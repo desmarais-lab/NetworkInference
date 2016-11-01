@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// ni_main
+int ni_main(int x);
+RcppExport SEXP netinf_ni_main(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(ni_main(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // wrapper_
 NumericVector wrapper_(NumericVector x);
 RcppExport SEXP netinf_wrapper_(SEXP xSEXP) {

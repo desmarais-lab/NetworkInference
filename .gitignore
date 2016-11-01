@@ -33,5 +33,7 @@ vignettes/*.pdf
 *.knit.md
 .Rproj.user
 
+# Compiled files
 *.o
 *.so
+*.a

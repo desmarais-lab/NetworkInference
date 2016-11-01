@@ -1,8 +1,11 @@
 #include <Rcpp.h>
-#include "test_lib/test.h"
+#include "Snap.h"
 using namespace Rcpp;
+
+
+
 
 // [[Rcpp::export]]
 NumericVector wrapper_(NumericVector x) {
-    return external_test_function(x);
+    return 1;
 }

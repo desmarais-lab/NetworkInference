@@ -1,18 +1,29 @@
-$(info The name of the shared library to be created is: $(SHLIB))
+$(info name of shared library: $(SHLIB))
+SNAPDIR = snap
+include snap/Makefile.config
 
-PKG_CPPFLAGS +=  -Itest_lib/ -Itest_lib/test_support/
-PKG_LIBS += -L../inst -lsupport
+#PKG_CPPFLAGS +=  -I$(SNAPDIR)/$(SNAP) -I$(SNAPDIR)/$(GLIB)
+PKG_CPPFLAGS =  -std=c++98 -Wall -O3 -DNDEBUG -fopenmp -I$(SNAPDIR)/$(SNAP) \
+	-I$(SNAPDIR)/$(GLIB) -I$(SNAPDIR)/$(SNAPADV)
+PKG_LIBS += -L../inst -lsnap
+LIBS += -lrt
 
-SOURCES= netinf_wrap.cpp RcppExports.cpp
-OBJECTS= $(SOURCES:.cpp=.o)
+SOURCES = ./netinf_wrap.cpp ./RcppExports.cpp ./netinf.cpp  \
+	$(SNAPDIR)/$(SNAPADV)/cascnetinf.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
 
-SOURCES_SUPP= ./RcppExports.cpp ./netinf_wrap.cpp ./test_lib/test.cpp \
-	./test_lib/test_support/test_support_functions.cpp
-OBJECTS_SUPP = $(SOURCES_SUPP:.cpp=.o)
+#SOURCES_SNAP = ./RcppExports.cpp ./netinf_wrap.cpp ./snap/snap-core/Snap.cpp \
+#	$(wildcard $(SNAPDIR)/$(SNAP)/*.h) $(wildcard $(SNAPDIR)/$(SNAP)/*.cpp) \
+#	$(wildcard $(SNAPDIR)/$(GLIB)/*.h) $(wildcard $(SNAPDIR)/$(GLIB)/*.cpp)
 
-all: $(SHLIB) ../inst/libsupport.a
+SOURCES_SNAP = ./snap/snap-core/Snap.cpp
+OBJECTS_SNAP = $(SOURCES_SNAP:.cpp=.o)
 
-$(SHLIB): $(OBJECTS) ../inst/libsupport.a
+all: $(SHLIB) ../inst/libsnap.a
 
-../inst/libsupport.a: $(OBJECTS_SUPP)
-	ar -rvs ../inst/libsupport.a $(OBJECTS_SUPP)
+$(SHLIB): $(OBJECTS) ../inst/libsnap.a
+
+../inst/libsnap.a: $(OBJECTS_SNAP)
+	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
+
+
