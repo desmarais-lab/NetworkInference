@@ -1,19 +1,24 @@
-$(info name of shared library: $(SHLIB))
-SNAPDIR = snap
-include snap/Makefile.config
+CORE = snap/snap-core
+ADV = snap/snap-adv
+GLIB = snap/glib-core
+NETINF = snap/examples/netinf
 
-PKG_CPPFLAGS =  -std=c++98 -Wall -O3 -DNDEBUG -fopenmp -I$(SNAPDIR)/$(SNAP) \
-	-I$(SNAPDIR)/$(GLIB) -I$(SNAPDIR)/$(SNAPADV) -Isnap/examples/netinf
+CXX_STD = CXX11
+PKG_CPPFLAGS= -Dlibsnap_core_shared_EXPORTS -Wall -pedantic -pthread \
+	-fPIC -O2 -g -fPIC -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) \
+	-I$(NETINF)
 PKG_LIBS += -L../inst -lsnap
-#LIBS += -lrt
+LIBS=-L./ -L../inst
 
-.PHONY: all ../inst/libsnap.a
+SOURCES= netinf.cpp RcppExports.cpp
+OBJECTS= $(SOURCES:.cpp=.o)
 
-all: $(SHLIB)
+SOURCES_SNAP = $(CORE)/Snap.cpp
+OBJECTS_SNAP = $(SOURCES_SNAP:.cpp=.o)
 
-$(SHLIB): ../inst/libsnap.a
+all: $(SHLIB) ../inst/libsnap.a
 
-../inst/libsnap.a:
-	@(cd snap/snap-core && $(MAKE) lib \
-	  CC="$(CC)" CFLAGS="$(CFLAGS) $(CPICFLAGS)" AR="$(AR)" RANLIB="$(RANLIB)" \
-	  && cp libsnap.a ../../../inst/)
+$(SHLIB): $(OBJECTS) ../inst/libsnap.a 
+
+../inst/libsnap.a: $(OBJECTS_SNAP)
+	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
