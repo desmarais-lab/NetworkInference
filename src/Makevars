@@ -3,12 +3,17 @@ ADV = snap/snap-adv
 GLIB = snap/glib-core
 NETINF = snap/examples/netinf
 
-CXX_STD = CXX11
-PKG_CPPFLAGS= -Dlibsnap_core_shared_EXPORTS -Wall -pedantic -pthread \
-	-fPIC -O2 -g -fPIC -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) \
-	-I$(NETINF)
+# Working configuration
+#PKG_CPPFLAGS= -Dlibsnap_core_shared_EXPORTS -Wall -pedantic -pthread \
+#	-fPIC -O2 -g -fPIC -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) \
+#	-I$(NETINF)
+#PKG_LIBS += -L../inst -lsnap
+#LIBS=-L./ -L../inst
+
+PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG -fopenmp  -I../inst \
+	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
 PKG_LIBS += -L../inst -lsnap
-LIBS=-L./ -L../inst
+LIBS=-L./ -L../inst -lrt
 
 SOURCES= netinf.cpp RcppExports.cpp 
 OBJECTS= $(SOURCES:.cpp=.o)
