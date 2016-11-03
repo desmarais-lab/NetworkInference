@@ -10,10 +10,10 @@ PKG_CPPFLAGS= -Dlibsnap_core_shared_EXPORTS -Wall -pedantic -pthread \
 PKG_LIBS += -L../inst -lsnap
 LIBS=-L./ -L../inst
 
-SOURCES= netinf.cpp RcppExports.cpp
+SOURCES= netinf.cpp RcppExports.cpp 
 OBJECTS= $(SOURCES:.cpp=.o)
 
-SOURCES_SNAP = $(CORE)/Snap.cpp
+SOURCES_SNAP = $(CORE)/Snap.cpp $(ADV)/cascnetinf.cpp
 OBJECTS_SNAP = $(SOURCES_SNAP:.cpp=.o)
 
 all: $(SHLIB) ../inst/libsnap.a
@@ -22,3 +22,6 @@ $(SHLIB): $(OBJECTS) ../inst/libsnap.a
 
 ../inst/libsnap.a: $(OBJECTS_SNAP)
 	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
+	
+clean:
+	rm $(CORE)/Snap.o
