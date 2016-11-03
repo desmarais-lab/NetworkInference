@@ -1,4 +1,6 @@
 #include <Rcpp.h>
+#include "Snap.h"
+#include "cascnetinf.h"
 using namespace Rcpp;
 
 // This is a simple example of exporting a C++ function to R. You can
@@ -13,6 +15,37 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 NumericVector timesTwo(NumericVector x) {
-  return x * 2;
+    return x * 2;
 }
 
+// Run netinf on file
+// [[Rcpp::export]]
+void test_netinf() {
+    
+    // Default settings
+    const char* infile_name = "data/example-cascades.txt";
+    int model = 1;
+    double alpha = 1.0;
+    int iters = 5;
+    
+    // Initialize netinf obj
+    TNetInfBs NIB(true, false);
+    
+    // Load cascades from file
+    //TFIn FIn("/Users/flinder/Dropbox/current_projects/netinf/data/example-cascades.txt");
+    TFIn FIn(infile_name);
+    
+    Rcout << FIn.Eof() << '\n';
+    
+    NIB.LoadCascadesTxt(FIn, model, alpha);
+    
+    // Run netinf 
+    NIB.Init();
+    printf("cascades:%d nodes:%d potential edges:%d\nRunning NETINF...\n", 
+           NIB.GetCascs(), NIB.GetNodes(), NIB.CascPerEdge.Len());
+    NIB.GreedyOpt(iters);
+    //
+    ////Save network
+    TStr outfile_name();
+    NIB.SavePlaneTextNet("data/test_out.txt");
+}
