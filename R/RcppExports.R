@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 timesTwo <- function(x) {
-    .Call('netinf_timesTwo', PACKAGE = 'netinf', x)
+    .Call('NetworkInference_timesTwo', PACKAGE = 'NetworkInference', x)
 }
 
 test_netinf <- function() {
-    invisible(.Call('netinf_test_netinf', PACKAGE = 'netinf'))
+    invisible(.Call('NetworkInference_test_netinf', PACKAGE = 'NetworkInference'))
 }
 

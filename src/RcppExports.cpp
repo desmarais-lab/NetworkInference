@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // timesTwo
 NumericVector timesTwo(NumericVector x);
-RcppExport SEXP netinf_timesTwo(SEXP xSEXP) {
+RcppExport SEXP NetworkInference_timesTwo(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -18,7 +18,7 @@ END_RCPP
 }
 // test_netinf
 void test_netinf();
-RcppExport SEXP netinf_test_netinf() {
+RcppExport SEXP NetworkInference_test_netinf() {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     test_netinf();

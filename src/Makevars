@@ -1,7 +1,6 @@
 CORE = snap/snap-core
 ADV = snap/snap-adv
 GLIB = snap/glib-core
-NETINF = snap/examples/netinf
 
 CC = g++
 PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG -fopenmp  -I../inst \
@@ -19,8 +18,11 @@ all: $(SHLIB) ../inst/libsnap.a
 
 $(SHLIB): $(OBJECTS) ../inst/libsnap.a 
 
-../inst/libsnap.a: $(OBJECTS_SNAP)
+../inst/libsnap.a: $(OBJECTS_SNAP) inst_dir
 	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
+
+inst_dir:
+	mkdir ../inst/
 	
 clean:
 	rm $(CORE)/Snap.o
