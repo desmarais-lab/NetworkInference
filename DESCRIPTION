@@ -11,3 +11,4 @@ License: GPL (>= 2)
 Imports: Rcpp (>= 0.12.5)
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/netinf/issues
+Suggests: testthat
