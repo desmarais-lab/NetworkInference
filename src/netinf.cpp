@@ -39,8 +39,8 @@ void test_netinf() {
     
     // Run netinf 
     NIB.Init();
-    printf("cascades:%d nodes:%d potential edges:%d\nRunning NETINF...\n", 
-           NIB.GetCascs(), NIB.GetNodes(), NIB.CascPerEdge.Len());
+    //printf("cascades:%d nodes:%d potential edges:%d\nRunning NETINF...\n", 
+    //       NIB.GetCascs(), NIB.GetNodes(), NIB.CascPerEdge.Len());
     NIB.GreedyOpt(iters);
     //
     ////Save network
