@@ -8,7 +8,10 @@ Authors@R: person("Fridolin", "Linder", email = "fridolin.linder@psu.edu",
 Description: This is an R implementation of the netinf algorithm (Leskovic et al
     XXXX). This paragraph describes the package in more detail.
 License: GPL (>= 2)
-Imports: Rcpp (>= 0.12.5)
+Imports:
+    Rcpp (>= 0.12.5)
 LinkingTo: Rcpp
-BugReports: https://github.com/flinder/netinf/issues
-Suggests: testthat
+BugReports: https://github.com/flinder/NetworkInference/issues
+Suggests:
+    testthat,assertthat
+RoxygenNote: 5.0.1
