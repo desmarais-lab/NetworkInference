@@ -5,17 +5,6 @@
 
 using namespace Rcpp;
 
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP NetworkInference_timesTwo(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // test_netinf
 void test_netinf();
 RcppExport SEXP NetworkInference_test_netinf() {
@@ -23,5 +12,22 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     test_netinf();
     return R_NilValue;
+END_RCPP
+}
+// netinf_
+List netinf_(IntegerVector node_ids, CharacterVector node_names, List cascade_ids, List cascade_times, int model, double alpha, int n_iter);
+RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP node_namesSEXP, SEXP cascade_idsSEXP, SEXP cascade_timesSEXP, SEXP modelSEXP, SEXP alphaSEXP, SEXP n_iterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type node_ids(node_idsSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type node_names(node_namesSEXP);
+    Rcpp::traits::input_parameter< List >::type cascade_ids(cascade_idsSEXP);
+    Rcpp::traits::input_parameter< List >::type cascade_times(cascade_timesSEXP);
+    Rcpp::traits::input_parameter< int >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< int >::type n_iter(n_iterSEXP);
+    rcpp_result_gen = Rcpp::wrap(netinf_(node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter));
+    return rcpp_result_gen;
 END_RCPP
 }
