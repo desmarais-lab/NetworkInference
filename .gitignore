@@ -41,3 +41,6 @@ vignettes/*.pdf
 
 # Development note
 devel_notes.md
+
+# Generated test data
+data/test_out.txt
