@@ -1,4 +1,4 @@
-Package: netinf
+Package: NetworkInference
 Type: Package
 Title: Inferring latent diffusion networks
 Version: 1.0
