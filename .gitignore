@@ -38,3 +38,6 @@ vignettes/*.pdf
 *.o
 *.so
 *.a
+
+# Development note
+devel_notes.md
