@@ -18,11 +18,9 @@ all: $(SHLIB) ../inst/libsnap.a
 
 $(SHLIB): $(OBJECTS) ../inst/libsnap.a 
 
-../inst/libsnap.a: $(OBJECTS_SNAP) inst_dir
+../inst/libsnap.a: $(OBJECTS_SNAP)
+	@mkdir -p object
 	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
-
-inst_dir:
-	mkdir ../inst/
 	
 clean:
 	rm $(CORE)/Snap.o
