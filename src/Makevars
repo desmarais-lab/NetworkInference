@@ -10,6 +10,7 @@ NETINF = snap/examples/netinf
 #PKG_LIBS += -L../inst -lsnap
 #LIBS=-L./ -L../inst
 
+CC = g++
 PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG -fopenmp  -I../inst \
 	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
 PKG_LIBS += -L../inst -lsnap
@@ -30,3 +31,4 @@ $(SHLIB): $(OBJECTS) ../inst/libsnap.a
 	
 clean:
 	rm $(CORE)/Snap.o
+	rm $(ADV)/cascnetinf.o
