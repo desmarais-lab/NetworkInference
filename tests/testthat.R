@@ -1,4 +1,4 @@
 library(testthat)
-library(netinf)
+library(NetworkInference)
 
-test_check("netinf")
+test_check("NetworkInference")
