@@ -24,7 +24,7 @@ void test_netinf() {
     
     // Default settings
     const char* infile_name = "data/example-cascades.txt";
-    int model = 1;
+    int model = 0;
     double alpha = 1.0;
     int iters = 5;
     
@@ -34,8 +34,6 @@ void test_netinf() {
     // Load cascades from file
     //TFIn FIn("/Users/flinder/Dropbox/current_projects/netinf/data/example-cascades.txt");
     TFIn FIn(infile_name);
-    
-    Rcout << FIn.Eof() << '\n';
     
     NIB.LoadCascadesTxt(FIn, model, alpha);
     
