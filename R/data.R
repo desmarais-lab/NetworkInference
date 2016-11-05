@@ -1,0 +1,17 @@
+#' Example cascades
+#'
+#' An example dataset of 31 nodes and 54 cascades. From the original netinf 
+#' implementation in SNAP. 
+#' 
+#'
+#' @format A list containing 4 objects
+#' \describe{
+#'   \item{node_ids}{Integer node ids}
+#'   \item{node_names}{Character node names}
+#'   \item{cascade_ids}{A list of integer vectors. Each containing the ids of the
+#'   nodes infected in this cascades in the order of infection}
+#'   \item{cascade_times}{A list of numeric vectors. Each containing the infection
+#'   times for the corresponding nodes in cascade_ids}
+#' }
+#' @source \url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
+"example_cascades"
