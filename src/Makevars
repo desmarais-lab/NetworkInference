@@ -3,7 +3,8 @@ ADV = snap/snap-adv
 GLIB = snap/glib-core
 
 CC = g++
-PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG -fopenmp  -I../inst \
+# -fopenmp
+PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG  -I../inst \
 	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
 PKG_LIBS += -L../inst -lsnap
 LIBS=-L./ -L../inst -lrt
@@ -19,7 +20,7 @@ all: $(SHLIB) ../inst/libsnap.a
 $(SHLIB): $(OBJECTS) ../inst/libsnap.a 
 
 ../inst/libsnap.a: $(OBJECTS_SNAP)
-	@mkdir -p object
+	@mkdir -p ../inst/
 	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
 	
 clean:
