@@ -5,18 +5,9 @@
 
 using namespace Rcpp;
 
-// test_netinf
-void test_netinf();
-RcppExport SEXP NetworkInference_test_netinf() {
-BEGIN_RCPP
-    Rcpp::RNGScope __rngScope;
-    test_netinf();
-    return R_NilValue;
-END_RCPP
-}
 // netinf_
-List netinf_(IntegerVector node_ids, CharacterVector node_names, List cascade_ids, List cascade_times, int model, double alpha, int n_iter);
-RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP node_namesSEXP, SEXP cascade_idsSEXP, SEXP cascade_timesSEXP, SEXP modelSEXP, SEXP alphaSEXP, SEXP n_iterSEXP) {
+List netinf_(IntegerVector node_ids, CharacterVector node_names, List cascade_ids, List cascade_times, int model, double alpha, int n_iter, bool verbose);
+RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP node_namesSEXP, SEXP cascade_idsSEXP, SEXP cascade_timesSEXP, SEXP modelSEXP, SEXP alphaSEXP, SEXP n_iterSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -27,7 +18,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type model(modelSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type n_iter(n_iterSEXP);
-    __result = Rcpp::wrap(netinf_(node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter));
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    __result = Rcpp::wrap(netinf_(node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose));
     return __result;
+END_RCPP
+}
+// test_netinf
+void test_netinf();
+RcppExport SEXP NetworkInference_test_netinf() {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    test_netinf();
+    return R_NilValue;
 END_RCPP
 }
