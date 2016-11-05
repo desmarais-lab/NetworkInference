@@ -10,13 +10,13 @@ netinf(node_ids, node_names, cascade_ids, cascade_times,
 \arguments{
 \item{node_ids}{A vector of integer node ids.}
 
-\item{node_names}{A charcter vector of node names.}
+\item{node_names}{A character vector of node names.}
 
 \item{cascade_ids}{A list of integer vectors containing the node ids of
 the cascade in order of infection.}
 
 \item{cascade_times}{A list of numeric vectors each containing infection
-times for the correspoinding nodes in \code{cascade_ids}.}
+times for the corresponding nodes in \code{cascade_ids}.}
 
 \item{trans_mod}{character, indicating the choice of model:
 \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.}

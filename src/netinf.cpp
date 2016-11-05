@@ -10,11 +10,11 @@ using namespace Rcpp;
 //' Run the netinf algorithm on a set of nodes and cascades
 //' 
 //' @param node_ids An integer vector of integer node ids.
-//' @param node_names A charcter vector of node names.
+//' @param node_names A character vector of node names.
 //' @param cascade_ids A list of integer vectors containing the node ids of
 //'     the cascade in order of infection.
 //' @param  cascade_times A list of numeric vectors each containing infection 
-//'     times for the correspoinding nodes in \code{cascade_ids}.
+//'     times for the corresponding nodes in \code{cascade_ids}.
 //' @param model integer indicating the choice of model: 0: exponential, 
 //'     1: power law, 2: rayleigh.
 //' @param alpha Numeric, alpha for transmission model.
