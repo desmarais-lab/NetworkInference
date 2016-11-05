@@ -4,8 +4,6 @@
 #include "cascnetinf.h"
 using namespace Rcpp;
 
-
-
 //' Run the netinf algorithm on a set of nodes and cascades
 //' 
 //' @param node_ids An integer vector of integer node ids.
@@ -70,34 +68,4 @@ List netinf_(IntegerVector node_ids, CharacterVector node_names,
     }
     
     return edges_out;
-}
-
-// Run netinf on file
-// [[Rcpp::export]]
-void test_netinf() {
-    
-    // Default settings
-    const char* infile_name = "data/example-cascades.txt";
-    int model = 0;
-    double alpha = 1.0;
-    int iters = 5;
-    
-    // Initialize netinf obj
-    TNetInfBs NIB(true, false);
-    
-    // Load cascades from file
-    //TFIn FIn("/Users/flinder/Dropbox/current_projects/netinf/data/example-cascades.txt");
-    TFIn FIn(infile_name);
-    
-    NIB.LoadCascadesTxt(FIn, model, alpha);
-    
-    // Run netinf 
-    NIB.Init();
-    //printf("cascades:%d nodes:%d potential edges:%d\nRunning NETINF...\n", 
-    //       NIB.GetCascs(), NIB.GetNodes(), NIB.CascPerEdge.Len());
-    NIB.GreedyOpt(iters);
-    //
-    ////Save network
-    TStr outfile_name();
-    NIB.SavePlaneTextNet("data/test_out.txt");
 }

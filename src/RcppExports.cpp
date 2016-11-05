@@ -23,12 +23,3 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test_netinf
-void test_netinf();
-RcppExport SEXP NetworkInference_test_netinf() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    test_netinf();
-    return R_NilValue;
-END_RCPP
-}
