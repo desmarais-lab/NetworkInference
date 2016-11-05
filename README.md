@@ -1,6 +1,5 @@
-[![Travis-CI Build Status](https://travis-ci.org/NA/NA.svg?branch=master)](https://travis-ci.org/NA/NA)
+[![Travis-CI Build Status](https://travis-ci.org/flinder/NetworkInference.svg?branch=master)](https://travis-ci.org/flinder/NetworkInference)
 
-# netinf
+# NetworkInference
 
-
-R interface to the netinf algorithm
+R interface to the stanford network analysis project's (SNAP) netinf algorithm.
