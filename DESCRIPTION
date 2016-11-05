@@ -9,9 +9,10 @@ Description: This is an R implementation of the netinf algorithm (Leskovic et al
     XXXX). This paragraph describes the package in more detail.
 License: GPL (>= 2)
 Imports:
-    Rcpp (>= 0.12.5)
+    Rcpp (>= 0.12.5),
+    assertthat
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
-    testthat,assertthat
+    testthat
 RoxygenNote: 5.0.1
