@@ -1,3 +1,4 @@
+#define SIZE_MAX 18446744073709551615UL
 #include <Rcpp.h>
 #include "Snap.h"
 #include "cascnetinf.h"
