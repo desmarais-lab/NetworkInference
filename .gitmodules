@@ -1,3 +1,0 @@
-[submodule "src/snap"]
-	path = src/snap
-	url = https://github.com/flinder/snap.git
