@@ -3,17 +3,16 @@ library(NetworkInference)
 context("Test if core netinf method works")
 
 test_that("netinf produces the edges as original netinf executable", {
-    setwd('../../')
-    original <- readLines('data/original_output_network.txt')[34:38]
-    original <- lapply(original, function(x) as.numeric(unlist(strsplit(x, ','))))
+    data(example_cascades)
+    from_netinf <- netinf(node_ids = example_cascades$node_ids, 
+                          node_names = example_cascades$node_names, 
+                          cascade_ids = example_cascades$cascade_ids, 
+                          cascade_times = example_cascades$cascade_times, 
+                          alpha = 1, trans_mod = "exponential")
     
-    dat <- readLines('data/example-cascades.txt')[34:87]
-    cascs <- lapply(dat, function(x) unlist(strsplit(x, ',')))
-    ids <- lapply(cascs, function(x) as.numeric(x[seq(1, 86, 2)]))
-    times <- lapply(cascs, function(x) as.numeric(x[seq(2, 87, 2)]))
-    from_netinf <- netinf(node_ids = c(0:31), 
-                          node_names = as.character(c(0:31)), 
-                          cascade_ids = ids, cascade_times = times, alpha = 1, 
-                          trans_mod = "exponential")
-    expect_equal(original, from_netinf)
+    # Results from orignal netinf executable 
+    original_edges <- matrix(c(23, 0, 0, 31, 9, 5, 5, 3, 5, 14), nc = 2,
+                             byrow = TRUE)
+ 
+    expect_equal(original_edges, from_netinf)
 })

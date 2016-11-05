@@ -23,7 +23,7 @@ times for the correspoinding nodes in \code{cascade_ids}.}
 
 \item{alpha}{Numeric, alpha for transmission model.}
 
-\item{verbose,}{logical, should additional output be printed.}
+\item{verbose}{logical, should additional output be printed.}
 }
 \value{
 Returns the inferred diffusion network as an object of class
@@ -39,16 +39,11 @@ Additional information as well as the C++ source can be found on the
 netinf website (\url{http://snap.stanford.edu/netinf/}).'
 }
 \examples{
-node_ids <- c(1:20)
-node_names <- as.character(c(1:20))
-cascade_ids <- list(c(2, 5, 12, 7),
-                    c(3, 18, 6, 4, 7, 2),
-                    c(4, 1, 7, 3, 12, 14, 2))
-cascade_times <- list(c(34.5, 23, 5.67, 0),
-                      c(23,  20, 14.2, 10, 8.5, 0),
-                      c(40.1, 34.2, 26.9, 12.5, 10.5, 5, 0))
-out <- netinf(node_ids = node_ids, node_names = node_names,
-              cascade_ids = cascade_ids, cascade_times = cascade_times,
+data(example_cascades)
+out <- netinf(node_ids = example_cascades$node_ids,
+              node_names = example_cascades$node_names,
+              cascade_ids = example_cascades$cascade_ids,
+              cascade_times = example_cascades$cascade_times,
               trans_mod = "exponential", alpha = 1, verbose = TRUE)
 }
 \references{

@@ -17,7 +17,3 @@ netinf_ <- function(node_ids, node_names, cascade_ids, cascade_times, model = 0L
     .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose)
 }
 
-test_netinf <- function() {
-    invisible(.Call('NetworkInference_test_netinf', PACKAGE = 'NetworkInference'))
-}
-

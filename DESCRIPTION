@@ -7,7 +7,7 @@ Authors@R: person("Fridolin", "Linder", email = "fridolin.linder@psu.edu",
                   role = c("aut", "cre"))
 Description: This is an R implementation of the netinf algorithm (Leskovic et al
     XXXX). This paragraph describes the package in more detail.
-License: GPL (>= 2)
+License: BSD
 Imports:
     Rcpp (>= 0.12.5),
     assertthat
