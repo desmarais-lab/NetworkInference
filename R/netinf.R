@@ -38,11 +38,12 @@
 #'                       c(40.1, 34.2, 26.9, 12.5, 10.5, 5, 0))
 #' out <- netinf(node_ids = node_ids, node_names = node_names, 
 #'               cascade_ids = cascade_ids, cascade_times = cascade_times,
-#'               trans_mod = "exponential", alpha = 1)
+#'               trans_mod = "exponential", alpha = 1, verbose = TRUE)
 #'               
 #' @export
 netinf <- function(node_ids, node_names, cascade_ids, cascade_times, 
-                   trans_mod = "exponential", alpha = 1.0, n_iter = 5) {
+                   trans_mod = "exponential", alpha = 1.0, n_iter = 5,
+                   verbose = TRUE) {
     
     # Check inputs
     assert_that(is.numeric(node_ids))

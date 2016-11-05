@@ -5,7 +5,7 @@
 \title{Run the netinf algorithm on a set of nodes and cascades}
 \usage{
 netinf_(node_ids, node_names, cascade_ids, cascade_times, model = 0L,
-  alpha = 1, n_iter = 5L)
+  alpha = 1, n_iter = 5L, verbose = TRUE)
 }
 \arguments{
 \item{node_ids}{An integer vector of integer node ids.}
@@ -22,6 +22,8 @@ times for the correspoinding nodes in \code{cascade_ids}.}
 1: power law, 2: rayleigh.}
 
 \item{alpha}{Numeric, alpha for transmission model.}
+
+\item{verbose}{boolean, should additional information be printed.}
 }
 \description{
 Run the netinf algorithm on a set of nodes and cascades

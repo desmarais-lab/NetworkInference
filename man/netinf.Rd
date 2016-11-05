@@ -5,7 +5,7 @@
 \title{Infer latent diffusion network.}
 \usage{
 netinf(node_ids, node_names, cascade_ids, cascade_times,
-  trans_mod = "exponential", alpha = 1, n_iter = 5)
+  trans_mod = "exponential", alpha = 1, n_iter = 5, verbose = TRUE)
 }
 \arguments{
 \item{node_ids}{A vector of integer node ids.}
@@ -22,18 +22,21 @@ times for the correspoinding nodes in \code{cascade_ids}.}
 \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.}
 
 \item{alpha}{Numeric, alpha for transmission model.}
+
+\item{verbose,}{logical, should additional output be printed.}
 }
 \value{
 Returns the inferred diffusion network as an object of class
  \link[base]{matrix} of dimension \code{k x 2} where k is the number of edges.
-
-The algorithm is describe in detail in Gomez-Rodriguez et al. (2010).
-Additional information as well as the C++ source can be found on the
-netinf website \url{http://snap.stanford.edu/netinf/}.
 }
 \description{
 Infer the most likely latent diffusion model from a set of nodes and
 infection times
+}
+\details{
+The algorithm is describe in detail in Gomez-Rodriguez et al. (2010).
+Additional information as well as the C++ source can be found on the
+netinf website (\url{http://snap.stanford.edu/netinf/}).'
 }
 \examples{
 node_ids <- c(1:20)
@@ -46,7 +49,7 @@ cascade_times <- list(c(34.5, 23, 5.67, 0),
                       c(40.1, 34.2, 26.9, 12.5, 10.5, 5, 0))
 out <- netinf(node_ids = node_ids, node_names = node_names,
               cascade_ids = cascade_ids, cascade_times = cascade_times,
-              trans_mod = "exponential", alpha = 1)
+              trans_mod = "exponential", alpha = 1, verbose = TRUE)
 }
 \references{
 M. Gomez-Rodriguez, J. Leskovec, A. Krause. Inferring Networks of Diffusion
