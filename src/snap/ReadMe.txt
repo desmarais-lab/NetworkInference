@@ -1,3 +1,5 @@
+This is a reduced version of the SNAP source, containing the core library and advanced features required for the netinf algorithm. For the full source see http://snap.stanford.edu.
+
 ========================================================================
   SNAP : Stanford Network Analysis Platform
 	http://snap.stanford.edu
