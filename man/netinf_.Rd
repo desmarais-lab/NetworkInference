@@ -23,6 +23,8 @@ times for the correspoinding nodes in \code{cascade_ids}.}
 
 \item{alpha}{Numeric, alpha for transmission model.}
 
+\item{n_iter}{Numeric, number of iterations for optimization.}
+
 \item{verbose}{boolean, should additional information be printed.}
 }
 \description{

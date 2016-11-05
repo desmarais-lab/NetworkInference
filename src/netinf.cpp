@@ -1,4 +1,7 @@
+#ifndef SIZE_MAX
 #define SIZE_MAX 18446744073709551615UL
+#endif
+
 #include <Rcpp.h>
 #include "Snap.h"
 #include "cascnetinf.h"
@@ -14,8 +17,9 @@ using namespace Rcpp;
 //'     times for the correspoinding nodes in \code{cascade_ids}.
 //' @param model integer indicating the choice of model: 0: exponential, 
 //'     1: power law, 2: rayleigh.
-//' @param verbose boolean, should additional information be printed.
 //' @param alpha Numeric, alpha for transmission model.
+//' @param n_iter Numeric, number of iterations for optimization.
+//' @param verbose boolean, should additional information be printed.
 // [[Rcpp::export]]
 List netinf_(IntegerVector node_ids, CharacterVector node_names,
             List cascade_ids, List cascade_times, int model = 0, 

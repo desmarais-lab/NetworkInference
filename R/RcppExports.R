@@ -11,8 +11,9 @@
 #'     times for the correspoinding nodes in \code{cascade_ids}.
 #' @param model integer indicating the choice of model: 0: exponential, 
 #'     1: power law, 2: rayleigh.
-#' @param verbose boolean, should additional information be printed.
 #' @param alpha Numeric, alpha for transmission model.
+#' @param n_iter Numeric, number of iterations for optimization.
+#' @param verbose boolean, should additional information be printed.
 netinf_ <- function(node_ids, node_names, cascade_ids, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE) {
     .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose)
 }

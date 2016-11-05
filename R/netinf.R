@@ -17,6 +17,7 @@
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.
 #' @param alpha Numeric, alpha for transmission model.
+#' @param n_iter Numeric, number of iterations for optimization.
 #' @param verbose logical, should additional output be printed.
 #' 
 #' @return Returns the inferred diffusion network as an object of class 
