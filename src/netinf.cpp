@@ -30,7 +30,6 @@ List netinf_(IntegerVector node_ids, CharacterVector node_names,
     
     // Initialize TNIB
     TNetInfBs NIB(false, false);
-    TStr node_name("1");
     
     // Add nodes
     for(int i = 0; i < n_nodes; i++) {
