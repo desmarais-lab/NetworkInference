@@ -5,7 +5,7 @@
 #' 
 #' @name example_cascades
 #' 
-#' @usage data("example_cascades")  
+#' @usage data(example_cascades)  
 #' @docType data
 #' 
 #' @format A list containing 4 objects
