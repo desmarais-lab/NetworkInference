@@ -3,7 +3,11 @@
 #' An example dataset of 31 nodes and 54 cascades. From the original netinf 
 #' implementation in SNAP. 
 #' 
-#'
+#' @name example_cascades
+#' 
+#' @usage data("example_cascades")  
+#' @docType data
+#' 
 #' @format A list containing 4 objects
 #' \describe{
 #'   \item{node_ids}{Integer node ids}

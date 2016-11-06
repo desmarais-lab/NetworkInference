@@ -17,7 +17,7 @@
 \url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
 }
 \usage{
-example_cascades
+data("example_cascades")
 }
 \description{
 An example dataset of 31 nodes and 54 cascades. From the original netinf
