@@ -22,7 +22,4 @@ $(SHLIB): $(OBJECTS) ../inst/libsnap.a
 ../inst/libsnap.a: $(OBJECTS_SNAP)
 	@mkdir -p ../inst/
 	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
-	
-clean:
-	rm $(CORE)/Snap.o
-	rm $(ADV)/cascnetinf.o
+	rm $(OBJECTS_SNAP)
