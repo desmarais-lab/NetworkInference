@@ -3,11 +3,16 @@ Type: Package
 Title: Inferring latent diffusion networks
 Version: 1.0
 Date: 2016-10-05
-Authors@R: person("Fridolin", "Linder", email = "fridolin.linder@psu.edu",
-                  role = c("aut", "cre"))
+Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@psu.edu",
+                  role = c("aut", "cre")),
+             person(family = "SNAP Authors", role = "ctb", 
+                    comment = "for the included SNAP sources"),
+             person("Jure", "Leskovec", role = "ctb", 
+                    comment = "for the included SNAP sources")
+            )
 Description: This is an R implementation of the netinf algorithm (Leskovic et al
     2010). 
-License: BSD
+License: BSD_3_clause + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
     assertthat
