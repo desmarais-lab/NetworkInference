@@ -4,19 +4,12 @@
 \alias{netinf}
 \title{Infer latent diffusion network.}
 \usage{
-netinf(node_ids, node_names, cascade_ids, cascade_times,
-  trans_mod = "exponential", alpha = 1, n_iter = 5, verbose = TRUE)
+netinf(cascades, trans_mod = "exponential", alpha = 1, n_iter = 5,
+  verbose = TRUE)
 }
 \arguments{
-\item{node_ids}{A vector of integer node ids.}
-
-\item{node_names}{A character vector of node names.}
-
-\item{cascade_ids}{A list of integer vectors containing the node ids of
-the cascade in order of infection.}
-
-\item{cascade_times}{A list of numeric vectors each containing infection 
-times for the corresponding nodes in \code{cascade_ids}.}
+\item{cascades}{An object of class cascade containing node and cascade 
+information. See \link{as.cascade} for details.}
 
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.}
@@ -41,12 +34,8 @@ Additional information as well as the C++ source can be found on the
 netinf website (\url{http://snap.stanford.edu/netinf/}).'
 }
 \examples{
-data(example_cascades)
-out <- netinf(node_ids = example_cascades$node_ids, 
-              node_names = example_cascades$node_names, 
-              cascade_ids = example_cascades$cascade_ids, 
-              cascade_times = example_cascades$cascade_times,
-              trans_mod = "exponential", alpha = 1, verbose = TRUE)
+data(cascades)
+out <- netinf(cascades, trans_mod = "exponential", alpha = 1, verbose = TRUE)
               
 }
 \references{

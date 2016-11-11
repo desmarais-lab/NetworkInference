@@ -15,7 +15,8 @@ Description: This is an R implementation of the netinf algorithm (Leskovic et al
 License: BSD_3_clause + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
-    assertthat
+    assertthat,
+    checkmate
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:

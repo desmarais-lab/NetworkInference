@@ -6,14 +6,12 @@
 #' The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 #' Additional information as well as the C++ source can be found on the 
 #' netinf website (\url{http://snap.stanford.edu/netinf/}).' 
+#' 
+#' @import checkmate
 #' @importFrom assertthat assert_that
 #' 
-#' @param node_ids A vector of integer node ids.
-#' @param node_names A character vector of node names.
-#' @param cascade_ids A list of integer vectors containing the node ids of
-#'     the cascade in order of infection.
-#' @param  cascade_times A list of numeric vectors each containing infection 
-#'     times for the corresponding nodes in \code{cascade_ids}.
+#' @param  cascades An object of class cascade containing node and cascade 
+#'     information. See \link{as.cascade} for details.
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.
 #' @param alpha Numeric, alpha for transmission model.
@@ -29,28 +27,20 @@
 #' Data Mining (KDD), 2010.
 #'      
 #' @examples 
-#' data(example_cascades)
-#' out <- netinf(node_ids = example_cascades$node_ids, 
-#'               node_names = example_cascades$node_names, 
-#'               cascade_ids = example_cascades$cascade_ids, 
-#'               cascade_times = example_cascades$cascade_times,
-#'               trans_mod = "exponential", alpha = 1, verbose = TRUE)
+#' data(cascades)
+#' out <- netinf(cascades, trans_mod = "exponential", alpha = 1, verbose = TRUE)
 #'               
 #' @export
-netinf <- function(node_ids, node_names, cascade_ids, cascade_times, 
-                   trans_mod = "exponential", alpha = 1.0, n_iter = 5,
+netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
                    verbose = TRUE) {
     
-    # Check inputs
-    assert_that(is.numeric(node_ids))
-    assert_that(is.character(node_names))
-    assert_that(is.list(cascade_ids))
-    assert_that(is.list(cascade_times))
-    assert_that(is.character(trans_mod))
-    assert_that(is.numeric(alpha))
-    assert_that(is.numeric(n_iter))
-    assert_that(length(cascade_ids) == length(cascade_times))
-    
+    # Check inputs 
+    assert_that(class(cascades)[1] == "cascade")
+    assert_cascade_consistency_(cascades$cascade_ids, cascades$cascade_times)
+    assert_node_info_(cascades$node_ids, cascades$node_names)
+    qassert(trans_mod, "S1")
+    qassert(alpha, "R1[0,)")
+    qassert(n_iter, "X1[1,)")
     model_char <- match.arg(trans_mod, c("exponential", "power", "rayleigh"))
     if(model_char == "exponential") {
         model <- 0
@@ -61,10 +51,12 @@ netinf <- function(node_ids, node_names, cascade_ids, cascade_times,
     }
     
     # Run netinf
-    netinf_out <- netinf_(node_ids = node_ids, node_names = node_names, 
-                          cascade_ids = cascade_ids, 
-                          cascade_times = cascade_times, model = model, 
-                          alpha = alpha, n_iter = n_iter, verbose = verbose)
+    netinf_out <- netinf_(node_ids = cascades$node_ids, 
+                          node_names = cascades$node_names, 
+                          cascade_ids = cascades$cascade_ids, 
+                          cascade_times = cascades$cascade_times, 
+                          model = model, alpha = alpha, n_iter = n_iter, 
+                          verbose = verbose)
     
     # Return outputs
     return(do.call(rbind, netinf_out))
