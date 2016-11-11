@@ -3,12 +3,12 @@
 #' An example dataset of 31 nodes and 54 cascades. From the original netinf 
 #' implementation in SNAP. 
 #' 
-#' @name example_cascades
+#' @name cascades
 #' 
-#' @usage data(example_cascades)  
+#' @usage data(cascades)  
 #' @docType data
 #' 
-#' @format A list containing 4 objects
+#' @format An object of class \code{cascade} containing 4 objects
 #' \describe{
 #'   \item{node_ids}{Integer node ids}
 #'   \item{node_names}{Character node names}
@@ -18,4 +18,4 @@
 #'   times for the corresponding nodes in cascade_ids}
 #' }
 #' @source \url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
-"example_cascades"
+"cascades"
