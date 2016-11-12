@@ -1,3 +1,11 @@
+# Functions related to the cascade class
+
+# TODO: 
+# - allow factor for cascade names
+# - assert consistency between provided node information and nodes used in the 
+#   cascade input
+
+
 #' Is the object a cascade?
 #' 
 #' @param object The object to be tested
@@ -5,7 +13,6 @@
 is.cascade <- function(object) {
     inherits(object, "cascade")
 }
-
 
 #' Create a cascade object from input data
 #'
@@ -47,21 +54,30 @@ as.cascade <- function(dat, node_ids, node_names = NULL) {
 #' @param dat \link{data.frame} with three columns containing the cascade 
 #'     infromation. The first column contains the node ids of the cascades, the 
 #'     second column the infection times of the corresponding nodes and the third
-#'     column contains an integer cascade identifier
+#'     column contains a character cascade names. If no names are provided, an 
+#'     integer sequence is used.
 #' @param node_ids Vector of integer ids for each node.
 #' @param node_names Character vector of names for each node. Optional. Must be 
 #'     of same length and sorting as node_ids. If not provided node_ids are used
 #'     as names.
 #'  
 #'  @import checkmate 
+#'  @import assertthat
 as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     
     # Check all inputs 
     assert_node_info_(node_ids, node_names)
-    assert_data_frame(dat, min.rows = 2, ncols = 3)
+    assert_data_frame(dat, min.rows = 2, min.cols = 2)
+    unused_columns <- see_if(ncol(dat) > 3)
+    if(unused_columns) {
+        msg <- paste("dat has more than three columns. Additional columns are", 
+                     "not used. Use ?as.cascade.data.frame for details on the",
+                     "required structure of dat.")
+        warning(msg)
+    }
     qassert(dat[, 1], 'X>1[0,)', .var.name = "dat[, 1]: Node ids.")
     qassert(dat[, 2], 'R>1[0,)', .var.name = "dat[, 2]: Cascade times.")
-    qassert(dat[, 3], 'X>1[0,)', .var.name = "dat[, 3]: Cascade ids.")
+    qassert(dat[, 3], 'S>1[0,)', .var.name = "dat[, 3]: Cascade names.")
      
     # Transform the data  
     splt <- split(dat, f = dat[, 3]) 
@@ -118,6 +134,7 @@ assert_cascade_consistency_ <- function(ids, times) {
 #' 
 #' @param node_ids Integer node ids.
 #' @param node_names Character node names.
+#' 
 #' @import checkmate
 assert_node_info_ <- function(node_ids, node_names) {
     qassert(node_ids, 'X+[0,)', .var.name = "node_ids")     
@@ -129,7 +146,6 @@ assert_node_info_ <- function(node_ids, node_names) {
     return(TRUE)
 }
 
-
 #' Simulate a set of cascades
 #' 
 #' @param n_cascades Number of cascades to generate 
@@ -138,7 +154,8 @@ simulate_cascades_ <- function(n_cascades) {
         n <- as.integer(runif(1, 2, 20))
         ids <- sample(c(0:20), n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
-        return(data.frame(ids, times, rep(cid, n)))
+        return(data.frame(ids, times, as.character(rep(cid, n)),
+                          stringsAsFactors = FALSE))
     }
     cascades <- do.call(rbind, lapply(c(1:10), make_cascade_))
     return(cascades)

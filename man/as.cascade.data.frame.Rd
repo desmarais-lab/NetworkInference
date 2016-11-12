@@ -10,7 +10,8 @@
 \item{dat}{\link{data.frame} with three columns containing the cascade 
 infromation. The first column contains the node ids of the cascades, the 
 second column the infection times of the corresponding nodes and the third
-column contains an integer cascade identifier}
+column contains a character cascade names. If no names are provided, an 
+integer sequence is used.}
 
 \item{node_ids}{Vector of integer ids for each node.}
 
@@ -18,7 +19,8 @@ column contains an integer cascade identifier}
    of same length and sorting as node_ids. If not provided node_ids are used
    as names.
 
-@import checkmate}
+@import checkmate 
+@import assertthat}
 }
 \description{
 Create cascade object from data frame
