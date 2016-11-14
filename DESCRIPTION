@@ -17,7 +17,8 @@ Imports:
     Rcpp (>= 0.12.5),
     assertthat,
     checkmate,
-    ggplot2
+    ggplot2,
+    ggrepel
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
