@@ -10,8 +10,8 @@
 \item{dat}{\link{data.frame} with three columns containing the cascade 
 infromation. The first column contains the node ids of the cascades, the 
 second column the infection times of the corresponding nodes and the third
-column contains a character cascade names. If no names are provided, an 
-integer sequence is used.}
+column contains a cascade identifier (can be \code{integer}, 
+\code{numeric}, \code{character} of \code{factor})}
 
 \item{node_ids}{Vector of integer ids for each node.}
 

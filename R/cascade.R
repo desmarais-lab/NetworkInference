@@ -54,8 +54,9 @@ as.cascade <- function(dat, node_ids, node_names = NULL) {
 #' @param dat \link{data.frame} with three columns containing the cascade 
 #'     infromation. The first column contains the node ids of the cascades, the 
 #'     second column the infection times of the corresponding nodes and the third
-#'     column contains a character cascade names. If no names are provided, an 
-#'     integer sequence is used.
+#'     column contains a cascade identifier (can be \code{integer}, 
+#'     \code{numeric}, \code{character} of \code{factor})
+#'     
 #' @param node_ids Vector of integer ids for each node.
 #' @param node_names Character vector of names for each node. Optional. Must be 
 #'     of same length and sorting as node_ids. If not provided node_ids are used
@@ -67,8 +68,8 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     
     # Check all inputs 
     assert_node_info_(node_ids, node_names)
-    assert_data_frame(dat, min.rows = 2, min.cols = 2)
-    unused_columns <- see_if(ncol(dat) > 3)
+    assert_data_frame(dat, min.rows = 2, min.cols = 3)
+    unused_columns <- assertthat::see_if(ncol(dat) > 3)
     if(unused_columns) {
         msg <- paste("dat has more than three columns. Additional columns are", 
                      "not used. Use ?as.cascade.data.frame for details on the",
@@ -77,14 +78,18 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     }
     qassert(dat[, 1], 'X>1[0,)', .var.name = "dat[, 1]: Node ids.")
     qassert(dat[, 2], 'R>1[0,)', .var.name = "dat[, 2]: Cascade times.")
-    qassert(dat[, 3], 'S>1[0,)', .var.name = "dat[, 3]: Cascade names.")
-     
+    assert_that(is.element(class(dat[, 3]), c("integer", "factor", "character")))
+   
+    if(is.null(node_names)) {
+        node_names <- as.character(node_ids)
+    } 
+    
     # Transform the data  
     splt <- split(dat, f = dat[, 3]) 
-    ids = lapply(splt, function(x) x[, 1])
-    names(ids) <- NULL
-    times = lapply(splt, function(x) x[, 2])
-    names(times) <- NULL
+    ids <- lapply(splt, function(x) x[, 1])
+    times <- lapply(splt, function(x) x[, 2])
+    names(ids) <- names(splt)
+    names(times) <- names(splt)
     
     # Check if data is consistent
     assert_cascade_consistency_(ids, times)
@@ -96,6 +101,39 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     return(out)
 }
 
+
+#' Convert a cascade object to a data frame
+#' 
+#' Generates a data frame containing the cascade information in the cascade object.
+#' Node information is lost
+#' 
+#' @param x Cascade object to convert.
+#' @param row.names	NULL or a character vector giving the row names for the data 
+#'     frame. Missing values are not allowed. (Not supported)
+#' @param optional logical. If TRUE, setting row names and converting column 
+#'     names (to syntactic names: see make.names) is optional. (Not supported)
+#' @param ... Additional arguments passed to \code{\link{data.frame}}.
+#' 
+#' @return A data frame with three columns. Containing (in order) 1) The ids of 
+#'     the infected nodes in each cascade, 2) the infection time of the
+#'     corresponding node, 3) the cascade identifier.
+#' 
+#' @export 
+as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
+                                  ...) {
+    # Check inputs
+    assert_that(class(x)[1] == "cascade")
+    
+    # Convert
+    ids <- do.call(c, x$cascade_ids)
+    times <- do.call(c, x$cascade_times)
+    smry <- summary(x)
+    cascade_ids <- do.call(c, apply(smry, 1, function(x) rep(x[1], each = x[2])))
+    out <- data.frame("ids" = ids, 'time' = times, "cascade_id" = cascade_ids, 
+                      stringsAsFactors = FALSE, ...)
+    row.names(out) <- as.character(c(1:nrow(out)))
+    return(out) 
+}
 
 #' Assert cascade consistency
 #' 
@@ -154,9 +192,12 @@ simulate_cascades_ <- function(n_cascades) {
         n <- as.integer(runif(1, 2, 20))
         ids <- sample(c(0:20), n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
-        return(data.frame(ids, times, as.character(rep(cid, n)),
+        return(data.frame(ids, times, as.character(rep(cid, n)), 
                           stringsAsFactors = FALSE))
     }
     cascades <- do.call(rbind, lapply(c(1:10), make_cascade_))
+    colnames(cascades) <- c("ids", "time", "cascade_id")
+    rownames(cascades) <- as.character(c(1:nrow(cascades)))
     return(cascades)
 }
+
