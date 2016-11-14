@@ -22,7 +22,8 @@ Imports:
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
-    testthat
+    testthat,
+    dplyr
 RoxygenNote: 5.0.1
 SystemRequirements: GNU make
 LazyData: true
