@@ -54,8 +54,8 @@ List netinf_(IntegerVector node_ids, CharacterVector node_names,
     // Run netinf
     NIB.Init();
     if(verbose) {
-        Rcout << "Number nodes: " << NIB.GetNodes() << "\n";
-        Rcout << "Number cascades: " << NIB.GetCascs() << "\n";
+        Rcout << "Number of nodes: " << NIB.GetNodes() << "\n";
+        Rcout << "Number of cascades: " << NIB.GetCascs() << "\n";
         Rcout << "Number of potential edges: " << NIB.CascPerEdge.Len() << "\n";
         Rcout << "Running netinf...\n";       
     }
