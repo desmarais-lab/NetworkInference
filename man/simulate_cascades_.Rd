@@ -4,12 +4,19 @@
 \alias{simulate_cascades_}
 \title{Simulate a set of cascades}
 \usage{
-simulate_cascades_(n_cascades)
+simulate_cascades_(n_cascades, id_class = "character")
 }
 \arguments{
 \item{n_cascades}{Number of cascades to generate}
+
+\item{id_class}{One of \code{c("character", "factor", "numeric")}. What class
+should the cascade_id indicator be.}
+}
+\value{
+A data frame containing (in order of columns) infected node ids, 
+    infection times and cascade identifiers for 20 distinct nodes.
 }
 \description{
-Simulate a set of cascades
+For testing purposes.
 }
 

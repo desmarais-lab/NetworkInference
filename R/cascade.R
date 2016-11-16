@@ -1,7 +1,6 @@
 # Functions related to the cascade class
 
 # TODO: 
-# - allow factor for cascade names
 # - assert consistency between provided node information and nodes used in the 
 #   cascade input
 
@@ -78,13 +77,18 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     }
     qassert(dat[, 1], 'X>1[0,)', .var.name = "dat[, 1]: Node ids.")
     qassert(dat[, 2], 'R>1[0,)', .var.name = "dat[, 2]: Cascade times.")
-    assert_that(is.element(class(dat[, 3]), c("integer", "factor", "character")))
+    assert_that(is.element(class(dat[, 3]), c("integer", "factor", "character",
+                                              "numeric")))
    
     if(is.null(node_names)) {
         node_names <- as.character(node_ids)
     } 
     
     # Transform the data  
+    ## Transform cascade ids to character to get consistency down the line
+    dat[, 3] <- as.character(dat[, 3])
+    
+    ## Transform to cascade data structure
     splt <- split(dat, f = dat[, 3]) 
     ids <- lapply(splt, function(x) x[, 1])
     times <- lapply(splt, function(x) x[, 2])
@@ -185,17 +189,36 @@ assert_node_info_ <- function(node_ids, node_names) {
 }
 
 #' Simulate a set of cascades
+#'
+#' For testing purposes.   
 #' 
 #' @param n_cascades Number of cascades to generate 
-simulate_cascades_ <- function(n_cascades) {
-    make_cascade_ <- function(cid) {
+#' @param id_class One of \code{c("character", "factor", "numeric")}. What class
+#'     should the cascade_id indicator be. 
+#'     
+#' @return A data frame containing (in order of columns) infected node ids, 
+#'     infection times and cascade identifiers for 20 distinct nodes.
+ 
+simulate_cascades_ <- function(n_cascades, id_class = "character") {
+    id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
+                                                      "numeric"))
+    make_cascade_ <- function(cid, id_class) {
         n <- as.integer(runif(1, 2, 20))
         ids <- sample(c(0:20), n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
-        return(data.frame(ids, times, as.character(rep(cid, n)), 
-                          stringsAsFactors = FALSE))
+        return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }
-    cascades <- do.call(rbind, lapply(c(1:10), make_cascade_))
+    if(id_class == "character"){
+        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+                                          make_cascade_))
+    } else if(id_class == "factor") {
+        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+                                          make_cascade_))
+        cascades[, 3] <- as.factor(cascades[, 3])
+    } else if(id_class == "numeric") {
+         cascades <- do.call(rbind, lapply(sample(c(1:10), 10, replace = FALSE), 
+                                          make_cascade_))
+    }
     colnames(cascades) <- c("ids", "time", "cascade_id")
     rownames(cascades) <- as.character(c(1:nrow(cascades)))
     return(cascades)
