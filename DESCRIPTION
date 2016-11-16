@@ -16,13 +16,13 @@ License: BSD_3_clause + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
     assertthat,
-    checkmate
+    checkmate,
+    ggplot2,
+    ggrepel
 LinkingTo: Rcpp
 BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
-    testthat,
-    ggplot2,
-    ggrepel
+    testthat
 RoxygenNote: 5.0.1
 SystemRequirements: GNU make
 LazyData: true
