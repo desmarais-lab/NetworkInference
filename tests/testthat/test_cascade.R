@@ -1,22 +1,99 @@
 library(NetworkInference)
-library(dplyr)
 
 context("Test if cascade data structure and related methods work.")
 
-dat <- simulate_cascades_(10)
-casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
-df <- as.data.frame(casc)
 
-test_that("as.cascade.data.frame works.", {
+test_as.cacade.data.frame_times <- function(dat) {
+    mean_casc_times <- sapply(casc$cascade_times, mean)
+    mean_dat_times <- sapply(names(mean_casc_times), 
+                             function(x) mean(dat[dat[, 3] == x, 2]))
+    return(list(mean_casc_times, mean_dat_times))
+}
+
+test_that("as.cascade.data.frame works with numeric cascade ids.", {
+    n_casc <- 10
+    dat <- simulate_cascades_(n_casc, "numeric")
+    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
     expect_equal(length(casc), 4)
-    mean_dat_times <- group_by(tbl_df(dat), cascade_id) %>%
-        summarize(m_time = mean(time))
-    mean_casc_times <- data_frame(cascade_id = names(casc$cascade_times),
-                                  m_time = sapply(casc$cascade_times, mean))
-    expect_equal(mean_dat_times, mean_casc_times)
+    expect_equal(length(casc$cascade_ids), n_casc)
+    expect_equal(length(casc$cascade_times), n_casc)
+     
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    expect_equal(el_per_casc_id, el_per_casc_time)
+    
+    out <- test_as.cacade.data.frame_times(dat) 
+    expect_equal(out[[1]], out[[2]])
 })
 
-test_that("as.data.frame.cascade works.", {
+test_that("as.cascade.data.frame works with factor cascade ids.", {
+    n_casc <- 10
+    dat <- simulate_cascades_(n_casc, "factor")
+    dat[, 3] <- as.factor(dat[, 3])
+    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    expect_equal(length(casc), 4)
+    expect_equal(length(casc$cascade_ids), n_casc)
+    expect_equal(length(casc$cascade_times), n_casc)
+     
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    expect_equal(el_per_casc_id, el_per_casc_time)
+    
+    out <- test_as.cacade.data.frame_times(dat) 
+    expect_equal(out[[1]], out[[2]])
+})
+
+test_that("as.cascade.data.frame works with character cascade ids.", {
+    n_casc <- 10
+    dat <- simulate_cascades_(n_casc, "character")
+    new_ids <- sapply(c(1:n_casc), function(x) paste0(sample(letters, 5), 
+                                                      collapse = ""))
+    freq <- table(dat[, 3]) 
+    
+    dat[, 3] <- as.factor(dat[, 3])
+    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    expect_equal(length(casc), 4)
+    expect_equal(length(casc$cascade_ids), n_casc)
+    expect_equal(length(casc$cascade_times), n_casc)
+     
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    expect_equal(el_per_casc_id, el_per_casc_time)
+    
+    out <- test_as.cacade.data.frame_times(dat) 
+    expect_equal(out[[1]], out[[2]])
+})
+
+test_that("as.data.frame.cascade works with numeric cascade ids.", {
+    dat <- simulate_cascades_(n_casc, "numeric")
+    casc <- as.cascade(dat, node_ids = c(0:20))
+    df <- as.data.frame(casc)
+    # cacade_id is transformed to character in as.cascade. Transform back to 
+    # allow comparision
+    df[, 3] <- as.numeric(df[, 3])
+    dat <- dat[order(dat$cascade_id), ]
+    df <- df[order(df$cascade_id), ]
+    rownames(dat) <- rownames(df) <- NULL
+    expect_equal(dat, df)    
+})
+
+test_that("as.data.frame.cascade works with factor cascade ids.", {
+    dat <- simulate_cascades_(n_casc, "factor")
+    casc <- as.cascade(dat, node_ids = c(0:20))
+    df <- as.data.frame(casc)
+    # cacade_id is transformed to character in as.cascade. Transform back to 
+    # allow comparision
+    df[, 3] <- as.factor(df[, 3])
+    dat <- dat[order(dat$cascade_id), ]
+    df <- df[order(df$cascade_id), ]
+    rownames(dat) <- rownames(df) <- NULL
+    expect_equal(dat, df)    
+})
+
+test_that("as.data.frame.cascade works with character cascade ids.", {
+    dat <- simulate_cascades_(n_casc, "character")
+    casc <- as.cascade(dat, node_ids = c(0:20))
+    df <- as.data.frame(casc)
     dat <- dat[order(dat$cascade_id), ]
     df <- df[order(df$cascade_id), ]
     rownames(dat) <- rownames(df) <- NULL
