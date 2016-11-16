@@ -2,7 +2,7 @@
 
 # NetworkInference
 
-R interface to the stanford network analysis project's (SNAP) netinf algorithm.
+R interface to the stanford network analysis project's ([SNAP](https://github.com/snap-stanford/snap)) [netinf](https://github.com/snap-stanford/snap/tree/master/examples/netinf) algorithm.
 
 
 ```R
