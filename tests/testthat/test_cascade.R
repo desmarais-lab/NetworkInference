@@ -2,8 +2,7 @@ library(NetworkInference)
 
 context("Test if cascade data structure and related methods work.")
 
-
-test_as.cacade.data.frame_times <- function(dat) {
+test_as.cacade.data.frame_times <- function(dat, casc) {
     mean_casc_times <- sapply(casc$cascade_times, mean)
     mean_dat_times <- sapply(names(mean_casc_times), 
                              function(x) mean(dat[dat[, 3] == x, 2]))
@@ -11,56 +10,48 @@ test_as.cacade.data.frame_times <- function(dat) {
 }
 
 test_that("as.cascade.data.frame works with numeric cascade ids.", {
+    set.seed(12)
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "numeric")
     casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    out <- test_as.cacade.data.frame_times(dat, casc) 
+    
     expect_equal(length(casc), 4)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
-     
-    el_per_casc_id <- sapply(casc$cascade_ids, length)
-    el_per_casc_time <- sapply(casc$cascade_times, length)
     expect_equal(el_per_casc_id, el_per_casc_time)
-    
-    out <- test_as.cacade.data.frame_times(dat) 
     expect_equal(out[[1]], out[[2]])
 })
 
 test_that("as.cascade.data.frame works with factor cascade ids.", {
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "factor")
-    dat[, 3] <- as.factor(dat[, 3])
     casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    out <- test_as.cacade.data.frame_times(dat, casc) 
+    
     expect_equal(length(casc), 4)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
-     
-    el_per_casc_id <- sapply(casc$cascade_ids, length)
-    el_per_casc_time <- sapply(casc$cascade_times, length)
     expect_equal(el_per_casc_id, el_per_casc_time)
-    
-    out <- test_as.cacade.data.frame_times(dat) 
     expect_equal(out[[1]], out[[2]])
 })
 
 test_that("as.cascade.data.frame works with character cascade ids.", {
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "character")
-    new_ids <- sapply(c(1:n_casc), function(x) paste0(sample(letters, 5), 
-                                                      collapse = ""))
-    freq <- table(dat[, 3]) 
-    
-    dat[, 3] <- as.factor(dat[, 3])
     casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    el_per_casc_id <- sapply(casc$cascade_ids, length)
+    el_per_casc_time <- sapply(casc$cascade_times, length)
+    out <- test_as.cacade.data.frame_times(dat, casc) 
+    
     expect_equal(length(casc), 4)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
-     
-    el_per_casc_id <- sapply(casc$cascade_ids, length)
-    el_per_casc_time <- sapply(casc$cascade_times, length)
     expect_equal(el_per_casc_id, el_per_casc_time)
-    
-    out <- test_as.cacade.data.frame_times(dat) 
     expect_equal(out[[1]], out[[2]])
 })
 
