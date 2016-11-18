@@ -161,10 +161,10 @@ assert_cascade_consistency_ <- function(ids, times) {
    tids <- sapply(ids, qtest, rules = 'X+[0,)')
    ttimes <- sapply(times, qtest, rules = 'R+[0,)')
    if(!all(tids)) {
-      stop("At least element of cascade_ids is not of class numeric or integer.") 
+      stop("At least one element of cascade_ids is not of class numeric or integer.") 
    }
    if(!all(ttimes)) {
-      stop("At least element of cascade_times is not of class double.") 
+      stop("At least one element of cascade_times is not of class double.") 
    }
 }
 

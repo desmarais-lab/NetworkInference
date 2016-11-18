@@ -32,7 +32,7 @@ plot.cascade <- function(cascades, label_nodes = TRUE) {
         msg <- paste("Plotting more than 20 cascades with labels is not recommended.",
                      "Set label_nodes to FALSE or subset the cascades into separate",
                      "objects and plot them.")
-        warning()
+        warning(msg)
     }
      
     pdat <- as.data.frame(cascades)
