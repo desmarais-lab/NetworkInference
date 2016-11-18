@@ -36,8 +36,7 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
-    assert_cascade_consistency_(cascades$cascade_ids, cascades$cascade_times)
-    assert_node_info_(cascades$node_ids, cascades$node_names)
+    #qassert(cascades, "L3")
     qassert(trans_mod, "S1")
     qassert(alpha, "R1[0,)")
     qassert(n_iter, "X1[1,)")
@@ -50,14 +49,25 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
         model <- 2
     }
     
+    # Assign integer node ids
+    node_ids <- c(1:length(cascades$node_names))
+    names(node_ids) <- cascades$node_names
+    
+    # Transform node ids in cascades to integer ids
+    cascade_ids <- lapply(cascades$cascade_ids, function(x) node_ids[x]) 
+    
     # Run netinf
-    netinf_out <- netinf_(node_ids = cascades$node_ids, 
+    netinf_out <- netinf_(node_ids = node_ids, 
                           node_names = cascades$node_names, 
-                          cascade_ids = cascades$cascade_ids, 
+                          cascade_ids = cascade_ids, 
                           cascade_times = cascades$cascade_times, 
                           model = model, alpha = alpha, n_iter = n_iter, 
                           verbose = verbose)
     
-    # Return outputs
-    return(do.call(rbind, netinf_out))
+    # Replace integer node_ids with node_names
+    netinf_out <- do.call(rbind, netinf_out)
+    origin <- cascades$node_names[netinf_out[, 1]]
+    destin <- cascades$node_names[netinf_out[, 2]]
+    out <- data.frame("origin_node" = origin, "destination_node" = destin) 
+    return(out)
 }
