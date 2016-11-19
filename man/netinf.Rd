@@ -5,7 +5,7 @@
 \title{Infer latent diffusion network.}
 \usage{
 netinf(cascades, trans_mod = "exponential", alpha = 1, n_iter = 5,
-  verbose = TRUE)
+  verbose = TRUE, edge_info = TRUE)
 }
 \arguments{
 \item{cascades}{An object of class cascade containing node and cascade 
@@ -19,10 +19,16 @@ information. See \link{as.cascade} for details.}
 \item{n_iter}{Numeric, number of iterations for optimization.}
 
 \item{verbose}{logical, should additional output be printed.}
+
+\item{edge_info}{logical, should additional information on each edge be 
+returned.}
 }
 \value{
 Returns the inferred diffusion network as an object of class 
- \link[base]{matrix} of dimension \code{k x 2} where k is the number of edges.
+ \link[base]{data.frame}. If \code{edge_info = FALSE} of dimension \code{k x 2} 
+     where k is the number of edges. If \code{edge_info = TRUE} additional
+     columns contain information on volume, marginal gain and time difference
+     for the respective edge.
 }
 \description{
 Infer the most likely latent diffusion model from a set of nodes and 
