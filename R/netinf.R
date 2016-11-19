@@ -70,11 +70,11 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
     
     # Concatenate and order by origin id 
     out <- as.data.frame(do.call(rbind, netinf_out))
-    out <- out[order(out[, 1]), ]
     
     # Replace integer node_ids with node_names
     out[, 1] <- cascades$node_names[out[, 1]]
     out[, 2] <- cascades$node_names[out[, 2]]
+    out <- out[order(out[, 1]), ]
     
     if(edge_info) {
         colnames(out) <- c("origin_node", "destination_node", "volume", 
