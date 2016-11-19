@@ -180,7 +180,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times) {
 #'
 #' For testing purposes.   
 #' 
-#' @importFrom("stats", "runif")
+#' @importFrom stats runif
 #' 
 #' @param n_cascades Number of cascades to generate 
 #' @param id_class One of \code{c("character", "factor", "numeric")}. What class
