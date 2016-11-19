@@ -33,7 +33,7 @@ test_that("as.cascade.data.frame works with factor cascade ids.", {
     el_per_casc_time <- sapply(casc$cascade_times, length)
     out <- test_as.cacade.data.frame_times(dat, casc) 
     
-    expect_equal(length(casc), 4)
+    expect_equal(length(casc), 3)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
     expect_equal(el_per_casc_id, el_per_casc_time)
