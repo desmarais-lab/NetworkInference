@@ -4,23 +4,22 @@
 \alias{as.cascade.data.frame}
 \title{Create cascade object from data frame}
 \usage{
-\method{as.cascade}{data.frame}(dat, node_ids, node_names = NULL)
+\method{as.cascade}{data.frame}(dat, node_names = NULL)
 }
 \arguments{
 \item{dat}{\link{data.frame} with three columns containing the cascade 
-infromation. The first column contains the node ids of the cascades, the 
-second column the infection times of the corresponding nodes and the third
+infromation. The first column contains the node names of the cascades, the 
+second column the event times of the corresponding nodes and the third
 column contains a cascade identifier (can be \code{integer}, 
 \code{numeric}, \code{character} of \code{factor})}
 
-\item{node_ids}{Vector of integer ids for each node.}
-
-\item{node_names}{Character vector of names for each node. Optional. Must be 
-   of same length and sorting as node_ids. If not provided node_ids are used
-   as names.
-
-@import checkmate 
-@import assertthat}
+\item{node_names}{Character, factor or numeric vector of names for each node. 
+Optional. If not provided, node names are inferred from the cascade data.
+Note that in this case nodes that are not involved in any cascade (isolates)
+will be dropped (not recommended).}
+}
+\value{
+An object of class \code{cascade}.
 }
 \description{
 Create cascade object from data frame
