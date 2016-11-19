@@ -97,7 +97,7 @@ as.cascade.data.frame <- function(dat, node_names = NULL) {
     names(cascade_times) <- names(splt)
     
     # Check if data is consistent
-    assert_cascade_consistency_(cascade_names, cascade_times)
+    assert_cascade_consistency_(cascade_names, cascade_times, node_names)
     
     out <- list("cascade_nodes" = cascade_names, 
                 "cascade_times" = cascade_times, 
@@ -147,33 +147,53 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
 #' Assert that the cascade information provided by the user is consistent.
 #' 
 #' @param cascade_nodes List of vectors of integer ids in order of infection.
-#' @param cascade_times List of vectors of infection times corresponding to \code{ids}.
+#' @param cascade_times List of vectors of infection times corresponding to 
+#'     \code{cascade_nodes}.
+#' @param node_names Full list of node names.
 #' @import checkmate
-assert_cascade_consistency_ <- function(cascade_nodes, cascade_times) {
+assert_cascade_consistency_ <- function(cascade_nodes, cascade_times, 
+                                        node_names) {
 
-   if(length(cascade_nodes) != length(cascade_times)) {
+    # Check if containers for nodes and event times have same length (same number
+    # of cascades)
+    if(length(cascade_nodes) != length(cascade_times)) {
        stop("cascade_ids is not the same length as cascade_times.", 
             call. = FALSE)
-   }
-   lens_ids <- sapply(cascade_nodes, length)
-   
-   lens_times <- sapply(cascade_times, length)
-   if(any(lens_ids != lens_times)) {
+    }
+    
+    # Check if each cascade has same length in event time and node name container
+    lens_ids <- sapply(cascade_nodes, length)
+    lens_times <- sapply(cascade_times, length)
+    if(any(lens_ids != lens_times)) {
        stop("Corresponding elements in cascade_ids and cascade_times are not of 
        equal length.", call. = FALSE)
-   }
-   tids <- sapply(cascade_nodes, function(x) assert_that(is.element(class(x), 
+    }
+    
+    # Check that all cascade elements are of correct class 
+    tids <- sapply(cascade_nodes, function(x) assert_that(is.element(class(x), 
                                                           c("numeric", "character",
                                                             "factor", "integer"))))
-   ttimes <- sapply(cascade_times, qtest, rules = 'R+[0,)')
-   if(!all(tids)) {
+    ttimes <- sapply(cascade_times, qtest, rules = 'R+[0,)')
+    if(!all(tids)) {
       stop("At least one element of cascade_ids is not of class numeric,
-           integer, character or factor or contains missing values.") 
-   }
-   if(!all(ttimes)) {
+           integer, character or factor or contains missing values.", 
+           call. = FALSE) 
+    }
+    if(!all(ttimes)) {
       stop("At least one element of cascade_times is not of class numeric 
-           or contains missing values.") 
-   }
+           or contains missing values.", call. = FALSE) 
+    }
+                         
+    # Check consistency between node names in cascades and provided node names
+    unique_cascade_nodes <- unique(do.call(c, cascade_nodes))
+    chk <- is.element(unique_cascade_nodes, node_names)
+    if(!all(chk)) {
+        msg <- paste0("The following node(s) that occur in the cascades are ",
+                      "not contained in provided node_names:\n", 
+                      unique_cascade_nodes[!chk], "\nPlease provide the full ", 
+                      "list of node names.")
+        stop(msg, .call = FALSE)
+    }
 }
 
 #' Simulate a set of cascades
