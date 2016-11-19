@@ -25,15 +25,13 @@ is.cascade <- function(object) {
 #' }
 #'  
 #' @param dat Cascades to be converted. See Details for supported classes.
-#' @param node_ids Vector of integer ids for each node.
-#' @param node_names Character vector of names for each node. Optional. Must be 
-#'     of same length and sorting as node_ids. If not provided node_ids are used
-#'     as names.
+#' @param node_names Character, numeric or factor vector of names for each node. 
+#'     Optional. Must be of same length and sorting as node_ids. If not provided 
+#'     node_ids are used as names.
 #' 
 #' @return An object of class \code{cascade}. This is a list containing four 
 #'     (named) elements: 
 #'     \enumerate{
-#'         \item \code{node_ids} A numeric vector of integer node ids.
 #'         \item \code{node_names} A character vector of node names.
 #'         \item \code{cascade_ids} A list with one element per cascade containing
 #'             the node ids of each cascade.
@@ -43,30 +41,38 @@ is.cascade <- function(object) {
 #'     (\code{cascade_times}) and a Numeric Vector of node ids 
 #'     
 #' @export
-as.cascade <- function(dat, node_ids, node_names = NULL) {
+as.cascade <- function(dat, node_names = NULL) {
    UseMethod("as.cascade", dat)
 }
 
-
 #' Create cascade object from data frame
 #' 
+#' @import checkmate 
+#' @import assertthat' 
 #' @param dat \link{data.frame} with three columns containing the cascade 
-#'     infromation. The first column contains the node ids of the cascades, the 
-#'     second column the infection times of the corresponding nodes and the third
+#'     infromation. The first column contains the node names of the cascades, the 
+#'     second column the event times of the corresponding nodes and the third
 #'     column contains a cascade identifier (can be \code{integer}, 
 #'     \code{numeric}, \code{character} of \code{factor})
+#' @param node_names Character, factor or numeric vector of names for each node. 
+#'     Optional. If not provided, node names are inferred from the cascade data.
+#'     Note that in this case nodes that are not involved in any cascade (isolates)
+#'     will be dropped (not recommended).
 #'     
-#' @param node_ids Vector of integer ids for each node.
-#' @param node_names Character vector of names for each node. Optional. Must be 
-#'     of same length and sorting as node_ids. If not provided node_ids are used
-#'     as names.
-#'  
-#'  @import checkmate 
-#'  @import assertthat
-as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
+#' @return An object of class \code{cascade}.
+as.cascade.data.frame <- function(dat, node_names = NULL) {
     
     # Check all inputs 
-    assert_node_info_(node_ids, node_names)
+    if(!is.null(node_names)) {
+        assert_that(is.element(class(node_names), c("integer", "factor", 
+                                                    "character", "numeric")))       
+    } else {
+        msg <- paste("Argument node_names not provided. Inferring node names",
+                     "from cascade data. Nodes not involved in any cascade will",
+                     "be dropped.")
+        warning(msg)
+        node_names <- as.character(unique(dat[, 1]))
+    }
     assert_data_frame(dat, min.rows = 2, min.cols = 3)
     unused_columns <- assertthat::see_if(ncol(dat) > 3)
     if(unused_columns) {
@@ -75,15 +81,12 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
                      "required structure of dat.")
         warning(msg)
     }
-    qassert(dat[, 1], 'X>1[0,)', .var.name = "dat[, 1]: Node ids.")
+    qassert(dat[, 1], 'S>1[0,)', .var.name = "dat[, 1]: Node names.")
     qassert(dat[, 2], 'R>1[0,)', .var.name = "dat[, 2]: Cascade times.")
     assert_that(is.element(class(dat[, 3]), c("integer", "factor", "character",
                                               "numeric")))
    
-    if(is.null(node_names)) {
-        node_names <- as.character(node_ids)
-    } 
-    
+
     # Transform the data  
     ## Transform cascade ids to character to get consistency down the line
     dat[, 3] <- as.character(dat[, 3])
@@ -98,7 +101,7 @@ as.cascade.data.frame <- function(dat, node_ids, node_names = NULL) {
     # Check if data is consistent
     assert_cascade_consistency_(ids, times)
     
-    out <- list("cascade_ids" = ids, "cascade_times" = times, "node_ids" = node_ids, 
+    out <- list("cascade_ids" = ids, "cascade_times" = times, 
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
     
@@ -158,34 +161,18 @@ assert_cascade_consistency_ <- function(ids, times) {
        stop("Corresponding elements in cascade_ids and cascade_times are not of 
        equal length.", call. = FALSE)
    }
-   tids <- sapply(ids, qtest, rules = 'X+[0,)')
+   tids <- sapply(ids, function(x) assert_that(is.element(class(x), 
+                                                          c("numeric", "character",
+                                                            "factor", "integer"))))
    ttimes <- sapply(times, qtest, rules = 'R+[0,)')
    if(!all(tids)) {
-      stop("At least element of cascade_ids is not of class numeric or integer.") 
+      stop("At least one element of cascade_ids is not of class numeric,
+           integer, character or factor or contains missing values.") 
    }
    if(!all(ttimes)) {
-      stop("At least element of cascade_times is not of class double.") 
+      stop("At least one element of cascade_times is not of class numeric 
+           or contains missing values.") 
    }
-}
-
-
-#' Assert that node information is consistent
-#' 
-#' Used in all methods invoked by as.cascade to check if the node information 
-#' (ids, times) passed into the funciton by the user are valid.
-#' 
-#' @param node_ids Integer node ids.
-#' @param node_names Character node names.
-#' 
-#' @import checkmate
-assert_node_info_ <- function(node_ids, node_names) {
-    qassert(node_ids, 'X+[0,)', .var.name = "node_ids")     
-    if(missing(node_names)) {
-        qassert(node_names, 'S+', .var.name = "node_names")     
-    } else {
-        node_names <- as.character(node_ids)
-    }
-    return(TRUE)
 }
 
 #' Simulate a set of cascades
@@ -204,7 +191,7 @@ simulate_cascades_ <- function(n_cascades, id_class = "character") {
                                                       "numeric"))
     make_cascade_ <- function(cid, id_class) {
         n <- as.integer(runif(1, 2, 20))
-        ids <- sample(c(0:20), n, replace = FALSE)
+        ids <- sample(letters[0:20], n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }

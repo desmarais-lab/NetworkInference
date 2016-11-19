@@ -4,22 +4,19 @@
 \alias{as.cascade}
 \title{Create a cascade object from input data}
 \usage{
-as.cascade(dat, node_ids, node_names = NULL)
+as.cascade(dat, node_names = NULL)
 }
 \arguments{
 \item{dat}{Cascades to be converted. See Details for supported classes.}
 
-\item{node_ids}{Vector of integer ids for each node.}
-
-\item{node_names}{Character vector of names for each node. Optional. Must be 
-of same length and sorting as node_ids. If not provided node_ids are used
-as names.}
+\item{node_names}{Character, numeric or factor vector of names for each node. 
+Optional. Must be of same length and sorting as node_ids. If not provided 
+node_ids are used as names.}
 }
 \value{
 An object of class \code{cascade}. This is a list containing four 
     (named) elements: 
     \enumerate{
-        \item \code{node_ids} A numeric vector of integer node ids.
         \item \code{node_names} A character vector of node names.
         \item \code{cascade_ids} A list with one element per cascade containing
             the node ids of each cascade.
