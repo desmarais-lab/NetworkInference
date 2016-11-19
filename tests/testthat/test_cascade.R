@@ -13,12 +13,12 @@ test_that("as.cascade.data.frame works with numeric cascade ids.", {
     set.seed(12)
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "numeric")
-    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    casc <- as.cascade.data.frame(dat, node_names = letters[0:20])
     el_per_casc_id <- sapply(casc$cascade_ids, length)
     el_per_casc_time <- sapply(casc$cascade_times, length)
     out <- test_as.cacade.data.frame_times(dat, casc) 
     
-    expect_equal(length(casc), 4)
+    expect_equal(length(casc), 3)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
     expect_equal(el_per_casc_id, el_per_casc_time)
@@ -28,7 +28,7 @@ test_that("as.cascade.data.frame works with numeric cascade ids.", {
 test_that("as.cascade.data.frame works with factor cascade ids.", {
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "factor")
-    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    casc <- as.cascade.data.frame(dat, node_names = letters[0:20])
     el_per_casc_id <- sapply(casc$cascade_ids, length)
     el_per_casc_time <- sapply(casc$cascade_times, length)
     out <- test_as.cacade.data.frame_times(dat, casc) 
@@ -43,12 +43,12 @@ test_that("as.cascade.data.frame works with factor cascade ids.", {
 test_that("as.cascade.data.frame works with character cascade ids.", {
     n_casc <- 10
     dat <- simulate_cascades_(n_casc, "character")
-    casc <- as.cascade.data.frame(dat, node_ids = c(0:20))
+    casc <- as.cascade.data.frame(dat, node_names = letters[0:20])
     el_per_casc_id <- sapply(casc$cascade_ids, length)
     el_per_casc_time <- sapply(casc$cascade_times, length)
     out <- test_as.cacade.data.frame_times(dat, casc) 
     
-    expect_equal(length(casc), 4)
+    expect_equal(length(casc), 3)
     expect_equal(length(casc$cascade_ids), n_casc)
     expect_equal(length(casc$cascade_times), n_casc)
     expect_equal(el_per_casc_id, el_per_casc_time)
@@ -57,7 +57,7 @@ test_that("as.cascade.data.frame works with character cascade ids.", {
 
 test_that("as.data.frame.cascade works with numeric cascade ids.", {
     dat <- simulate_cascades_(n_casc, "numeric")
-    casc <- as.cascade(dat, node_ids = c(0:20))
+    casc <- as.cascade(dat, node_names = letters[0:20])
     df <- as.data.frame(casc)
     # cacade_id is transformed to character in as.cascade. Transform back to 
     # allow comparision
@@ -70,7 +70,7 @@ test_that("as.data.frame.cascade works with numeric cascade ids.", {
 
 test_that("as.data.frame.cascade works with factor cascade ids.", {
     dat <- simulate_cascades_(n_casc, "factor")
-    casc <- as.cascade(dat, node_ids = c(0:20))
+    casc <- as.cascade(dat, node_names = letters[0:20])
     df <- as.data.frame(casc)
     # cacade_id is transformed to character in as.cascade. Transform back to 
     # allow comparision
@@ -83,7 +83,7 @@ test_that("as.data.frame.cascade works with factor cascade ids.", {
 
 test_that("as.data.frame.cascade works with character cascade ids.", {
     dat <- simulate_cascades_(n_casc, "character")
-    casc <- as.cascade(dat, node_ids = c(0:20))
+    casc <- as.cascade(dat, node_names = letters[0:20])
     df <- as.data.frame(casc)
     dat <- dat[order(dat$cascade_id), ]
     df <- df[order(df$cascade_id), ]
