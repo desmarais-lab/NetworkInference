@@ -54,12 +54,12 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
     names(node_ids) <- cascades$node_names
     
     # Transform node ids in cascades to integer ids
-    cascade_ids <- lapply(cascades$cascade_ids, function(x) node_ids[x]) 
+    cascade_nodes <- lapply(cascades$cascade_nodes, function(x) node_ids[x]) 
     
     # Run netinf
     netinf_out <- netinf_(node_ids = node_ids, 
                           node_names = cascades$node_names, 
-                          cascade_ids = cascade_ids, 
+                          cascade_ids = cascade_nodes, 
                           cascade_times = cascades$cascade_times, 
                           model = model, alpha = alpha, n_iter = n_iter, 
                           verbose = verbose)
