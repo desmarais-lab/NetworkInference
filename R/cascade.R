@@ -146,8 +146,8 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
 #' 
 #' Assert that the cascade information provided by the user is consistent.
 #' 
-#' @param ids List of vectors of integer ids in order of infection.
-#' @param times List of vectors of infection times corresponding to \code{ids}.
+#' @param cascade_nodes List of vectors of integer ids in order of infection.
+#' @param cascade_times List of vectors of infection times corresponding to \code{ids}.
 #' @import checkmate
 assert_cascade_consistency_ <- function(cascade_nodes, cascade_times) {
 
@@ -179,6 +179,8 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times) {
 #' Simulate a set of cascades
 #'
 #' For testing purposes.   
+#' 
+#' @importFrom("stats", "runif")
 #' 
 #' @param n_cascades Number of cascades to generate 
 #' @param id_class One of \code{c("character", "factor", "numeric")}. What class

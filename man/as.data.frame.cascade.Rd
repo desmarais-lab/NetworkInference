@@ -18,8 +18,8 @@ names (to syntactic names: see make.names) is optional. (Not supported)}
 \item{...}{Additional arguments passed to \code{\link{data.frame}}.}
 }
 \value{
-A data frame with three columns. Containing (in order) 1) The ids of 
-    the infected nodes in each cascade, 2) the infection time of the
+A data frame with three columns. Containing (in order) 1) The names of 
+    the nodes that experience an event in each cascade, 2) the event time of the
     corresponding node, 3) the cascade identifier.
 }
 \description{
