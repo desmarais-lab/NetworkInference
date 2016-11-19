@@ -10,20 +10,18 @@ as.cascade(dat, node_names = NULL)
 \item{dat}{Cascades to be converted. See Details for supported classes.}
 
 \item{node_names}{Character, numeric or factor vector of names for each node. 
-Optional. Must be of same length and sorting as node_ids. If not provided 
-node_ids are used as names.}
+Optional.}
 }
 \value{
-An object of class \code{cascade}. This is a list containing four 
+An object of class \code{cascade}. This is a list containing three
     (named) elements: 
     \enumerate{
         \item \code{node_names} A character vector of node names.
-        \item \code{cascade_ids} A list with one element per cascade containing
-            the node ids of each cascade.
+        \item \code{cascade_nodes} A list with one character vector per
+            cascade containing the node names in order of the events.
         \item \code{cascade_times} A list with one element per cascade 
-            containing the infection times for the nodes in \code{cascade_ids}.
+            containing the event times for the nodes in \code{cascade_names}.
     }
-    (\code{cascade_times}) and a Numeric Vector of node ids
 }
 \description{
 A generic function to transform input data into a cascade object to be used 

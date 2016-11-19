@@ -4,7 +4,7 @@
 \alias{assert_cascade_consistency_}
 \title{Assert cascade consistency}
 \usage{
-assert_cascade_consistency_(ids, times)
+assert_cascade_consistency_(cascade_nodes, cascade_times)
 }
 \arguments{
 \item{ids}{List of vectors of integer ids in order of infection.}

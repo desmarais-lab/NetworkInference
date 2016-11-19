@@ -5,9 +5,9 @@
 #'     stats in a list
 summary.cascade <- function(cascades) {
     # Cascade info
-    casc_lengths <- sapply(cascades$cascade_ids, length)
+    casc_lengths <- sapply(cascades$cascade_nodes, length)
     names(casc_lengths) <- NULL
-    casc_names <- names(cascades$cascade_ids)
+    casc_names <- names(cascades$cascade_nodes)
     casc_info <- data.frame("name" = casc_names, "length" = casc_lengths)
     return(casc_info)
 }

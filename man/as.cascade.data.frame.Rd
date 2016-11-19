@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{dat}{\link{data.frame} with three columns containing the cascade 
-infromation. The first column contains the node names of the cascades, the 
+information. The first column contains the node names of the cascades, the 
 second column the event times of the corresponding nodes and the third
 column contains a cascade identifier (can be \code{integer}, 
 \code{numeric}, \code{character} of \code{factor})}
