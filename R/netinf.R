@@ -8,7 +8,7 @@
 #' netinf website (\url{http://snap.stanford.edu/netinf/}).' 
 #' 
 #' @import checkmate
-#' @importFrom assertthat assert_that
+#' @import assertthat
 #' 
 #' @param  cascades An object of class cascade containing node and cascade 
 #'     information. See \link{as.cascade} for details.
