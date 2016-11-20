@@ -8,12 +8,12 @@
 \describe{
   \item{node_names}{Character node names}
   \item{cascade_nodes}{A list of integer vectors. Each containing the names of the
-  nodes infected in this cascades in the order of infection}
+      nodes infected in this cascades in the order of infection}
   \item{cascade_times}{A list of numeric vectors. Each containing the infection
-  times for the corresponding nodes in cascade_nodes}
+      times for the corresponding nodes in cascade_nodes}
 }}
 \source{
-\url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
+\url{https:,,github.com,snap-stanford,snap,blob,master,examples,netinf,example-cascades.txt}
 }
 \usage{
 data(cascades)
