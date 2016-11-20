@@ -19,7 +19,7 @@
 #'   \item{cascade_times}{A list of numeric vectors. Each containing the infection
 #'       times for the corresponding nodes in cascade_nodes}
 #' }
-#' @source \url{https:,,github.com,snap-stanford,snap,blob,master,examples,netinf,example-cascades.txt}
+#' @source \url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
 "cascades"
 
 
@@ -43,7 +43,7 @@
 #'       destination}
 #' }
 #' 
-#' @source Output from netinf example program (\url{https:,,github.com,snap-stanford,snap})
+#' @source Output from netinf example program (\url{https://github.com/snap-stanford/snap/tree/master/examples/netinf})
 "validation"
 
 # # Code to generate validation dataset. Data is copied from netinf source example

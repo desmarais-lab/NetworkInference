@@ -16,7 +16,7 @@
       destination}
 }}
 \source{
-Output from netinf example program (\url{https:,,github.com,snap-stanford,snap})
+Output from netinf example program (\url{https://github.com/snap-stanford/snap/tree/master/examples/netinf})
 }
 \usage{
 data(validation)

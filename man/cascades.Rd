@@ -13,7 +13,7 @@
       times for the corresponding nodes in cascade_nodes}
 }}
 \source{
-\url{https:,,github.com,snap-stanford,snap,blob,master,examples,netinf,example-cascades.txt}
+\url{https://github.com/snap-stanford/snap/blob/master/examples/netinf/example-cascades.txt}
 }
 \usage{
 data(cascades)
