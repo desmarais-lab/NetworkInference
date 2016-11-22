@@ -14,7 +14,10 @@
 #' @param alpha Numeric, alpha for transmission model.
 #' @param n_iter Numeric, number of iterations for optimization.
 #' @param verbose boolean, should additional information be printed.
-netinf_ <- function(node_ids, node_names, cascade_ids, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE) {
-    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose)
+#' @param edge_info boolean, should addditional edge information be returned
+#' 
+#' @return List containing one vector per edge.
+netinf_ <- function(node_ids, node_names, cascade_ids, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE, edge_info = TRUE) {
+    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose, edge_info)
 }
 

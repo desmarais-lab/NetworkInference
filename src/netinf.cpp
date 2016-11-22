@@ -20,10 +20,14 @@ using namespace Rcpp;
 //' @param alpha Numeric, alpha for transmission model.
 //' @param n_iter Numeric, number of iterations for optimization.
 //' @param verbose boolean, should additional information be printed.
+//' @param edge_info boolean, should addditional edge information be returned
+//' 
+//' @return List containing one vector per edge.
 // [[Rcpp::export]]
 List netinf_(IntegerVector node_ids, CharacterVector node_names,
             List cascade_ids, List cascade_times, int model = 0, 
-            double alpha = 1.0, int n_iter = 5, bool verbose = true) {
+            double alpha = 1.0, int n_iter = 5, bool verbose = true, 
+            bool edge_info = true) {
     
     int n_nodes = node_ids.size();
     int n_cascades = cascade_ids.size();
@@ -64,10 +68,31 @@ List netinf_(IntegerVector node_ids, CharacterVector node_names,
     
     // Convert output to Rcpp objects and return
     List edges_out = List::create();
-    for (TNGraph::TEdgeI EI = NIB.Graph->BegEI(); EI < NIB.Graph->EndEI(); EI++) {
-        IntegerVector edge = IntegerVector::create(EI.GetSrcNId(), 
-                                                   EI.GetDstNId());
-        edges_out.push_back(edge);
+   
+    // Return additional edge info
+    if(edge_info) {
+        //fprintf(F, "src dst vol marginal_gain median_timediff average_timediff\n");
+        for (THash<TIntPr, TEdgeInfo>::TIter EI = NIB.EdgeInfoH.BegI(); 
+             EI < NIB.EdgeInfoH.EndI(); EI++) {
+            
+            TEdgeInfo &EdgeInfo = EI.GetDat();
+            NumericVector edge_detail = NumericVector::create(
+                EI.GetKey().Val1.Val,
+                EI.GetKey().Val2.Val,
+                EdgeInfo.Vol.Val,
+                EdgeInfo.MarginalGain.Val,
+                EdgeInfo.MedianTimeDiff.Val,
+                EdgeInfo.AverageTimeDiff.Val
+            );
+            edges_out.push_back(edge_detail);
+        }
+    // or just the edges
+    } else {
+        for (TNGraph::TEdgeI EI = NIB.Graph->BegEI(); EI < NIB.Graph->EndEI(); EI++) {
+            IntegerVector edge = IntegerVector::create(EI.GetSrcNId(), 
+                                                       EI.GetDstNId());
+            edges_out.push_back(edge);
+        }
     }
     
     return edges_out;

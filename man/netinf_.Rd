@@ -5,7 +5,7 @@
 \title{Run the netinf algorithm on a set of nodes and cascades}
 \usage{
 netinf_(node_ids, node_names, cascade_ids, cascade_times, model = 0L,
-  alpha = 1, n_iter = 5L, verbose = TRUE)
+  alpha = 1, n_iter = 5L, verbose = TRUE, edge_info = TRUE)
 }
 \arguments{
 \item{node_ids}{An integer vector of integer node ids.}
@@ -26,6 +26,11 @@ times for the corresponding nodes in \code{cascade_ids}.}
 \item{n_iter}{Numeric, number of iterations for optimization.}
 
 \item{verbose}{boolean, should additional information be printed.}
+
+\item{edge_info}{boolean, should addditional edge information be returned}
+}
+\value{
+List containing one vector per edge.
 }
 \description{
 Run the netinf algorithm on a set of nodes and cascades

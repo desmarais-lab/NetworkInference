@@ -2,16 +2,22 @@ library(NetworkInference)
 
 context("Test if core netinf method works")
 
-test_that("netinf produces the edges as original netinf executable", {
-    data(cascades)
+data(cascades)
+data(validation)
+test_that("netinf produces the edges as original netinf executable.", {
     from_netinf <- netinf(cascades, alpha = 1, trans_mod = "exponential",
-                          verbose = FALSE)
-    
-    # Results from orignal netinf executable 
-    original_edges <- as.data.frame(matrix(as.character(c(23, 0, 0, 31, 9, 5, 5, 
-                                                          3, 5, 14)), nc = 2, 
-                                           byrow = TRUE))
-    colnames(original_edges) <- c("origin_node", "destination_node")
- 
-    expect_equal(original_edges, from_netinf)
+                          verbose = FALSE, edge_info = FALSE)
+    expect_equal(validation[, -c(3:6)], from_netinf)
+})
+test_that("netinf produces the same edges and edge information as original.", {
+    from_netinf <- netinf(cascades, alpha = 1, trans_mod = "exponential",
+                          verbose = FALSE, edge_info = TRUE)
+    # Round double precision numbers for comparison
+    from_netinf$mean_time_difference <- round(from_netinf$mean_time_difference, 6)
+    from_netinf$median_time_difference <- round(from_netinf$median_time_difference, 6)
+    from_netinf$marginal_gain <- round(from_netinf$marginal_gain, 6)
+    validation$mean_time_difference <- round(validation$mean_time_difference, 6)
+    validation$median_time_difference <- round(validation$median_time_difference, 6)
+    validation$marginal_gain <- round(validation$marginal_gain, 6)
+    expect_equal(validation, from_netinf)
 })
