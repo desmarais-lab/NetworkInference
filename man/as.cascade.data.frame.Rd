@@ -4,14 +4,21 @@
 \alias{as.cascade.data.frame}
 \title{Create cascade object from data frame}
 \usage{
-\method{as.cascade}{data.frame}(dat, node_names = NULL)
+\method{as.cascade}{data.frame}(cascade_node_name, event_time, cascade_id, data,
+  node_names = NULL)
 }
 \arguments{
-\item{dat}{\link{data.frame} with three columns containing the cascade 
-information. The first column contains the node names of the cascades, the 
-second column the event times of the corresponding nodes and the third
-column contains a cascade identifier (can be \code{integer}, 
-\code{numeric}, \code{character} of \code{factor})}
+\item{cascade_node_name}{Character, column name of \code{data} that specifies 
+the node names in the cascade.}
+
+\item{event_time}{Character, column name of \code{data} that specifies the 
+event times for each node involved in a cascade.}
+
+\item{cascade_id}{Character, column name of the cascade identifier.}
+
+\item{data}{\link{data.frame} containing the cascade data with column names 
+corresponding to the arguments provided to \code{cascade_node_names}, 
+\code{event_time} and \code{cascade_id}.}
 
 \item{node_names}{Character, factor or numeric vector of names for each node. 
 Optional. If not provided, node names are inferred from the cascade data.
@@ -19,7 +26,7 @@ Note that in this case nodes that are not involved in any cascade (isolates)
 will be dropped (not recommended).}
 }
 \value{
-An object of class \code{cascade}.
+An object of class \code{cascade}. See \link{as.cascade} for details.
 }
 \description{
 Create cascade object from data frame
