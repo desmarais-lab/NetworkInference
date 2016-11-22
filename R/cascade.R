@@ -218,15 +218,21 @@ simulate_cascades_ <- function(n_cascades, id_class = "character") {
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }
+     
     if(id_class == "character"){
-        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+        ids <- as.character(outer(letters, letters, FUN = paste0))
+        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
+                                                 replace = FALSE), 
                                           make_cascade_))
     } else if(id_class == "factor") {
-        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+        ids <- as.character(outer(letters, letters, FUN = paste0))
+        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
+                                                 replace = FALSE), 
                                           make_cascade_))
         cascades[, 3] <- as.factor(cascades[, 3])
     } else if(id_class == "numeric") {
-         cascades <- do.call(rbind, lapply(sample(c(1:10), 10, replace = FALSE), 
+         cascades <- do.call(rbind, lapply(sample(c(1:n_cascades), n_cascades, 
+                                                  replace = FALSE), 
                                           make_cascade_))
     }
     colnames(cascades) <- c("node_name", "event_time", "cascade_id")
