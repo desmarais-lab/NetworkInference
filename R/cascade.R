@@ -191,7 +191,6 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #' For testing purposes.   
 #' 
 #' @importFrom stats runif
-#' @import qassert 
 #' 
 #' @param n_cascades Number of cascades to generate 
 #' @param id_class One of \code{c("character", "factor", "numeric")}. What class
@@ -201,7 +200,6 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #'     infection times and cascade identifiers for 20 distinct nodes.
  
 simulate_cascades_ <- function(n_cascades, id_class = "character") {
-    qassert(n_cascades, "X1[1,)")
     id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
                                                       "numeric"))
     make_cascade_ <- function(cid, id_class) {
