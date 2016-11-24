@@ -4,7 +4,8 @@
 \alias{plot.cascade}
 \title{Plot a cascade object}
 \usage{
-\method{plot}{cascade}(cascades, label_nodes = TRUE)
+\method{plot}{cascade}(cascades, label_nodes = TRUE, selection = NULL,
+  plot_elements = NULL)
 }
 \arguments{
 \item{cascades}{Object of class cascade to be plottet}
@@ -12,6 +13,11 @@
 \item{label_nodes}{Logical, indicating if should the nodes in each cascade be 
 labeled. If the cascades are very dense setting this to \code{FALSE} is
 recommended.}
+
+\item{selection}{A vector of cascade ids to plot.}
+
+\item{plot_elements}{Addtional ggplot plotting elements to be appended to the
+plot (e.g. axis labels etc.).}
 }
 \value{
 A ggplot plot object

@@ -24,24 +24,44 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' @param label_nodes Logical, indicating if should the nodes in each cascade be 
 #'     labeled. If the cascades are very dense setting this to \code{FALSE} is
 #'     recommended.
+#' @param selection A vector of cascade ids to plot.
+#' @param plot_elements Addtional ggplot plotting elements to be appended to the
+#'     plot (e.g. axis labels etc.).
 #' 
 #' @return A ggplot plot object
-plot.cascade <- function(cascades, label_nodes = TRUE) {
+plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
+                         plot_elements = NULL) {
+    
+    # Check inputs
+    assert_that(class(cascades) == "cascade") 
+    assert_that(class(label_nodes) == "logical")
+    pdat <- as.data.frame(cascades)
+    
+    # Select cascades
+    if(!is.null(selection)) {
+        # Check selection input
+        assert_that(length(selection) >= 1) 
+        assert_that(is.element(class(selection), c("character", "numeric", 
+                                                   "integer", "factor")))
+        selection <- as.character(selection)  
+        # Slice data
+        sel <- is.element(pdat$cascade_id, selection)
+        pdat <- pdat[sel, ]
+    }
     
     if(length(cascades$cascade_times) > 20 & label_nodes) {
-        msg <- paste("Plotting more than 20 cascades with labels is not recommended.",
-                     "Set label_nodes to FALSE or subset the cascades into separate",
-                     "objects and plot them.")
+        msg <- paste("Plotting more than 20 cascades with labels is not",
+                     "recommended. Set label_nodes to FALSE or choose a subset",
+                     "of cascades using the `selection` argument.")
         warning(msg)
     }
-     
-    pdat <- as.data.frame(cascades)
     
     # node ids with corresponging names
     node_info <- data.frame("id" = cascades$node_ids, 
                             "name" = cascades$node_names)
     # Get the name of each infected id
-    pdat$node_name <- sapply(pdat$ids, function(x) node_info$name[node_info$id == x])
+    pdat$node_name <- sapply(pdat$ids, 
+                             function(x) node_info$name[node_info$id == x])
     
     # Plot
     
@@ -63,6 +83,6 @@ plot.cascade <- function(cascades, label_nodes = TRUE) {
     ## Layout
     p <- p + 
         ylab("Cascade ID") + xlab("Time") +
-        PLOT_THEME_()
+        PLOT_THEME_() + plot_elements
     return(p)
 }
