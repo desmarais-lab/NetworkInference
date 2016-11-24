@@ -1,10 +1,5 @@
 # Functions related to the cascade class
 
-# TODO: 
-# - assert consistency between provided node information and nodes used in the 
-#   cascade input
-
-
 #' Is the object a cascade?
 #' 
 #' @param object The object to be tested
@@ -47,59 +42,54 @@ as.cascade <- function(dat, node_names = NULL) {
 #' 
 #' @import checkmate 
 #' @import assertthat
-#' @param dat \link{data.frame} with three columns containing the cascade 
-#'     information. The first column contains the node names of the cascades, the 
-#'     second column the event times of the corresponding nodes and the third
-#'     column contains a cascade identifier (can be \code{integer}, 
-#'     \code{numeric}, \code{character} of \code{factor})
+#' 
+#' @param cascade_node_name Character, column name of \code{data} that specifies 
+#'     the node names in the cascade. 
+#' @param event_time Character, column name of \code{data} that specifies the 
+#'     event times for each node involved in a cascade.
+#' @param cascade_id Character, column name of the cascade identifier.
+#' @param data \link{data.frame} containing the cascade data with column names 
+#'     corresponding to the arguments provided to \code{cascade_node_names}, 
+#'     \code{event_time} and \code{cascade_id}.
 #' @param node_names Character, factor or numeric vector of names for each node. 
 #'     Optional. If not provided, node names are inferred from the cascade data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
 #'     will be dropped (not recommended).
 #'     
-#' @return An object of class \code{cascade}.
-as.cascade.data.frame <- function(dat, node_names = NULL) {
+#' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+as.cascade.data.frame <- function(cascade_node_name, event_time, cascade_id, 
+                                  data, node_names = NULL) {
     
     # Check all inputs 
-    if(!is.null(node_names)) {
-        assert_that(is.element(class(node_names), c("integer", "factor", 
-                                                    "character", "numeric")))       
-    } else {
+    if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
                      "from cascade data. Nodes not involved in any cascade will",
                      "be dropped.")
         warning(msg)
-        node_names <- as.character(unique(dat[, 1]))
+        node_names <- as.character(unique(data[, cascade_node_name]))
     }
-    assert_data_frame(dat, min.rows = 2, min.cols = 3)
-    unused_columns <- see_if(ncol(dat) > 3)
-    if(unused_columns) {
-        msg <- paste("dat has more than three columns. Additional columns are", 
-                     "not used. Use ?as.cascade.data.frame for details on the",
-                     "required structure of dat.")
-        warning(msg)
-    }
-    qassert(dat[, 1], 'S>1[0,)', .var.name = "dat[, 1]: Node names.")
-    qassert(dat[, 2], 'R>1[0,)', .var.name = "dat[, 2]: Cascade times.")
-    assert_that(is.element(class(dat[, 3]), c("integer", "factor", "character",
-                                              "numeric")))
-   
+    qassert(cascade_node_name, 'S1')
+    qassert(event_time, 'S1')
+    qassert(cascade_id, 'S1')
+    assert_data_frame(data, min.rows = 2, min.cols = 3)
 
     # Transform the data  
-    ## Transform cascade ids to character to get consistency down the line
-    dat[, 3] <- as.character(dat[, 3])
+    ## Transform cascade ids and node names to character to get consistency 
+    ## down the line
+    data[, cascade_node_name] <- as.character(data[, cascade_node_name])
+    data[, cascade_id] <- as.character(data[, cascade_id])
     
     ## Transform to cascade data structure
-    splt <- split(dat, f = dat[, 3]) 
-    cascade_names <- lapply(splt, function(x) x[, 1])
-    cascade_times <- lapply(splt, function(x) x[, 2])
-    names(cascade_names) <- names(splt)
+    splt <- split(data, f = data[, cascade_id]) 
+    cascade_nodes <- lapply(splt, function(x) x[, cascade_node_name])
+    cascade_times <- lapply(splt, function(x) x[, event_time])
+    names(cascade_nodes) <- names(splt)
     names(cascade_times) <- names(splt)
     
     # Check if data is consistent
-    assert_cascade_consistency_(cascade_names, cascade_times, node_names)
+    assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
     
-    out <- list("cascade_nodes" = cascade_names, 
+    out <- list("cascade_nodes" = cascade_nodes, 
                 "cascade_times" = cascade_times, 
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
@@ -218,15 +208,21 @@ simulate_cascades_ <- function(n_cascades, id_class = "character") {
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }
+     
     if(id_class == "character"){
-        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+        ids <- as.character(outer(letters, letters, FUN = paste0))
+        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
+                                                 replace = FALSE), 
                                           make_cascade_))
     } else if(id_class == "factor") {
-        cascades <- do.call(rbind, lapply(sample(letters, 10, replace = FALSE), 
+        ids <- as.character(outer(letters, letters, FUN = paste0))
+        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
+                                                 replace = FALSE), 
                                           make_cascade_))
         cascades[, 3] <- as.factor(cascades[, 3])
     } else if(id_class == "numeric") {
-         cascades <- do.call(rbind, lapply(sample(c(1:10), 10, replace = FALSE), 
+         cascades <- do.call(rbind, lapply(sample(c(1:n_cascades), n_cascades, 
+                                                  replace = FALSE), 
                                           make_cascade_))
     }
     colnames(cascades) <- c("node_name", "event_time", "cascade_id")
