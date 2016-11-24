@@ -43,6 +43,12 @@ plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
         assert_that(length(selection) >= 1) 
         assert_that(is.element(class(selection), c("character", "numeric", 
                                                    "integer", "factor")))
+        chk <- is.element(selection, unique(pdat$cascade_id))
+        if(!all(chk)) {
+            msg <- paste("The following cascade ids provided in `selection` do",
+                         "not exist in the cascade object:", selection[!chk])
+            stop(msg) 
+        }
         selection <- as.character(selection)  
         # Slice data
         sel <- is.element(pdat$cascade_id, selection)
@@ -52,7 +58,7 @@ plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
     if(length(unique(pdat$cascade_id)) > 20 & label_nodes) {
         msg <- paste("Plotting more than 20 cascades with labels is not",
                      "recommended. Set label_nodes to FALSE or choose a subset",
-                     "of cascades using the `selection` argument.")
+                     "of cascades using the `selection` argument")
         warning(msg)
     }
     
