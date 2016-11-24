@@ -33,8 +33,8 @@ plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
                          plot_elements = NULL) {
     
     # Check inputs
-    assert_that(class(cascades) == "cascade") 
-    assert_that(class(label_nodes) == "logical")
+    assert_that(inherits(cascades, "cascade"))
+    assert_that(inherits(label_nodes, "logical"))
     pdat <- as.data.frame(cascades)
     
     # Select cascades
@@ -49,24 +49,17 @@ plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
         pdat <- pdat[sel, ]
     }
     
-    if(length(cascades$cascade_times) > 20 & label_nodes) {
+    if(length(unique(pdat$cascade_id)) > 20 & label_nodes) {
         msg <- paste("Plotting more than 20 cascades with labels is not",
                      "recommended. Set label_nodes to FALSE or choose a subset",
                      "of cascades using the `selection` argument.")
         warning(msg)
     }
     
-    # node ids with corresponging names
-    node_info <- data.frame("id" = cascades$node_ids, 
-                            "name" = cascades$node_names)
-    # Get the name of each infected id
-    pdat$node_name <- sapply(pdat$ids, 
-                             function(x) node_info$name[node_info$id == x])
-    
     # Plot
     
     ## Base
-    p <- ggplot(aes_string(x = "time", y = "cascade_id"), data = pdat)
+    p <- ggplot(aes_string(x = "event_time", y = "cascade_id"), data = pdat)
     
     ## Optional plotting elements 
     if(label_nodes) {
