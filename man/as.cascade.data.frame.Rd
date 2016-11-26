@@ -4,10 +4,14 @@
 \alias{as.cascade.data.frame}
 \title{Create cascade object from data frame}
 \usage{
-\method{as.cascade}{data.frame}(cascade_node_name, event_time, cascade_id, data,
-  node_names = NULL)
+\method{as.cascade}{data.frame}(data, cascade_node_name = "node_name",
+  event_time = "event_time", cascade_id = "cascade_id", node_names = NULL)
 }
 \arguments{
+\item{data}{\link{data.frame} containing the cascade data with column names 
+corresponding to the arguments provided to \code{cascade_node_names}, 
+\code{event_time} and \code{cascade_id}.}
+
 \item{cascade_node_name}{Character, column name of \code{data} that specifies 
 the node names in the cascade.}
 
@@ -15,10 +19,6 @@ the node names in the cascade.}
 event times for each node involved in a cascade.}
 
 \item{cascade_id}{Character, column name of the cascade identifier.}
-
-\item{data}{\link{data.frame} containing the cascade data with column names 
-corresponding to the arguments provided to \code{cascade_node_names}, 
-\code{event_time} and \code{cascade_id}.}
 
 \item{node_names}{Character, factor or numeric vector of names for each node. 
 Optional. If not provided, node names are inferred from the cascade data.

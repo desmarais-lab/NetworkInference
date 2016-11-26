@@ -32,6 +32,7 @@ in other \code{NetworkInference} function. The method invoked depends on the
 The following methods are available:
 \itemize{
     \item \link{as.cascade.data.frame}
+    \item \link{as.cascade.matrix}
 }
 }
 
