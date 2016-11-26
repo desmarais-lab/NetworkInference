@@ -24,29 +24,48 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' @param label_nodes Logical, indicating if should the nodes in each cascade be 
 #'     labeled. If the cascades are very dense setting this to \code{FALSE} is
 #'     recommended.
+#' @param selection A vector of cascade ids to plot.
+#' @param plot_elements Addtional ggplot plotting elements to be appended to the
+#'     plot (e.g. axis labels etc.).
 #' 
 #' @return A ggplot plot object
-plot.cascade <- function(cascades, label_nodes = TRUE) {
+plot.cascade <- function(cascades, label_nodes = TRUE, selection = NULL,
+                         plot_elements = NULL) {
     
-    if(length(cascades$cascade_times) > 20 & label_nodes) {
-        msg <- paste("Plotting more than 20 cascades with labels is not recommended.",
-                     "Set label_nodes to FALSE or subset the cascades into separate",
-                     "objects and plot them.")
-        warning(msg)
-    }
-     
+    # Check inputs
+    assert_that(inherits(cascades, "cascade"))
+    assert_that(inherits(label_nodes, "logical"))
     pdat <- as.data.frame(cascades)
     
-    # node ids with corresponging names
-    node_info <- data.frame("id" = cascades$node_ids, 
-                            "name" = cascades$node_names)
-    # Get the name of each infected id
-    pdat$node_name <- sapply(pdat$ids, function(x) node_info$name[node_info$id == x])
+    # Select cascades
+    if(!is.null(selection)) {
+        # Check selection input
+        assert_that(length(selection) >= 1) 
+        assert_that(is.element(class(selection), c("character", "numeric", 
+                                                   "integer", "factor")))
+        chk <- is.element(selection, unique(pdat$cascade_id))
+        if(!all(chk)) {
+            msg <- paste("The following cascade ids provided in `selection` do",
+                         "not exist in the cascade object:", selection[!chk])
+            stop(msg) 
+        }
+        selection <- as.character(selection)  
+        # Slice data
+        sel <- is.element(pdat$cascade_id, selection)
+        pdat <- pdat[sel, ]
+    }
+    
+    if(length(unique(pdat$cascade_id)) > 20 & label_nodes) {
+        msg <- paste("Plotting more than 20 cascades with labels is not",
+                     "recommended. Set label_nodes to FALSE or choose a subset",
+                     "of cascades using the `selection` argument")
+        warning(msg)
+    }
     
     # Plot
     
     ## Base
-    p <- ggplot(aes_string(x = "time", y = "cascade_id"), data = pdat)
+    p <- ggplot(aes_string(x = "event_time", y = "cascade_id"), data = pdat)
     
     ## Optional plotting elements 
     if(label_nodes) {
@@ -63,6 +82,6 @@ plot.cascade <- function(cascades, label_nodes = TRUE) {
     ## Layout
     p <- p + 
         ylab("Cascade ID") + xlab("Time") +
-        PLOT_THEME_()
+        PLOT_THEME_() + plot_elements
     return(p)
 }

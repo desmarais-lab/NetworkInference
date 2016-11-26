@@ -57,8 +57,10 @@ as.cascade <- function(dat, node_names = NULL) {
 #'     will be dropped (not recommended).
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
-as.cascade.data.frame <- function(cascade_node_name, event_time, cascade_id, 
-                                  data, node_names = NULL) {
+as.cascade.data.frame <- function(data, cascade_node_name = "node_name", 
+                                  event_time = "event_time", 
+                                  cascade_id = "cascade_id", 
+                                  node_names = NULL) {
     
     # Check all inputs 
     if(is.null(node_names)) {
@@ -200,6 +202,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #'     infection times and cascade identifiers for 20 distinct nodes.
  
 simulate_cascades_ <- function(n_cascades, id_class = "character") {
+    qassert(n_cascades, "X1[1,)")
     id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
                                                       "numeric"))
     make_cascade_ <- function(cid, id_class) {
