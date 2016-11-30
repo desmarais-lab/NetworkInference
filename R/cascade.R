@@ -17,6 +17,7 @@ is.cascade <- function(object) {
 #' The following methods are available:
 #' \itemize{
 #'     \item \link{as.cascade.data.frame}
+#'     \item \link{as.cascade.matrix}
 #' }
 #'  
 #' @param dat Cascades to be converted. See Details for supported classes.
@@ -99,11 +100,122 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     return(out)
 }
 
+#' Create cascade object from a matrix
+#' 
+#' @import checkmate 
+#' @import assertthat
+#' 
+#' @param data \link{matrix} Rows corresponding to nodes, columns to cascades 
+#'     (unless otherwise specified with the \code{nodes} argument). Matrix 
+#'     entries are the event times for node, cascade pairs. Specify column and
+#'     row names if cascade and node ids other than integer sequences are 
+#'     desired.
+#' @param nodes Character, one of \code{("rows", "cols")} specifying which 
+#'     dimension of the matrix corresponds to nodes. The other dimension will 
+#'     be assumed to correspond to the cascades. 
+#' @param node_names Character, factor or numeric vector of names for each node. 
+#'     Optional. If not provided, node names are inferred from the provided data.
+#'     Note that in this case nodes that are not involved in any cascade (isolates)
+#'     will be dropped (not recommended).
+#'     
+#' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+as.cascade.matrix <- function(data, nodes = "rows", node_names = NULL) {
+    
+    # Check all inputs 
+    if(is.null(node_names)) {
+        msg <- paste("Argument node_names not provided. Inferring node names",
+                     "from cascade data. Nodes not involved in any cascade will",
+                     "be dropped.")
+        warning(msg)
+        # Get node names
+        if(is.null(rownames(data))) {
+            node_names <- as.character(c(1:nrow(data)))
+        } else {
+            node_names <- rownames(data)
+        }
+    }
+    
+    # Transform the data  
+    ## Get cascade ids
+    if(is.null(colnames(data))) {
+        cascade_ids <- as.character(c(1:ncol(data)))
+    } else {
+        cascade_ids <- colnames(data)
+    }
+
+    ## Transform to cascade data structure
+    clean_casc_vec <- function(x, mode) {
+        n <- node_names[!is.na(x)]
+        x <- x[!is.na(x)]
+        times <- sort(x)
+        n <- n[order(x)]
+        names(times) <- NULL
+        names(n) <- NULL
+        if(mode == "times") return(times)
+        else return(n)
+    }
+    
+    cascade_times <- apply(data, 2, clean_casc_vec, "times") 
+    cascade_nodes <- apply(data, 2, clean_casc_vec, "nodes") 
+       
+    # Check if data is consistent
+    assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
+    
+    out <- list("cascade_nodes" = cascade_nodes, 
+                "cascade_times" = cascade_times, 
+                "node_names" = node_names)
+    class(out) <- c("cascade", "list")
+    
+    return(out)   
+}
+
+
+#' Convert a cascade object to a matrix
+#' 
+#' Generates a matrix containing the cascade information in the cascade object.
+#' 
+#' Missing values are used for nodes that do not experience an event in a cascade.
+#' 
+#' @param x cascade object to convert.
+#' @param ... additional arguments to be passed to or from methods. 
+#'     (Currently not supported.)
+#' 
+#' @return A matrix containing all cascade information. See section Details for
+#'     more information.
+#' @export 
+as.matrix.cascade <- function(x, ...) {
+    
+    # Check inputs
+    assert_that(inherits(x, "cascade"))
+   
+    cids <- names(x$cascade_times) 
+    nids <- x$node_names
+    
+    time_lookup_ <- function(pair) {
+        cid <- pair[1]
+        nid <- pair[2]
+        match <- which(x$cascade_nodes[[cid]] == nid)
+        if(length(match) == 1) {
+            return(x$cascade_times[[cid]][match])
+        } else {
+            return(NA)
+        }
+    }
+    
+    combos <- expand.grid(cids, nids) 
+    times <- apply(combos, 1, time_lookup_)
+    
+    # Reshape to matrix
+    out <- matrix(times, nrow = length(nids), ncol = length(cids), byrow = TRUE)
+    rownames(out) <- nids
+    colnames(out) <- cids
+    
+    return(out)    
+}
 
 #' Convert a cascade object to a data frame
 #' 
 #' Generates a data frame containing the cascade information in the cascade object.
-#' Node information is lost
 #' 
 #' @param x Cascade object to convert.
 #' @param row.names	NULL or a character vector giving the row names for the data 
@@ -120,7 +232,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
 as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
                                   ...) {
     # Check inputs
-    assert_that(class(x)[1] == "cascade")
+    assert_that(inherits(x, "cascade"))
     
     # Convert
     cascade_nodes <- do.call(c, x$cascade_nodes)
