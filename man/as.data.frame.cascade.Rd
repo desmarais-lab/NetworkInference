@@ -24,6 +24,5 @@ A data frame with three columns. Containing (in order) 1) The names of
 }
 \description{
 Generates a data frame containing the cascade information in the cascade object.
-Node information is lost
 }
 
