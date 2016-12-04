@@ -20,9 +20,9 @@ is.cascade <- function(object) {
 #'     \item \link{as.cascade.matrix}
 #' }
 #'  
-#' @param dat Cascades to be converted. See Details for supported classes.
-#' @param node_names Character, numeric or factor vector of names for each node. 
-#'     Optional. 
+#' @param data Cascades to be converted. See Details for supported classes.
+#' @param ... additional arguments passed to dispatched method. See methods 
+#'     linked in Details for more information.
 #' 
 #' @return An object of class \code{cascade}. This is a list containing three
 #'     (named) elements: 
@@ -35,8 +35,8 @@ is.cascade <- function(object) {
 #'     }
 #'     
 #' @export
-as.cascade <- function(dat, node_names = NULL) {
-   UseMethod("as.cascade", dat)
+as.cascade <- function(data, ...) {
+   UseMethod("as.cascade", data)
 }
 
 #' Create cascade object from data frame
