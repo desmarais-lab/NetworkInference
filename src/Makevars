@@ -3,8 +3,9 @@ ADV = snap/snap-adv
 GLIB = snap/glib-core
 
 CC = g++
-# -fopenmp
-PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG  -I../inst \
+#PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG  -I../inst \
+#	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
+PKG_CPPFLAGS= -DNDBUG  -I../inst \
 	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
 PKG_LIBS += -L../inst -lsnap
 LIBS=-L./ -L../inst -lrt
