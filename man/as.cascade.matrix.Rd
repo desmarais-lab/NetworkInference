@@ -4,18 +4,13 @@
 \alias{as.cascade.matrix}
 \title{Create cascade object from a matrix}
 \usage{
-\method{as.cascade}{matrix}(data, nodes = "rows", node_names = NULL)
+\method{as.cascade}{matrix}(data, node_names = NULL)
 }
 \arguments{
-\item{data}{\link{matrix} Rows corresponding to nodes, columns to cascades 
-(unless otherwise specified with the \code{nodes} argument). Matrix 
-entries are the event times for node, cascade pairs. Specify column and
-row names if cascade and node ids other than integer sequences are 
+\item{data}{\link{matrix} Rows corresponding to nodes, columns to cascades.
+Matrix entries are the event times for node, cascade pairs. Specify column 
+and row names if cascade and node ids other than integer sequences are 
 desired.}
-
-\item{nodes}{Character, one of \code{("rows", "cols")} specifying which 
-dimension of the matrix corresponds to nodes. The other dimension will 
-be assumed to correspond to the cascades.}
 
 \item{node_names}{Character, factor or numeric vector of names for each node. 
 Optional. If not provided, node names are inferred from the provided data.
