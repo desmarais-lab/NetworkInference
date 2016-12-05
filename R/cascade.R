@@ -67,7 +67,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
                      "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.")
+                     "be dropped.\n")
         warning(msg)
         node_names <- as.character(unique(data[, cascade_node_name]))
     }
@@ -121,12 +121,12 @@ as.cascade.matrix <- function(data, node_names = NULL) {
     if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
                      "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.")
+                     "be dropped.\n")
         warning(msg)
         # Get node names
         if(is.null(rownames(data))) {
             msg <- paste("No rownames provided for data matrix. Assigning integer",
-                         "names to nodes.")
+                         "names to nodes.\n")
             warning(msg)
             node_names <- as.character(c(1:nrow(data)))
         } else {
@@ -138,7 +138,7 @@ as.cascade.matrix <- function(data, node_names = NULL) {
     ## Get cascade ids
     if(is.null(colnames(data))) {
         msg <- paste("No column names provided for data. Assigning integer names",
-                     "to cascades.")
+                     "to cascades.\n")
         warning(msg)
         cascade_ids <- as.character(c(1:ncol(data)))
     } else {
