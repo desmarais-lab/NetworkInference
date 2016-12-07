@@ -3,6 +3,8 @@
 #endif
 
 #include <Rcpp.h>
+#undef Realloc
+#undef Free
 #include "Snap.h"
 #include "cascnetinf.h"
 using namespace Rcpp;

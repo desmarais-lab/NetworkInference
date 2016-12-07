@@ -2138,8 +2138,10 @@ bool TUInt::IsIpv6Str(const TStr& IpStr, const char& SplitCh) {
 // Unsigned-Integer-64Bit
 
 #if defined (GLib_WIN32)
-const TUInt64 TUInt64::Mn(uint64(0x0000000000000000i64));
-const TUInt64 TUInt64::Mx(uint64(0xFFFFFFFFFFFFFFFFi64));
+const TUInt64 TUInt64::Mn((uint64)0x0000000000000000LL);
+const TUInt64 TUInt64::Mx(0xFFFFFFFFFFFFFFFFLL);
+//const TUInt64 TUInt64::Mn(uint64(0x0000000000000000i64));
+//const TUInt64 TUInt64::Mx(uint64(0xFFFFFFFFFFFFFFFFi64));
 #elif defined (GLib_BCB)
 const TUInt64 TUInt64::Mn(0x0000000000000000i64);
 const TUInt64 TUInt64::Mx(0xFFFFFFFFFFFFFFFFi64);
