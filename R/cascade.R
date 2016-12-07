@@ -20,9 +20,9 @@ is.cascade <- function(object) {
 #'     \item \link{as.cascade.matrix}
 #' }
 #'  
-#' @param dat Cascades to be converted. See Details for supported classes.
-#' @param node_names Character, numeric or factor vector of names for each node. 
-#'     Optional. 
+#' @param data Cascades to be converted. See Details for supported classes.
+#' @param ... additional arguments passed to dispatched method. See methods 
+#'     linked in Details for more information.
 #' 
 #' @return An object of class \code{cascade}. This is a list containing three
 #'     (named) elements: 
@@ -35,8 +35,8 @@ is.cascade <- function(object) {
 #'     }
 #'     
 #' @export
-as.cascade <- function(dat, node_names = NULL) {
-   UseMethod("as.cascade", dat)
+as.cascade <- function(data, ...) {
+   UseMethod("as.cascade", data)
 }
 
 #' Create cascade object from data frame
@@ -67,7 +67,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
                      "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.")
+                     "be dropped.\n")
         warning(msg)
         node_names <- as.character(unique(data[, cascade_node_name]))
     }
@@ -105,50 +105,53 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
 #' @import checkmate 
 #' @import assertthat
 #' 
-#' @param data \link{matrix} Rows corresponding to nodes, columns to cascades 
-#'     (unless otherwise specified with the \code{nodes} argument). Matrix 
-#'     entries are the event times for node, cascade pairs. Specify column and
-#'     row names if cascade and node ids other than integer sequences are 
+#' @param data \link{matrix} Rows corresponding to nodes, columns to cascades.
+#'     Matrix entries are the event times for node, cascade pairs. Specify column 
+#'     and row names if cascade and node ids other than integer sequences are 
 #'     desired.
-#' @param nodes Character, one of \code{("rows", "cols")} specifying which 
-#'     dimension of the matrix corresponds to nodes. The other dimension will 
-#'     be assumed to correspond to the cascades. 
 #' @param node_names Character, factor or numeric vector of names for each node. 
 #'     Optional. If not provided, node names are inferred from the provided data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
 #'     will be dropped (not recommended).
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
-as.cascade.matrix <- function(data, nodes = "rows", node_names = NULL) {
+as.cascade.matrix <- function(data, node_names = NULL) {
     
     # Check all inputs 
     if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
                      "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.")
+                     "be dropped.\n")
         warning(msg)
         # Get node names
         if(is.null(rownames(data))) {
+            msg <- paste("No rownames provided for data matrix. Assigning integer",
+                         "names to nodes.\n")
+            warning(msg)
             node_names <- as.character(c(1:nrow(data)))
         } else {
             node_names <- rownames(data)
         }
     }
-    
+   
     # Transform the data  
     ## Get cascade ids
     if(is.null(colnames(data))) {
+        msg <- paste("No column names provided for data. Assigning integer names",
+                     "to cascades.\n")
+        warning(msg)
         cascade_ids <- as.character(c(1:ncol(data)))
     } else {
         cascade_ids <- colnames(data)
     }
-
+    
+    
     ## Transform to cascade data structure
     clean_casc_vec <- function(x, mode) {
-        n <- node_names[!is.na(x)]
+        n <- rownames(data)[!is.na(x)]
         x <- x[!is.na(x)]
-        times <- sort(x)
-        n <- n[order(x)]
+        times <- sort(x, decreasing = TRUE)
+        n <- n[order(x, decreasing = TRUE)]
         names(times) <- NULL
         names(n) <- NULL
         if(mode == "times") return(times)

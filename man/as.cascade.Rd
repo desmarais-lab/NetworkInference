@@ -4,13 +4,13 @@
 \alias{as.cascade}
 \title{Create a cascade object from input data}
 \usage{
-as.cascade(dat, node_names = NULL)
+as.cascade(data, ...)
 }
 \arguments{
-\item{dat}{Cascades to be converted. See Details for supported classes.}
+\item{data}{Cascades to be converted. See Details for supported classes.}
 
-\item{node_names}{Character, numeric or factor vector of names for each node. 
-Optional.}
+\item{...}{additional arguments passed to dispatched method. See methods 
+linked in Details for more information.}
 }
 \value{
 An object of class \code{cascade}. This is a list containing three

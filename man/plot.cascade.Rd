@@ -5,7 +5,7 @@
 \title{Plot a cascade object}
 \usage{
 \method{plot}{cascade}(cascades, label_nodes = TRUE, selection = NULL,
-  plot_elements = NULL)
+  plot_elements = NULL, density_ = TRUE)
 }
 \arguments{
 \item{cascades}{Object of class cascade to be plottet}
@@ -18,6 +18,8 @@ recommended.}
 
 \item{plot_elements}{Addtional ggplot plotting elements to be appended to the
 plot (e.g. axis labels etc.).}
+
+\item{density_}{draw density lines for each cascade.}
 }
 \value{
 A ggplot plot object
