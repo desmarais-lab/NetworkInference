@@ -4,7 +4,7 @@ GLIB = snap/glib-core
 
 CC = g++
 PKG_CPPFLAGS= -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) \
-    -fpermissive -D__STDC_LIMIT_MACROS 
+    -fpermissive -D__STDC_LIMIT_MACROS -std=c++11 
 PKG_LIBS += -L../inst -lsnap
 
 SOURCES= netinf.cpp RcppExports.cpp 

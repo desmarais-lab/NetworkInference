@@ -3,7 +3,7 @@ ADV = snap/snap-adv
 GLIB = snap/glib-core
 
 CC = g++
-PKG_CPPFLAGS= -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
+PKG_CPPFLAGS= -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) -std=c++11
 PKG_LIBS += -L../inst -lsnap
 
 SOURCES= netinf.cpp RcppExports.cpp 
