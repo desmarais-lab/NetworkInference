@@ -3,11 +3,8 @@ ADV = snap/snap-adv
 GLIB = snap/glib-core
 
 CC = g++
-# -fopenmp
-PKG_CPPFLAGS= -std=c++98 -Wall -O3 -DNDBUG  -I../inst \
-	-I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
+PKG_CPPFLAGS= -I../inst -I../inst/include -I$(CORE) -I$(GLIB) -I$(ADV) 
 PKG_LIBS += -L../inst -lsnap
-LIBS=-L./ -L../inst -lrt
 
 SOURCES= netinf.cpp RcppExports.cpp 
 OBJECTS= $(SOURCES:.cpp=.o)
@@ -21,5 +18,5 @@ $(SHLIB): $(OBJECTS) ../inst/libsnap.a
 
 ../inst/libsnap.a: $(OBJECTS_SNAP)
 	@mkdir -p ../inst/
-	ar -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
+	$(AR) -rvs ../inst/libsnap.a $(OBJECTS_SNAP)
 	rm $(OBJECTS_SNAP)
