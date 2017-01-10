@@ -97,6 +97,8 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
     
+    out <- order_cascade_(out)
+    
     return(out)
 }
 
@@ -168,6 +170,7 @@ as.cascade.matrix <- function(data, node_names = NULL) {
                 "cascade_times" = cascade_times, 
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
+    out <- order_cascade_(out)
     
     return(out)   
 }
@@ -247,6 +250,32 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
                       stringsAsFactors = FALSE, ...)
     row.names(out) <- as.character(c(1:nrow(out)))
     return(out) 
+}
+
+#' Sort cascades by event time
+#' 
+#' @param cascades, object of class cascade
+#' 
+#' @return An object of class cascade with each cascade (ids and times) ordered
+#'     by event time
+order_cascade_ <- function(cascades) {
+    
+    casc_names <- names(cascades$cascade_times)
+   
+    sort_times <- function(x) return(cascades$cascade_times[[x]][orderings[[x]]])
+    sort_nodes <- function(x) return(cascades$cascade_nodes[[x]][orderings[[x]]])
+    
+    orderings <- lapply(cascades$cascade_times, order)
+    times <- lapply(c(1:length(cascades$cascade_times)), sort_times)
+    ids <- lapply(c(1:length(cascades$cascade_nodes)), sort_nodes)
+    
+    cascades$cascade_nodes <- ids    
+    cascades$cascade_times <- times
+    
+    names(cascades$cascade_nodes) <- casc_names
+    names(cascades$cascade_times) <- casc_names
+    
+    return(cascades)
 }
 
 #' Assert cascade consistency
