@@ -106,15 +106,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_ids,
 // [[Rcpp::export]]
 Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids, 
                                  Rcpp::NumericVector this_cascade_times,
-                                 double lambda, double beta, 
-                                 double epsilon) {
+                                 double &lambda, double &beta, 
+                                 double &epsilon) {
     
  
     int cascade_size = this_cascade_ids.size();
     
     // Init containers for the results
     Rcpp::NumericVector parent_scores(cascade_size);
-    Rcpp::NumericVector parent_ids(cascade_size);
+    Rcpp::IntegerVector parent_ids(cascade_size);
     
     // For each node involved in this cascade find the parent and the weight for
     // the respective edge 
@@ -153,10 +153,10 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
             parent_scores[i] = max_parent_score;
             
         // If node can't have parent (fist node in cascade) set parent id and 
-        // score to -1 to indicate missing value
+        // score to NA
         } else {
-            parent_ids[i] = -1;
-            parent_scores[i] = -1;
+            parent_ids[i] = NA_INTEGER;
+            parent_scores[i] = NA_REAL;
         }
     }
     Rcpp::List out = Rcpp::List::create(parent_ids, parent_scores); 
