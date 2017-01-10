@@ -55,7 +55,8 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
     }
     
     # Assign integer node ids
-    node_ids <- c(1:length(cascades$node_names))
+    # Note that the ids start at 0 (c++ is 0 indexed)
+    node_ids <- c(0:(length(cascades$node_names) - 1))
     names(node_ids) <- cascades$node_names
     
     # Transform node ids in cascades to integer ids

@@ -4,13 +4,11 @@
 \alias{netinf_}
 \title{Run the netinf algorithm on a set of nodes and cascades}
 \usage{
-netinf_(node_ids, node_names, cascade_ids, cascade_times, model = 0L,
-  alpha = 1, n_iter = 5L, verbose = TRUE, edge_info = TRUE)
+netinf_(node_ids, cascade_ids, cascade_times, model = 0L, alpha = 1,
+  n_iter = 5L, verbose = TRUE, edge_info = TRUE)
 }
 \arguments{
 \item{node_ids}{An integer vector of integer node ids.}
-
-\item{node_names}{A character vector of node names.}
 
 \item{cascade_ids}{A list of integer vectors containing the node ids of
 the cascade in order of infection.}
