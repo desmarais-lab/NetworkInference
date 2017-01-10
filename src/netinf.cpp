@@ -106,8 +106,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_ids,
 // [[Rcpp::export]]
 Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids, 
                                  Rcpp::NumericVector this_cascade_times,
-                                 double &lambda, double &beta, 
-                                 double &epsilon) {
+                                 double lambda, double beta, 
+                                 double epsilon) {
     
  
     int cascade_size = this_cascade_ids.size();
@@ -118,6 +118,7 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
     
     // For each node involved in this cascade find the parent and the weight for
     // the respective edge 
+    
     for(int i = 0; i < cascade_size; i++) {
         // Only nodes that have an earlier event time can be parents for current
         // node
@@ -135,11 +136,11 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
         // If there are multiple potential parents find the one that gives the e
         // edge the maximum weight
         if (n_parents > 0) {
-            double score;
+            double max_parent_score = -INFINITY;
             int parent;
-            double max_parent_score = - INFINITY;
-            for (int k = 0; k < n_parents; i++) {
-                score = edge_weight_(parent_times[k], this_cascade_times[i],
+            double score;
+            for (int k = 0; k < n_parents; k++) {
+                double score = edge_weight_(parent_times[k], this_cascade_times[i],
                                      lambda = lambda, beta = beta, 
                                      epsilon = epsilon);
                 if (score > max_parent_score) {
