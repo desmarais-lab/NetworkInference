@@ -78,7 +78,7 @@ double edge_weight_(double event_time_i, double event_time_j, double lambda,
 //' Run the netinf algorithm on a set of nodes and cascades
 //' 
 //' @param node_ids An integer vector of integer node ids.
-//' @param cascade_ids A list of integer vectors containing the node ids of
+//' @param cascade_nodes A list of integer vectors containing the node ids of
 //'     the cascade in order of infection.
 //' @param  cascade_times A list of numeric vectors each containing infection 
 //'     times for the corresponding nodes in \code{cascade_ids}.
@@ -91,12 +91,12 @@ double edge_weight_(double event_time_i, double event_time_j, double lambda,
 //' 
 //' @return List containing one vector per edge.
 // [[Rcpp::export]]
-Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_ids, 
+Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_nodes, 
                    Rcpp::List cascade_times, int model = 0, double alpha = 1.0, 
                    int n_iter = 5, bool verbose = true, bool edge_info = true) {
     
     int n_nodes = node_ids.size();
-    int n_cascades = cascade_ids.size();
+    int n_cascades = cascade_nodes.size();
     
    
     return 0;
@@ -164,3 +164,8 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
 }
 
 // Initialize parents
+void initialize_parents(data, lambda, beta =0.5, epsilon=10^(-9))
+
+
+
+

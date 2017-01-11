@@ -64,7 +64,7 @@ netinf <- function(cascades, trans_mod = "exponential", alpha = 1.0, n_iter = 5,
     
     # Run netinf
     netinf_out <- netinf_(node_ids = node_ids, node_names = cascades$node_names, 
-                          cascade_ids = cascade_nodes, 
+                          cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
                           alpha = alpha, n_iter = n_iter, verbose = verbose, 
                           edge_info = edge_info)
