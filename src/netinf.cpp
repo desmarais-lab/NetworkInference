@@ -2,14 +2,12 @@
 #include <cmath>
 #include <string>
 
-//' Exponential density
-// [[Rcpp::export]]
+// Exponential density
 double dexp_(float x, float lambda = 1) {
     return lambda * std::exp(-1 * lambda * x);
 }
 
-//' Calculate the edge weight between two nodes
-// [[Rcpp::export]]
+// Calculate the edge weight between two nodes
 double edge_weight_(double event_time_i, double event_time_j, double lambda, 
                    double beta = 0.5, double epsilon = 0.00000000001, 
                    bool tied = false, int model = 1) {
@@ -32,83 +30,11 @@ double edge_weight_(double event_time_i, double event_time_j, double lambda,
     return out;
 }
 
-// Function to find optimal spanning tree given empty graph and cascade
-// 
-
-//optimal_spanning_tree = function(cascade_data,lambda,beta =0.5,epsilon=10^(-9)) {
-//# first column of cascade_data is the cascade id
-//# second column of cascade_data is the vertex id
-//# third column of cascade_data is the infection time
-//    
-//# keep track of assigned parents
-//    parent = rep(NA,nrow(cascade_data))
-//# keep track of the branch-wise score associated with each branch in the tree
-//        score = rep(NA,nrow(cascade_data))
-//# loop over each infected node
-//        for(i in 1:nrow(cascade_data)) {
-//# posible parents have times preceding the node's infection time
-//# note, first infected node(s) not assigned a parent
-//            possible_parents = cascade_data[which(cascade_data[,3]<cascade_data[i,3]),1]
-//# times of possible parents
-//            parent_times = cascade_data[which(cascade_data[,3]<cascade_data[i,3]),3]
-//# store the scores associated with each parent
-//            parent_scores = numeric(length(possible_parents))
-//# stop if there are no possible parents
-//            if(length(possible_parents)>0) {
-//# loop over each parent
-//                for(j in 1:length(parent_scores)) {
-//# calculate score for the jth parent
-//                    parent_scores[j] = w_c(parent_times[j],cascade_data[i,3],lambda=lambda,beta =0.5,epsilon=10^(-9))
-//                }
-//# store parent
-//                parent[i] = possible_parents[which.max(parent_scores)]
-//# store associated score
-//                score[i] = parent_scores[which.max(parent_scores)]
-//            }
-//            
-//        }
-//# returns a matrix in which the parent id and score is binded to the cascade_data
-//        return(cbind(cascade_data,parent,score))
-//}
-
-
-
-
-
-//' Run the netinf algorithm on a set of nodes and cascades
-//' 
-//' @param node_ids An integer vector of integer node ids.
-//' @param cascade_nodes A list of integer vectors containing the node ids of
-//'     the cascade in order of infection.
-//' @param  cascade_times A list of numeric vectors each containing infection 
-//'     times for the corresponding nodes in \code{cascade_ids}.
-//' @param model integer indicating the choice of model: 0: exponential, 
-//'     1: power law, 2: rayleigh.
-//' @param alpha Numeric, alpha for transmission model.
-//' @param n_iter Numeric, number of iterations for optimization.
-//' @param verbose boolean, should additional information be printed.
-//' @param edge_info boolean, should addditional edge information be returned
-//' 
-//' @return List containing one vector per edge.
-// [[Rcpp::export]]
-Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_nodes, 
-                   Rcpp::List cascade_times, int model = 0, double alpha = 1.0, 
-                   int n_iter = 5, bool verbose = true, bool edge_info = true) {
-    
-    int n_nodes = node_ids.size();
-    int n_cascades = cascade_nodes.size();
-    
-    
-   
-    return 0;
-}
-
-//' Calculate the optimal spanning tree for a cascade
-// [[Rcpp::export]]
-Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector &this_cascade_ids, 
-                                 Rcpp::NumericVector &this_cascade_times,
-                                 double &lambda, double &beta, 
-                                 double &epsilon) {
+// Calculate the optimal spanning tree for a cascade
+Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids, 
+                                 Rcpp::NumericVector this_cascade_times,
+                                 double lambda, double beta, 
+                                 double epsilon) {
     
  
     int cascade_size = this_cascade_ids.size();
@@ -165,14 +91,15 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector &this_cascade_ids,
 }
 
 // Initialize parents
-void initialize_parents(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times, 
-                        double &lambda, double &beta, double &epsilon) {
-    
-    int n_cascades = cascade_nodes.size();
+Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times, 
+                               double &lambda, double &beta, double &epsilon,
+                               int &n_cascades) {
     
     // Output containers
-    Rcpp::IntegerVector parents
+    Rcpp::List parents;
+    Rcpp::List scores;
     
+    // Calculate optimal spanning tree for each cascade
     for(int i = 0; i < n_cascades; i++) {
         Rcpp::IntegerVector this_cascade_ids = cascade_nodes[i];
         Rcpp::NumericVector this_cascade_times = cascade_times[i];
@@ -180,9 +107,44 @@ void initialize_parents(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times,
             this_cascade_ids = this_cascade_ids, 
             this_cascade_times = this_cascade_times, lambda = lambda, 
             beta = beta, epsilon = epsilon);
+        parents.push_back(tree_result[0]);
+        scores.push_back(tree_result[1]);
     }
+    
+    Rcpp::List out = Rcpp::List::create(parents, scores);
+    return out;
 }
 
 
 
-
+//' Run the netinf algorithm on a set of nodes and cascades
+//' 
+//' @param node_ids An integer vector of integer node ids.
+//' @param cascade_nodes A list of integer vectors containing the node ids of
+//'     the cascade in order of infection.
+//' @param  cascade_times A list of numeric vectors each containing infection 
+//'     times for the corresponding nodes in \code{cascade_ids}.
+//' @param model integer indicating the choice of model: 0: exponential, 
+//'     1: power law, 2: rayleigh.
+//' @param lambda Numeric, rate parameter for exponential transmission model.
+//' @param n_iter Numeric, number of iterations for optimization.
+//' @param verbose boolean, should additional information be printed.
+//' @param edge_info boolean, should addditional edge information be returned
+//' 
+//' @return List containing one vector per edge.
+// [[Rcpp::export]]
+Rcpp::List netinf_(Rcpp::List cascade_nodes, 
+                   Rcpp::List cascade_times, int model = 0, 
+                   double lambda = 1.0) {
+    
+    int n_cascades = cascade_nodes.size();
+    double beta = 0.5;
+    double epsilon = 0.000000001;
+    Rcpp::List parent_data = initialize_parents_(cascade_nodes = cascade_nodes,
+                                                 cascade_times = cascade_times,
+                                                 lambda = lambda, beta = beta,
+                                                 epsilon = epsilon, 
+                                                 n_cascades = n_cascades);
+   
+    return 0;
+}
