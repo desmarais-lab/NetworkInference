@@ -35,31 +35,31 @@ BEGIN_RCPP
 END_RCPP
 }
 // netinf_
-Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_ids, Rcpp::List cascade_times, int model, double alpha, int n_iter, bool verbose, bool edge_info);
-RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP cascade_idsSEXP, SEXP cascade_timesSEXP, SEXP modelSEXP, SEXP alphaSEXP, SEXP n_iterSEXP, SEXP verboseSEXP, SEXP edge_infoSEXP) {
+Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_nodes, Rcpp::List cascade_times, int model, double alpha, int n_iter, bool verbose, bool edge_info);
+RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP modelSEXP, SEXP alphaSEXP, SEXP n_iterSEXP, SEXP verboseSEXP, SEXP edge_infoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type node_ids(node_idsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type cascade_ids(cascade_idsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type cascade_nodes(cascade_nodesSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type cascade_times(cascade_timesSEXP);
     Rcpp::traits::input_parameter< int >::type model(modelSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type n_iter(n_iterSEXP);
     Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
     Rcpp::traits::input_parameter< bool >::type edge_info(edge_infoSEXP);
-    rcpp_result_gen = Rcpp::wrap(netinf_(node_ids, cascade_ids, cascade_times, model, alpha, n_iter, verbose, edge_info));
+    rcpp_result_gen = Rcpp::wrap(netinf_(node_ids, cascade_nodes, cascade_times, model, alpha, n_iter, verbose, edge_info));
     return rcpp_result_gen;
 END_RCPP
 }
 // optimal_spanning_tree_
-Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids, Rcpp::NumericVector this_cascade_times, double& lambda, double& beta, double& epsilon);
+Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector& this_cascade_ids, Rcpp::NumericVector& this_cascade_times, double& lambda, double& beta, double& epsilon);
 RcppExport SEXP NetworkInference_optimal_spanning_tree_(SEXP this_cascade_idsSEXP, SEXP this_cascade_timesSEXP, SEXP lambdaSEXP, SEXP betaSEXP, SEXP epsilonSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type this_cascade_ids(this_cascade_idsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type this_cascade_times(this_cascade_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type this_cascade_ids(this_cascade_idsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type this_cascade_times(this_cascade_timesSEXP);
     Rcpp::traits::input_parameter< double& >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< double& >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double& >::type epsilon(epsilonSEXP);

@@ -98,14 +98,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_nodes,
     int n_nodes = node_ids.size();
     int n_cascades = cascade_nodes.size();
     
+    
    
     return 0;
 }
 
 //' Calculate the optimal spanning tree for a cascade
 // [[Rcpp::export]]
-Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids, 
-                                 Rcpp::NumericVector this_cascade_times,
+Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector &this_cascade_ids, 
+                                 Rcpp::NumericVector &this_cascade_times,
                                  double &lambda, double &beta, 
                                  double &epsilon) {
     
@@ -164,7 +165,23 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
 }
 
 // Initialize parents
-void initialize_parents(data, lambda, beta =0.5, epsilon=10^(-9))
+void initialize_parents(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times, 
+                        double &lambda, double &beta, double &epsilon) {
+    
+    int n_cascades = cascade_nodes.size();
+    
+    // Output containers
+    Rcpp::IntegerVector parents
+    
+    for(int i = 0; i < n_cascades; i++) {
+        Rcpp::IntegerVector this_cascade_ids = cascade_nodes[i];
+        Rcpp::NumericVector this_cascade_times = cascade_times[i];
+        Rcpp::List tree_result = optimal_spanning_tree_(
+            this_cascade_ids = this_cascade_ids, 
+            this_cascade_times = this_cascade_times, lambda = lambda, 
+            beta = beta, epsilon = epsilon);
+    }
+}
 
 
 

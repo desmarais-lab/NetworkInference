@@ -14,7 +14,7 @@ edge_weight_ <- function(event_time_i, event_time_j, lambda, beta = 0.5, epsilon
 #' Run the netinf algorithm on a set of nodes and cascades
 #' 
 #' @param node_ids An integer vector of integer node ids.
-#' @param cascade_ids A list of integer vectors containing the node ids of
+#' @param cascade_nodes A list of integer vectors containing the node ids of
 #'     the cascade in order of infection.
 #' @param  cascade_times A list of numeric vectors each containing infection 
 #'     times for the corresponding nodes in \code{cascade_ids}.
@@ -26,8 +26,8 @@ edge_weight_ <- function(event_time_i, event_time_j, lambda, beta = 0.5, epsilon
 #' @param edge_info boolean, should addditional edge information be returned
 #' 
 #' @return List containing one vector per edge.
-netinf_ <- function(node_ids, cascade_ids, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE, edge_info = TRUE) {
-    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, cascade_ids, cascade_times, model, alpha, n_iter, verbose, edge_info)
+netinf_ <- function(node_ids, cascade_nodes, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE, edge_info = TRUE) {
+    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, cascade_nodes, cascade_times, model, alpha, n_iter, verbose, edge_info)
 }
 
 #' Calculate the optimal spanning tree for a cascade
