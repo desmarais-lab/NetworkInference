@@ -91,8 +91,9 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector this_cascade_ids,
 }
 
 // Initialize parents
-Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times, 
-                               double &lambda, double &beta, double &epsilon,
+Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes, 
+                               Rcpp::List &cascade_times, double &lambda, 
+                               double &beta, double &epsilon,
                                int &n_cascades) {
     
     // Output containers
@@ -115,7 +116,91 @@ Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_ti
     return out;
 }
 
+// Get index of value (first one that matches) in Rcpp Integer Vector
+int which_int_(int value, Rcpp::IntegerVector x) {
+    int n = x.size();
+    for(int i = 0; i < n; i++) {
+        if(x[i] == value) {
+            return i;
+        }
+    }
+    return -1; 
+}
 
+// Union of two integer vectors with unique elements
+void update_children_(Rcpp::IntegerVector &children, 
+                      Rcpp::IntegerVector &candidates) {
+    int nc = candidates.size();
+    for(int i = 0; i < nc; i++) {
+        int k = which_int_(candidates[i], children);
+        if(k == -1) {
+            children.push_back(candidates[i]);
+        }
+    }
+}
+
+// Find unique possible edges for complete data
+Rcpp::List unique_possible_edges_(Rcpp::IntegerVector &node_ids, 
+                                  Rcpp::List &cascade_nodes, 
+                                  int &n_nodes, int n_cascades) {
+    
+    Rcpp::List out; 
+    
+    // Get all potential edges (an edge u->v is possible if in at least one case
+    // u has an event before v). Generates a list with one element for each node
+    // (in order) containing all potential child nodes for this node
+    for(int u = 0; u < n_nodes; u++) {
+        
+        Rcpp::IntegerVector children;
+        
+        for(int i = 0; i < n_cascades; i++) {
+            Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[i];
+            int csize = this_cascade_nodes.size();
+            int j = which_int_(u, cascade_nodes[i]);
+            if(j == -1) {
+                continue;
+            }
+            if(j == (csize - 1)) {
+                continue;
+            }
+            Rcpp::IntegerVector candidates = this_cascade_nodes[Rcpp::seq((j + 1), (csize - 1))];
+            update_children_(children, candidates);
+        }
+        out.push_back(children);
+    }
+    return out;
+}
+
+
+// Find possible edges for each cascade
+Rcpp::List find_possible_edges_(Rcpp::IntegerVector &node_ids, 
+                                Rcpp::List &cascade_nodes, 
+                                int &n_nodes, int n_cascades) {
+    
+    Rcpp::List out; 
+    
+    // Get all potential edges (an edge u->v is possible if in at least one case
+    // u has an event before v). Generates a list with one element for each node
+    // (in order) containing all potential child nodes for this node
+    for(int c = 0; c < n_cascades; c++) {
+        
+        Rcpp::List pairs;
+        Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];
+        int csize = this_cascade_nodes.size();
+        
+        // Use the fact that the cascade data is ordered (see cascade.R)
+        for(int i = 0; i < csize; i++) {
+            for(int j = i + 1; j < csize; j++) {
+                Rcpp::IntegerVector pair = Rcpp::IntegerVector::create(
+                    this_cascade_nodes[i], this_cascade_nodes[j]);
+                pairs.push_back(pair);
+            }
+        }
+        out.push_back(pairs);
+    }
+    return out;
+}
+   
 
 //' Run the netinf algorithm on a set of nodes and cascades
 //' 
@@ -133,11 +218,12 @@ Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_ti
 //' 
 //' @return List containing one vector per edge.
 // [[Rcpp::export]]
-Rcpp::List netinf_(Rcpp::List cascade_nodes, 
-                   Rcpp::List cascade_times, int model = 0, 
+Rcpp::List netinf_(Rcpp::IntegerVector node_ids, Rcpp::List cascade_nodes, 
+                   Rcpp::List cascade_times, int n_edges, int model = 0, 
                    double lambda = 1.0) {
     
     int n_cascades = cascade_nodes.size();
+    int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
     Rcpp::List parent_data = initialize_parents_(cascade_nodes = cascade_nodes,
@@ -145,6 +231,22 @@ Rcpp::List netinf_(Rcpp::List cascade_nodes,
                                                  lambda = lambda, beta = beta,
                                                  epsilon = epsilon, 
                                                  n_cascades = n_cascades);
-   
-    return 0;
+    Rcpp::List unique_possible_edges = unique_possible_edges_(
+        node_ids = node_ids, cascade_nodes = cascade_nodes, n_nodes = n_nodes, 
+        n_cascades = n_cascades
+    );
+    Rcpp::List possible_edges = find_possible_edges_(
+        node_ids = node_ids, cascade_nodes = cascade_nodes, n_nodes = n_nodes, 
+        n_cascades = n_cascades
+    );
+    
+    // Output containers
+    Rcpp::List edges; 
+    Rcpp::NumericVector scores;
+    
+    for(int e = 0; e < n_edges; e++) {
+        continue;   
+    }
+    
+    return possible_edges;
 }
