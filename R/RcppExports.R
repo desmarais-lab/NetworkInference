@@ -16,7 +16,7 @@
 #' @param edge_info boolean, should addditional edge information be returned
 #' 
 #' @return List containing one vector per edge.
-netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model = 0L, lambda = 1.0) {
+netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda) {
     .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, cascade_nodes, cascade_times, n_edges, model, lambda)
 }
 
