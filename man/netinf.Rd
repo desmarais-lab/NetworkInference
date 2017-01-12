@@ -35,7 +35,7 @@ netinf website (\url{http://snap.stanford.edu/netinf/}).'
 }
 \examples{
 data(cascades)
-out <- netinf(cascades, trans_mod = "exponential", alpha = 1, verbose = TRUE)
+out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
               
 }
 \references{
