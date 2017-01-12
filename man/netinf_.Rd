@@ -15,16 +15,12 @@ the cascade in order of infection.}
 \item{cascade_times}{A list of numeric vectors each containing infection 
 times for the corresponding nodes in \code{cascade_ids}.}
 
-\item{model}{integer indicating the choice of model: 0: exponential, 
-1: power law, 2: rayleigh.}
+\item{n_edges}{Numeric, number of edges to infer.}
+
+\item{model}{integer indicating the choice of model: 1: exponential, 
+2: power law, 3: rayleigh (only exponential implemented).}
 
 \item{lambda}{Numeric, rate parameter for exponential transmission model.}
-
-\item{n_iter}{Numeric, number of iterations for optimization.}
-
-\item{verbose}{boolean, should additional information be printed.}
-
-\item{edge_info}{boolean, should addditional edge information be returned}
 }
 \value{
 List containing one vector per edge.
