@@ -5,14 +5,10 @@ Version: 1.0
 Date: 2016-10-05
 Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@gmail.com",
                   role = c("aut", "cre")),
-             person(family = "SNAP Authors", role = "ctb", 
-                    comment = "for the included SNAP sources"),
-             person("Jure", "Leskovec", role = "ctb", 
-                    comment = "for the included SNAP sources")
-            )
+             person("Bruce", "Desmarais", role = "ctb"))
 Description: This is an R implementation of the netinf algorithm (Leskovic et al
     2010). 
-License: BSD_3_clause + file LICENSE
+License: MIT + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
     assertthat,
@@ -25,5 +21,5 @@ BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
     testthat
 RoxygenNote: 5.0.1
-SystemRequirements: GNU make
+SystemRequirements: C++11
 LazyData: true

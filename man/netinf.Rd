@@ -4,8 +4,7 @@
 \alias{netinf}
 \title{Infer latent diffusion network.}
 \usage{
-netinf(cascades, trans_mod = "exponential", alpha = 1, n_iter = 5,
-  verbose = TRUE, edge_info = TRUE)
+netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 }
 \arguments{
 \item{cascades}{An object of class cascade containing node and cascade 
@@ -14,14 +13,9 @@ information. See \link{as.cascade} for details.}
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.}
 
-\item{alpha}{Numeric, alpha for transmission model.}
+\item{n_edges}{Numeric, number of edges to infer.}
 
-\item{n_iter}{Numeric, number of iterations for optimization.}
-
-\item{verbose}{logical, should additional output be printed.}
-
-\item{edge_info}{logical, should additional information on each edge be 
-returned.}
+\item{lambda}{Numeric, alpha for transmission model.}
 }
 \value{
 Returns the inferred diffusion network as an object of class 
@@ -41,7 +35,7 @@ netinf website (\url{http://snap.stanford.edu/netinf/}).'
 }
 \examples{
 data(cascades)
-out <- netinf(cascades, trans_mod = "exponential", alpha = 1, verbose = TRUE)
+out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
               
 }
 \references{

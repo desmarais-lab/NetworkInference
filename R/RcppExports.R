@@ -4,20 +4,17 @@
 #' Run the netinf algorithm on a set of nodes and cascades
 #' 
 #' @param node_ids An integer vector of integer node ids.
-#' @param node_names A character vector of node names.
-#' @param cascade_ids A list of integer vectors containing the node ids of
+#' @param cascade_nodes A list of integer vectors containing the node ids of
 #'     the cascade in order of infection.
 #' @param  cascade_times A list of numeric vectors each containing infection 
 #'     times for the corresponding nodes in \code{cascade_ids}.
-#' @param model integer indicating the choice of model: 0: exponential, 
-#'     1: power law, 2: rayleigh.
-#' @param alpha Numeric, alpha for transmission model.
-#' @param n_iter Numeric, number of iterations for optimization.
-#' @param verbose boolean, should additional information be printed.
-#' @param edge_info boolean, should addditional edge information be returned
+#' @param model integer indicating the choice of model: 1: exponential, 
+#'     2: power law, 3: rayleigh (only exponential implemented).
+#' @param lambda Numeric, rate parameter for exponential transmission model.
+#' @param n_edges Numeric, number of edges to infer.
 #' 
 #' @return List containing one vector per edge.
-netinf_ <- function(node_ids, node_names, cascade_ids, cascade_times, model = 0L, alpha = 1.0, n_iter = 5L, verbose = TRUE, edge_info = TRUE) {
-    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, node_names, cascade_ids, cascade_times, model, alpha, n_iter, verbose, edge_info)
+netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda) {
+    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, cascade_nodes, cascade_times, n_edges, model, lambda)
 }
 

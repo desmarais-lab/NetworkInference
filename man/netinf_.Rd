@@ -4,30 +4,23 @@
 \alias{netinf_}
 \title{Run the netinf algorithm on a set of nodes and cascades}
 \usage{
-netinf_(node_ids, node_names, cascade_ids, cascade_times, model = 0L,
-  alpha = 1, n_iter = 5L, verbose = TRUE, edge_info = TRUE)
+netinf_(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda)
 }
 \arguments{
 \item{node_ids}{An integer vector of integer node ids.}
 
-\item{node_names}{A character vector of node names.}
-
-\item{cascade_ids}{A list of integer vectors containing the node ids of
+\item{cascade_nodes}{A list of integer vectors containing the node ids of
 the cascade in order of infection.}
 
 \item{cascade_times}{A list of numeric vectors each containing infection 
 times for the corresponding nodes in \code{cascade_ids}.}
 
-\item{model}{integer indicating the choice of model: 0: exponential, 
-1: power law, 2: rayleigh.}
+\item{n_edges}{Numeric, number of edges to infer.}
 
-\item{alpha}{Numeric, alpha for transmission model.}
+\item{model}{integer indicating the choice of model: 1: exponential, 
+2: power law, 3: rayleigh (only exponential implemented).}
 
-\item{n_iter}{Numeric, number of iterations for optimization.}
-
-\item{verbose}{boolean, should additional information be printed.}
-
-\item{edge_info}{boolean, should addditional edge information be returned}
+\item{lambda}{Numeric, rate parameter for exponential transmission model.}
 }
 \value{
 List containing one vector per edge.
