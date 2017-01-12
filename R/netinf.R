@@ -14,7 +14,7 @@
 #'     information. See \link{as.cascade} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.
-#' @param alpha Numeric, alpha for transmission model.
+#' @param lambda Numeric, alpha for transmission model.
 #' @param n_iter Numeric, number of iterations for optimization.
 #' @param verbose logical, should additional output be printed.
 #' @param edge_info logical, should additional information on each edge be 
