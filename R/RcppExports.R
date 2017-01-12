@@ -8,12 +8,10 @@
 #'     the cascade in order of infection.
 #' @param  cascade_times A list of numeric vectors each containing infection 
 #'     times for the corresponding nodes in \code{cascade_ids}.
-#' @param model integer indicating the choice of model: 0: exponential, 
-#'     1: power law, 2: rayleigh.
+#' @param model integer indicating the choice of model: 1: exponential, 
+#'     2: power law, 3: rayleigh (only exponential implemented).
 #' @param lambda Numeric, rate parameter for exponential transmission model.
-#' @param n_iter Numeric, number of iterations for optimization.
-#' @param verbose boolean, should additional information be printed.
-#' @param edge_info boolean, should addditional edge information be returned
+#' @param n_edges Numeric, number of edges to infer.
 #' 
 #' @return List containing one vector per edge.
 netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda) {

@@ -257,12 +257,10 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
 //'     the cascade in order of infection.
 //' @param  cascade_times A list of numeric vectors each containing infection 
 //'     times for the corresponding nodes in \code{cascade_ids}.
-//' @param model integer indicating the choice of model: 0: exponential, 
-//'     1: power law, 2: rayleigh.
+//' @param model integer indicating the choice of model: 1: exponential, 
+//'     2: power law, 3: rayleigh (only exponential implemented).
 //' @param lambda Numeric, rate parameter for exponential transmission model.
-//' @param n_iter Numeric, number of iterations for optimization.
-//' @param verbose boolean, should additional information be printed.
-//' @param edge_info boolean, should addditional edge information be returned
+//' @param n_edges Numeric, number of edges to infer.
 //' 
 //' @return List containing one vector per edge.
 // [[Rcpp::export]]
@@ -284,7 +282,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
 
     
     // Output containers
-    Rcpp::CharacterVector edges(n_edges); 
+    Rcpp::List edges(n_edges); 
     Rcpp::NumericVector scores(n_edges);
     
     for(int e = 0; e < n_edges; e++) {
@@ -324,7 +322,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             }
         }
         // Store the best results
-        edges[e] = best_edge;
+        Rcpp::IntegerVector pair = possible_edges[best_edge][0];
+        edges[e] = pair;
         scores[e] = max_improvement;
 
         // Get data to update parent information for new edge
@@ -332,10 +331,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         Rcpp::NumericVector replacement_score = replacement[2];
         
         // Get u and v of best edge
-        
-        //Rcpp::List value = possible_edges.find(pair_id)->second;;
-        
-        Rcpp::IntegerVector pair = possible_edges[best_edge][0];
         int u = pair[0];
         int v = pair[1];
         
@@ -359,7 +354,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Remove best edge from possible edges
         possible_edges.erase(best_edge);       
     }
-    
+    Rcpp::IntegerVector origin(n_edges);
+    Rcpp::IntegerVector destination(n_edges);
     Rcpp::List out = Rcpp::List::create(edges, scores);
     return out;
 }
