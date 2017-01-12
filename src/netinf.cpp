@@ -158,8 +158,7 @@ std::string make_pair_id_(int &u, int &v) {
 //     cascades that the edge is possible in
 std::map <std::string, Rcpp::List> find_possible_edges_(
         Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
-        int &n_nodes, int n_cascades) 
-    {
+        int &n_nodes, int n_cascades) {
     
     std::map <std::string, Rcpp::List> possible_edges;
     
