@@ -25,5 +25,5 @@ BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
     testthat
 RoxygenNote: 5.0.1
-SystemRequirements: GNU make
+SystemRequirements: C++11
 LazyData: true
