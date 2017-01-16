@@ -56,13 +56,14 @@ as.cascade <- function(data, ...) {
 #'     Optional. If not provided, node names are inferred from the cascade data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
 #'     will be dropped (not recommended).
+#' @param ..., Additional arguments
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
 #' @export
 as.cascade.data.frame <- function(data, cascade_node_name = "node_name", 
                                   event_time = "event_time", 
                                   cascade_id = "cascade_id", 
-                                  node_names = NULL) {
+                                  node_names = NULL, ...) {
     
     # Check all inputs 
     if(is.null(node_names)) {
@@ -116,10 +117,11 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
 #'     Optional. If not provided, node names are inferred from the provided data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
 #'     will be dropped (not recommended).
+#' @param ..., Additional arguments
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
 #' @export
-as.cascade.matrix <- function(data, node_names = NULL) {
+as.cascade.matrix <- function(data, node_names = NULL, ...) {
     
     # Check all inputs 
     if(is.null(node_names)) {

@@ -5,7 +5,8 @@
 \title{Create cascade object from data frame}
 \usage{
 \method{as.cascade}{data.frame}(data, cascade_node_name = "node_name",
-  event_time = "event_time", cascade_id = "cascade_id", node_names = NULL)
+  event_time = "event_time", cascade_id = "cascade_id", node_names = NULL,
+  ...)
 }
 \arguments{
 \item{data}{\link{data.frame} containing the cascade data with column names 
@@ -24,6 +25,8 @@ event times for each node involved in a cascade.}
 Optional. If not provided, node names are inferred from the cascade data.
 Note that in this case nodes that are not involved in any cascade (isolates)
 will be dropped (not recommended).}
+
+\item{..., }{Additional arguments}
 }
 \value{
 An object of class \code{cascade}. See \link{as.cascade} for details.

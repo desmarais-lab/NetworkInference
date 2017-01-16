@@ -4,7 +4,7 @@
 \alias{as.cascade.matrix}
 \title{Create cascade object from a matrix}
 \usage{
-\method{as.cascade}{matrix}(data, node_names = NULL)
+\method{as.cascade}{matrix}(data, node_names = NULL, ...)
 }
 \arguments{
 \item{data}{\link{matrix} Rows corresponding to nodes, columns to cascades.
@@ -16,6 +16,8 @@ desired.}
 Optional. If not provided, node names are inferred from the provided data.
 Note that in this case nodes that are not involved in any cascade (isolates)
 will be dropped (not recommended).}
+
+\item{..., }{Additional arguments}
 }
 \value{
 An object of class \code{cascade}. See \link{as.cascade} for details.
