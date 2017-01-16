@@ -318,7 +318,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             // if there is at least one improvement, keep track of edge
             
             double improvement = Rcpp::as<double>(e_replacements[0]);
-            if(improvement > max_improvement) { //TODO: improvement is always 0
+            if(improvement > max_improvement) { 
                 // store improvement
                 max_improvement = improvement;
                 // store all replacement information
