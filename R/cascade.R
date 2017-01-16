@@ -44,6 +44,11 @@ is.cascade <- function(object) {
 #'             containing the event times for the nodes in \code{cascade_names}.
 #'     }
 #'     
+#' @examples
+#' 
+#' df <- simulate_cascades(10)
+#' 
+#'     
 #' @export
 as.cascade <- function(data, ...) {
    UseMethod("as.cascade", data)
@@ -348,7 +353,8 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 
 #' Simulate a set of cascades
 #'
-#' For testing purposes.   
+#' Simulate random cascades, for testing and demonstration purposes. No actual 
+#' diffusion model is underlying these cascades.
 #' 
 #' @importFrom stats runif
 #' 
@@ -359,7 +365,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #' @return A data frame containing (in order of columns) infected node ids, 
 #'     infection times and cascade identifiers for 20 distinct nodes.
 #' @export
-simulate_cascades_ <- function(n_cascades, id_class = "character") {
+simulate_cascades <- function(n_cascades, id_class = "character") {
     qassert(n_cascades, "X1[1,)")
     id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
                                                       "numeric"))

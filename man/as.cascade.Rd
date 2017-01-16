@@ -35,4 +35,10 @@ The following methods are available:
     \item \link{as.cascade.matrix}
 }
 }
+\examples{
+
+df <- simulate_cascades(10)
+
+    
+}
 
