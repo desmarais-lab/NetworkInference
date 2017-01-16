@@ -251,18 +251,6 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
     return out;
 }
 
-// Split string pair id into two integers
-//Rcpp::IntegerVector split_pair_id_(std::string pair_id) {
-//    std::stringstream test(pair_id);
-//    std::string segment;
-//    std::vector<std::string> seglist;
-//    while(std::getline(test, segment, '_')) {
-//        seglist.push_back(segment);
-//    }
-//    return Rcpp::IntegerVector::create(atoi(seglist[0].c_str()),
-//                                       atoi(seglist[1].c_str()));
-//}
-
 //' Run the netinf algorithm on a set of nodes and cascades
 //' 
 //' @param node_ids An integer vector of integer node ids.
