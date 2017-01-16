@@ -13,7 +13,7 @@
 #' @param  cascades An object of class cascade containing node and cascade 
 #'     information. See \link{as.cascade} for details. 
 #' @param trans_mod character, indicating the choice of model: 
-#'      \code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.
+#'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda Numeric, alpha for transmission model.
 #' @param n_edges Numeric, number of edges to infer.
 #' 
@@ -41,10 +41,10 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     qassert(trans_mod, "S1")
     qassert(lambda, "R1[0,)")
     qassert(n_edges, "X1[1,)")
-    model_char <- match.arg(trans_mod, c("exponential", "power", "rayleigh"))
+    model_char <- match.arg(trans_mod, c("exponential", "rayleigh"))
     if(model_char == "exponential") {
         model <- 1
-    } else if(model_char == "power") {
+    } else if(model_char == "rayleigh") {
         model <- 2
     } else {
         model <- 3

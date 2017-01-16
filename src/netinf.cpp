@@ -1,37 +1,42 @@
 #include <Rcpp.h>
 #include <cmath>
 #include <string>
-#include <typeinfo>
 
 // Exponential density
-double dexp_(float x, float lambda = 1) {
+double dexp_(float x, float lambda) {
     return lambda * std::exp(-1 * lambda * x);
+}
+
+// Rayleigh density
+double drayleigh_(float x, float lambda) {
+    return (x / pow(lambda, 2)) * std::exp(-pow(x, 2) / (2 * pow(lambda, 2)));
 }
 
 // Calculate the edge weight between two nodes
 double edge_weight_(double &event_time_i, double &event_time_j, double &lambda, 
                    double &beta, double &epsilon, bool tied, int &model) {
-    double out;
+    double y, out;
+    double x = event_time_j - event_time_i;
     if (model == 1) {
-        double x = event_time_j - event_time_i;
-        if (tied) {
-            out = log(beta * dexp_(x, lambda));
-        } else {
-            out = log(epsilon * dexp_(x, lambda));
-        }
+        y = dexp_(x, lambda);
     } else if (model == 2) {
-        Rcpp::Rcout << "Not implemented. Use exponential model\n";
+        y = drayleigh_(x, lambda);
         out = 0; 
     } else {
         Rcpp::Rcout << "Not implemented. Use exponential model\n";
         out = 0;
+    }
+    if (tied) {
+        out = log(beta * y);
+    } else {
+        out = log(epsilon * y);
     }
     return out;
 }
 
 // Calculate the optimal spanning tree for a cascade
 // Output:
-//     List (size 2):
+//     List (size 2): 
 //         [0] Vector of parent ids, each element indicates the parent of the 
 //             node at the same position in the original cascade
 //         [1] Vector of scores, each element is the score of the node at this 

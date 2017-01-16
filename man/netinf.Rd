@@ -11,7 +11,7 @@ netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 information. See \link{as.cascade} for details.}
 
 \item{trans_mod}{character, indicating the choice of model: 
-\code{"exponential"}, \code{"power"} (power law) or \code{"rayleigh"}.}
+\code{"exponential"} or \code{"rayleigh"}.}
 
 \item{n_edges}{Numeric, number of edges to infer.}
 
