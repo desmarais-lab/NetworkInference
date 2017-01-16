@@ -4,7 +4,7 @@
 #' infection times
 #' 
 #' The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
-#' Additional information as well as the C++ source can be found on the 
+#' Additional information can be found on the 
 #' netinf website (\url{http://snap.stanford.edu/netinf/}).' 
 #' 
 #' @import checkmate
@@ -29,9 +29,16 @@
 #' Data Mining (KDD), 2010.
 #'      
 #' @examples 
+#' 
+#' # Data already in cascades format:
 #' data(cascades)
 #' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
-#'               
+#' 
+#' # Starting with a dataframe
+#' df <- simulate_cascades_(10)
+#' cascades2 <- as.cascade(df, node_names = unique(df$node_name))
+#' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, lambda = 1)
+#' 
 #' @export
 netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     

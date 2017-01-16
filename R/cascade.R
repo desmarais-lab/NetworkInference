@@ -58,6 +58,7 @@ as.cascade <- function(data, ...) {
 #'     will be dropped (not recommended).
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+#' @export
 as.cascade.data.frame <- function(data, cascade_node_name = "node_name", 
                                   event_time = "event_time", 
                                   cascade_id = "cascade_id", 
@@ -117,6 +118,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
 #'     will be dropped (not recommended).
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+#' @export
 as.cascade.matrix <- function(data, node_names = NULL) {
     
     # Check all inputs 
@@ -344,7 +346,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #'     
 #' @return A data frame containing (in order of columns) infected node ids, 
 #'     infection times and cascade identifiers for 20 distinct nodes.
- 
+#' @export
 simulate_cascades_ <- function(n_cascades, id_class = "character") {
     qassert(n_cascades, "X1[1,)")
     id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
