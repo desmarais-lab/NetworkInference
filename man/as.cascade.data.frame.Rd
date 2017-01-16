@@ -34,4 +34,11 @@ An object of class \code{cascade}. See \link{as.cascade} for details.
 \description{
 Create cascade object from data frame
 }
+\examples{
+
+# For data frames 
+df <- simulate_cascades(10)
+cascades <- as.cascade(df)
+is.cascade(cascades)
+}
 

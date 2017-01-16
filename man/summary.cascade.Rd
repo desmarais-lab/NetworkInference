@@ -4,10 +4,12 @@
 \alias{summary.cascade}
 \title{Summarize cascade object}
 \usage{
-\method{summary}{cascade}(cascades)
+\method{summary}{cascade}(object, ...)
 }
 \arguments{
-\item{cascades}{Object of class cascade to be plottet}
+\item{object}{Object of class cascade to be summarized.}
+
+\item{...}{Additional arguments passed to summary}
 }
 \value{
 Prints cascade summary information to the screen and returns summary
@@ -15,5 +17,11 @@ Prints cascade summary information to the screen and returns summary
 }
 \description{
 Summarize cascade object
+}
+\examples{
+
+data(cascades)
+summary(cascades)
+
 }
 

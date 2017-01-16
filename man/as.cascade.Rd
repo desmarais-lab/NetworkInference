@@ -37,8 +37,15 @@ The following methods are available:
 }
 \examples{
 
+# For data frames 
 df <- simulate_cascades(10)
+cascades <- as.cascade(df)
+is.cascade(cascades)
 
+# For matrices
+cascade_matrix <- as.matrix(cascades)
+cascades <- as.cascade(cascade_matrix)
+is.cascade(cascades)
     
 }
 

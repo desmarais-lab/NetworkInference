@@ -25,4 +25,12 @@ An object of class \code{cascade}. See \link{as.cascade} for details.
 \description{
 Create cascade object from a matrix
 }
+\examples{
+
+# For matrices
+cascade_matrix <- as.matrix(cascades)
+cascades <- as.cascade(cascade_matrix)
+is.cascade(cascades)
+
+}
 

@@ -22,4 +22,10 @@ Generates a matrix containing the cascade information in the cascade object.
 \details{
 Missing values are used for nodes that do not experience an event in a cascade.
 }
+\examples{
+
+data(cascades) 
+as.matrix(cascades)
+
+}
 

@@ -46,8 +46,15 @@ is.cascade <- function(object) {
 #'     
 #' @examples
 #' 
+#' # For data frames 
 #' df <- simulate_cascades(10)
+#' cascades <- as.cascade(df)
+#' is.cascade(cascades)
 #' 
+#' # For matrices
+#' cascade_matrix <- as.matrix(cascades)
+#' cascades <- as.cascade(cascade_matrix)
+#' is.cascade(cascades)
 #'     
 #' @export
 as.cascade <- function(data, ...) {
@@ -74,6 +81,14 @@ as.cascade <- function(data, ...) {
 #' @param ..., Additional arguments
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+#' 
+#' @examples 
+#' 
+#' # For data frames 
+#' df <- simulate_cascades(10)
+#' cascades <- as.cascade(df)
+#' is.cascade(cascades)
+#
 #' @export
 as.cascade.data.frame <- function(data, cascade_node_name = "node_name", 
                                   event_time = "event_time", 
@@ -135,6 +150,14 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
 #' @param ..., Additional arguments
 #'     
 #' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+#' 
+#' @examples 
+#' 
+#' # For matrices
+#' cascade_matrix <- as.matrix(cascades)
+#' cascades <- as.cascade(cascade_matrix)
+#' is.cascade(cascades)
+#' 
 #' @export
 as.cascade.matrix <- function(data, node_names = NULL, ...) {
     
@@ -207,6 +230,12 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
 #' 
 #' @return A matrix containing all cascade information. See section Details for
 #'     more information.
+#'     
+#' @examples
+#' 
+#' data(cascades) 
+#' as.matrix(cascades)
+#' 
 #' @export 
 as.matrix.cascade <- function(x, ...) {
     
@@ -252,6 +281,11 @@ as.matrix.cascade <- function(x, ...) {
 #' @return A data frame with three columns. Containing (in order) 1) The names of 
 #'     the nodes that experience an event in each cascade, 2) the event time of the
 #'     corresponding node, 3) the cascade identifier.
+#'     
+#' @examples
+#' 
+#' data(cascades)
+#' as.data.frame(cascades)
 #' 
 #' @export 
 as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
@@ -364,6 +398,12 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #'     
 #' @return A data frame containing (in order of columns) infected node ids, 
 #'     infection times and cascade identifiers for 20 distinct nodes.
+#'     
+#' @examples
+#' 
+#' df <- simulate_cascades(10)
+#' head(df)
+#' 
 #' @export
 simulate_cascades <- function(n_cascades, id_class = "character") {
     qassert(n_cascades, "X1[1,)")

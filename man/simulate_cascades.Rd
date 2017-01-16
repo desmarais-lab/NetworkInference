@@ -20,4 +20,10 @@ A data frame containing (in order of columns) infected node ids,
 Simulate random cascades, for testing and demonstration purposes. No actual 
 diffusion model is underlying these cascades.
 }
+\examples{
+
+df <- simulate_cascades(10)
+head(df)
+
+}
 

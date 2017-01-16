@@ -4,11 +4,13 @@
 \alias{plot.cascade}
 \title{Plot a cascade object}
 \usage{
-\method{plot}{cascade}(cascades, label_nodes = TRUE, selection = NULL,
-  plot_elements = NULL, density_ = TRUE)
+\method{plot}{cascade}(x, y = NULL, label_nodes = TRUE, selection = NULL,
+  plot_elements = NULL, density_ = FALSE, ...)
 }
 \arguments{
-\item{cascades}{Object of class cascade to be plottet}
+\item{x}{Object of class cascade to be plottet}
+
+\item{y}{Generic method placeholder. Leave \code{NULL}}
 
 \item{label_nodes}{Logical, indicating if should the nodes in each cascade be 
 labeled. If the cascades are very dense setting this to \code{FALSE} is
@@ -20,11 +22,20 @@ recommended.}
 plot (e.g. axis labels etc.).}
 
 \item{density_}{draw density lines for each cascade.}
+
+\item{...}{additional arguments passed to plot}
 }
 \value{
 A ggplot plot object
 }
 \description{
 Plot a cascade object
+}
+\examples{
+
+data(cascades)
+plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
+plot(cascades, label_nodes = FALSE)
+
 }
 
