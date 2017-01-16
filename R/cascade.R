@@ -3,6 +3,16 @@
 #' Is the object a cascade?
 #' 
 #' @param object The object to be tested
+#' 
+#' @return \code{TRUE} if object is a cascade, \code{FALSE} otherwise
+#' 
+#' @examples
+#' 
+#' data(cascades)
+#' is.cascade(cascades)
+#' # > TRUE
+#' is.cascade(1) 
+#' # > FALSE
 #' @export
 is.cascade <- function(object) {
     inherits(object, "cascade")
