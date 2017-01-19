@@ -11,9 +11,7 @@ The `NetworkInference` package provides an R implementation of the `netinf` algo
 Quick start guide
 -----------------
 
-TL;DR: To get started get your data into the `cascades` format required by the `netinf` function:
-
-``` r
+TL;DR: To get started get your data into the `cascades` format required by the `netinf` function: ``` r
 library(NetworkInference)
 
 # Simulate example data
@@ -51,29 +49,29 @@ pander::pandoc.table(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">i</td>
+<td align="center">t</td>
+<td align="center">d</td>
+<td align="center">71.14</td>
+</tr>
+<tr class="even">
+<td align="center">s</td>
+<td align="center">e</td>
+<td align="center">69.48</td>
+</tr>
+<tr class="odd">
+<td align="center">c</td>
+<td align="center">l</td>
+<td align="center">67.17</td>
+</tr>
+<tr class="even">
 <td align="center">h</td>
-<td align="center">79.17</td>
-</tr>
-<tr class="even">
-<td align="center">q</td>
-<td align="center">r</td>
-<td align="center">76.03</td>
-</tr>
-<tr class="odd">
-<td align="center">r</td>
-<td align="center">s</td>
-<td align="center">75.79</td>
-</tr>
-<tr class="even">
 <td align="center">p</td>
-<td align="center">o</td>
-<td align="center">59.16</td>
+<td align="center">64.55</td>
 </tr>
 <tr class="odd">
-<td align="center">s</td>
-<td align="center">f</td>
-<td align="center">56.5</td>
+<td align="center">c</td>
+<td align="center">h</td>
+<td align="center">63.92</td>
 </tr>
 </tbody>
 </table>
@@ -195,7 +193,7 @@ Finally `node_names` contains the unique names of nodes (in our case states) in 
 node_names[1:10]
 ```
 
-    ##  [1] "a" "s" "h" "b" "i" "o" "p" "r" "t" "q"
+    ##  [1] "l" "k" "i" "d" "m" "t" "r" "j" "a" "h"
 
 ### Plotting Cascades
 
@@ -211,7 +209,7 @@ selection <- cascade_ids[1:4]
 plot(policy_cascades, label_nodes = TRUE, selection = selection)
 ```
 
-<img src="github_readme_files/figure-markdown_github/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
 
@@ -220,7 +218,7 @@ selection <- cascade_ids[1:30]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
 
-<img src="github_readme_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 ### Inferring the Latent Diffusion Network
 
@@ -296,7 +294,7 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="github_readme_files/figure-markdown_github/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 In the plot we can see a kink in the plot at about edge \#25. Let's re-run `netinf` to get the final network.
 
@@ -312,31 +310,17 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](github_readme_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 
 ``` r
 library(igraph)
-```
-
-    ## 
-    ## Attaching package: 'igraph'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     decompose, spectrum
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     union
-
-``` r
 g <- graph_from_data_frame(d = results[, 1:2])
 plot(g, edge.arrow.size=.3, vertex.color = "grey70")
 ```
 
-![](github_readme_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 References
 ----------

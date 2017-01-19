@@ -3,10 +3,6 @@ title: "NetworkInference"
 author: "Fridolin Linder"
 date: "`r Sys.Date()`"
 output: rmarkdown::github_document
-vignette: >
-    %\VignetteIndexEntry{Vignette Title}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
 bibliography: bibliography.bib
 ---
 
@@ -191,7 +187,7 @@ plot(diffusion_network, type = "network")
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 
-```{r}
+```{r, message=FALSE}
 library(igraph)
 g <- graph_from_data_frame(d = results[, 1:2])
 plot(g, edge.arrow.size=.3, vertex.color = "grey70")

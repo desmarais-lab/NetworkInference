@@ -1,5 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
-github_readme_files/
+readme_files/
 vignettes/github_readme.Rmd
+vignettes/make_github_readme.py
+vignettes/render_readme.R
