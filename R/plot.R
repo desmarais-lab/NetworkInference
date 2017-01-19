@@ -7,7 +7,7 @@
 #' @return A ggplot object that can be added to a ggplot plot 
 PLOT_THEME_ <- function(mode = NULL) {
     if(is.null(mode)) {
-        out <- theme_bw()
+        out <- theme_bw() 
     } else if(mode == "color") {
         out <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", 
                  "#0072B2", "#D55E00", "#CC79A7")
@@ -130,26 +130,46 @@ plot.cascade <- function(x, label_nodes = TRUE,
 #' Plot a cascade object
 #' 
 #' @import ggplot2
-#' @import ggrepel
-#' @importFrom stats density
 #' 
-#' @param x Object of class cascade to be plottet
-#' @param label_nodes Logical, indicating if should the nodes in each cascade be 
-#'     labeled. If the cascades are very dense setting this to \code{FALSE} is
-#'     recommended.
-#' @param selection A vector of cascade ids to plot.
-#' @param plot_elements Addtional ggplot plotting elements to be appended to the
-#'     plot (e.g. axis labels etc.).
-#' @param density_ draw density lines for each cascade.
-#' @param ... additional arguments passed to plot
+#' @param x Object of class diffnet to be plotted.
+#' @param type character, one of \code{c("network", "improvement") indicating if 
+#'     the inferred diffusion network (\code{"network"}) or the improvement for each
+#'     edge should be visualized (\code{"improvement"})}.
+#' @param ... additional arguments.
 #' 
 #' @examples 
+#'
+#' \dontrun{
+#'  data(cascades)
+#'  res <- netinf(cascades, n_edges = 6, lambda = 1)
+#'  plot(res, type = "network")
+#'  plot(res, type = "improvement")
+#' }
 #' 
-#' data(cascades)
-#' plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
-#' plot(cascades, label_nodes = FALSE)
-#' 
-#' @return A ggplot plot object
+#' @return A ggplot plot object if \code{type = "improvement"} otherwise an 
+#'     igraph plot.
 #' @export
-plot.netinf_result <- function(x, label_nodes = TRUE, 
- 
+plot.diffnet <- function(x, type = "network", ...) {
+    # Check inputs
+    type <- match.arg(type, c("network", "improvement"))
+    
+    if(type == "network") {
+        # Check if igraph is installed
+        if(!is.element("igraph", rownames(installed.packages()))) {
+            stop("In order to use this functionality the `igraph` package needs
+                 to be installed. Run `install.packages('igraph')` and retry.")
+        }
+        
+        # Plot network
+        g <- igraph::graph_from_data_frame(d = x[, 1:2])
+        plot(g, edge.arrow.size=.3, vertex.color = "grey70")
+    }
+    else{
+        ggplot(x) + 
+            geom_line(aes(x=c(1:nrow(x)), y = improvement), color = "grey80", 
+                      size = 0.5) +
+            geom_point(aes(x=c(1:nrow(x)), y = improvement)) + 
+            xlab("Edge Number") + ylab("Improvement") +
+            PLOT_THEME_()
+    }
+}
