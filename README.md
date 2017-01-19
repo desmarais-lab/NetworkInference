@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">o</td>
-<td align="center">h</td>
-<td align="center">175.4</td>
+<td align="center">k</td>
+<td align="center">q</td>
+<td align="center">187.8</td>
 </tr>
 <tr class="even">
-<td align="center">i</td>
-<td align="center">m</td>
-<td align="center">169.4</td>
-</tr>
-<tr class="odd">
-<td align="center">e</td>
-<td align="center">a</td>
-<td align="center">168.1</td>
-</tr>
-<tr class="even">
-<td align="center">i</td>
-<td align="center">s</td>
-<td align="center">164.9</td>
-</tr>
-<tr class="odd">
+<td align="center">k</td>
 <td align="center">c</td>
-<td align="center">e</td>
-<td align="center">163</td>
+<td align="center">184.7</td>
+</tr>
+<tr class="odd">
+<td align="center">k</td>
+<td align="center">d</td>
+<td align="center">178.7</td>
+</tr>
+<tr class="even">
+<td align="center">p</td>
+<td align="center">h</td>
+<td align="center">178.4</td>
+</tr>
+<tr class="odd">
+<td align="center">k</td>
+<td align="center">t</td>
+<td align="center">176.7</td>
 </tr>
 </tbody>
 </table>
@@ -244,7 +244,7 @@ Finally `node_names` contains the unique names of nodes (in our case states) in 
 node_names[1:10]
 ```
 
-    ##  [1] "k" "p" "n" "i" "e" "g" "f" "j" "m" "l"
+    ##  [1] "a" "i" "p" "c" "f" "t" "l" "q" "s" "n"
 
 ### Plotting Cascades
 
