@@ -79,5 +79,23 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     out[, 2] <- cascades$node_names[(out[, 2] + 1)]
     
     colnames(out) <- c("origin_node", "destination_node", "improvement")
+    class(out) <- c("diffnet", "data.frame")
     return(out)
+}
+
+
+#' Is the object of class diffnet
+#' 
+#' @param object The object to be tested
+#' 
+#' @return \code{TRUE} if object is a diffnet, \code{FALSE} otherwise.
+#' 
+#' @examples
+#' 
+#' data(cascades)
+#' result <- netinf(cascades, n_edges = 6, lambda = 1)
+#' is.diffnet(result)
+#' @export
+is.diffnet <- function(object) {
+    inherits(object, "diffnet")
 }
