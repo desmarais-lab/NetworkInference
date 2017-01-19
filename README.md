@@ -3,6 +3,8 @@ NetworkInference
 Fridolin Linder
 2017-01-19
 
+![](https://travis-ci.org/flinder/NetworkInference.svg)
+
 Introduction
 ------------
 
@@ -16,8 +18,8 @@ TL;DR: To get started get your data into the `cascades` format required by the `
 ``` r
 library(NetworkInference)
 
-# Simulate example data
-df <- simulate_cascades(10)
+# Load example data policies
+df <- simulate_cascades(50)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
@@ -33,7 +35,10 @@ Then fit the model:
 
 ``` r
 result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
-pander::pandoc.table(result)
+```
+
+``` r
+print(result)
 ```
 
 <table style="width:64%;">
@@ -51,29 +56,29 @@ pander::pandoc.table(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">g</td>
-<td align="center">i</td>
-<td align="center">98.98</td>
+<td align="center">o</td>
+<td align="center">h</td>
+<td align="center">175.4</td>
 </tr>
 <tr class="even">
-<td align="center">g</td>
-<td align="center">d</td>
-<td align="center">93.67</td>
+<td align="center">i</td>
+<td align="center">m</td>
+<td align="center">169.4</td>
 </tr>
 <tr class="odd">
-<td align="center">g</td>
+<td align="center">e</td>
 <td align="center">a</td>
-<td align="center">83.94</td>
+<td align="center">168.1</td>
 </tr>
 <tr class="even">
 <td align="center">i</td>
-<td align="center">q</td>
-<td align="center">76.89</td>
+<td align="center">s</td>
+<td align="center">164.9</td>
 </tr>
 <tr class="odd">
-<td align="center">i</td>
-<td align="center">t</td>
-<td align="center">66.28</td>
+<td align="center">c</td>
+<td align="center">e</td>
+<td align="center">163</td>
 </tr>
 </tbody>
 </table>
@@ -91,60 +96,100 @@ The data for (Desmarais, Harden, and Boehmke 2015) is available in the package. 
 
 ``` r
 library(NetworkInference)
-set.seed(9588)
-policies <- simulate_cascades(100)
-state_names <- unique(policies$node_name)
+# Load the `policies` dataset (?policies for details).
+data(policies)
+state_names <- rownames(policies)
 ```
 
-In this case the data is in the shape of a dataframe. Each row corresponds to an event, i.e. the adoption of a policy (`colname_policy`) by a state (`colname_state`) at a certain time (`colname_time`):
+In this case the data is stored in a matrix. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper right corner of this matrix:
 
 ``` r
-head(policies)
+policies[1:7, 1:7]
 ```
 
-<table style="width:53%;">
+<table>
 <colgroup>
-<col width="16%" />
-<col width="18%" />
-<col width="18%" />
+<col width="11%" />
+<col width="14%" />
+<col width="15%" />
+<col width="9%" />
+<col width="9%" />
+<col width="15%" />
+<col width="11%" />
+<col width="11%" />
 </colgroup>
 <thead>
 <tr class="header">
-<th align="center">node_name</th>
-<th align="center">event_time</th>
-<th align="center">cascade_id</th>
+<th align="center"> </th>
+<th align="center">equalpay</th>
+<th align="center">conacchwy</th>
+<th align="center">soil</th>
+<th align="center">fish</th>
+<th align="center">consgsoil</th>
+<th align="center">airpol</th>
+<th align="center">forest</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">n</td>
-<td align="center">28.33</td>
-<td align="center">ln</td>
+<td align="center"><strong>CT</strong></td>
+<td align="center">1949</td>
+<td align="center">1939</td>
+<td align="center">1945</td>
+<td align="center">1867</td>
+<td align="center">NA</td>
+<td align="center">1959</td>
+<td align="center">1901</td>
 </tr>
 <tr class="even">
-<td align="center">b</td>
-<td align="center">27.62</td>
-<td align="center">ln</td>
+<td align="center"><strong>ME</strong></td>
+<td align="center">1949</td>
+<td align="center">1939</td>
+<td align="center">1941</td>
+<td align="center">1878</td>
+<td align="center">NA</td>
+<td align="center">1954</td>
+<td align="center">1891</td>
 </tr>
 <tr class="odd">
-<td align="center">f</td>
-<td align="center">23.72</td>
-<td align="center">ln</td>
+<td align="center"><strong>MA</strong></td>
+<td align="center">1945</td>
+<td align="center">1943</td>
+<td align="center">1945</td>
+<td align="center">1865</td>
+<td align="center">NA</td>
+<td align="center">1954</td>
+<td align="center">1904</td>
 </tr>
 <tr class="even">
-<td align="center">k</td>
-<td align="center">23.18</td>
-<td align="center">ln</td>
+<td align="center"><strong>NH</strong></td>
+<td align="center">1947</td>
+<td align="center">1943</td>
+<td align="center">1945</td>
+<td align="center">1864</td>
+<td align="center">NA</td>
+<td align="center">1955</td>
+<td align="center">1893</td>
 </tr>
 <tr class="odd">
-<td align="center">o</td>
-<td align="center">22.67</td>
-<td align="center">ln</td>
+<td align="center"><strong>RI</strong></td>
+<td align="center">1946</td>
+<td align="center">1937</td>
+<td align="center">1943</td>
+<td align="center">1879</td>
+<td align="center">NA</td>
+<td align="center">1956</td>
+<td align="center">1909</td>
 </tr>
 <tr class="even">
-<td align="center">g</td>
-<td align="center">17.22</td>
-<td align="center">ln</td>
+<td align="center"><strong>VT</strong></td>
+<td align="center">NA</td>
+<td align="center">1955</td>
+<td align="center">1939</td>
+<td align="center">1867</td>
+<td align="center">NA</td>
+<td align="center">1959</td>
+<td align="center">1904</td>
 </tr>
 </tbody>
 </table>
@@ -169,11 +214,14 @@ names(policy_cascades)
 policy_cascades$cascade_nodes[1:2]
 ```
 
-    ## $ag
-    ##  [1] "l" "b" "s" "k" "d" "c" "h" "i" "r" "e" "a" "j" "m"
+    ## $equalpay
+    ##  [1] "MI" "MT" "WA" "NY" "IL" "MA" "RI" "NH" "PA" "CT" "ME" "CA" "NJ" "AR"
+    ## [15] "CO" "OR" "OH" "WY" "AZ" "MO" "ND" "OK" "WV" "SD" "GA" "KY" "MD"
     ## 
-    ## $ap
-    ##  [1] "r" "l" "p" "d" "t" "o" "q" "e" "m" "h" "f" "b" "a"
+    ## $conacchwy
+    ##  [1] "RI" "NY" "CT" "ME" "AZ" "CA" "MI" "OH" "SD" "MD" "CO" "VA" "LA" "MA"
+    ## [15] "NH" "IL" "FL" "GA" "TX" "WV" "DE" "NJ" "PA" "IN" "OK" "NM" "UT" "KY"
+    ## [29] "WI" "WY" "ID" "WA" "KS" "AR" "VT" "MT" "AL" "MS" "SC" "NC" "NV" "MN"
 
 `cascade_times` is a list of vectors containing the event times again in the same order as the elements of `cascade_nodes`.
 
@@ -181,13 +229,14 @@ policy_cascades$cascade_nodes[1:2]
 policy_cascades$cascade_times[1:2]
 ```
 
-    ## $ag
-    ##  [1]  1.419406  2.085201  2.950420  4.178073  7.039512  8.415287  8.776330
-    ##  [8] 10.440150 10.590096 15.491325 16.276705 18.016922 29.417519
+    ## $equalpay
+    ##  [1] 1919 1919 1943 1944 1944 1945 1946 1947 1948 1949 1949 1949 1952 1955
+    ## [15] 1955 1955 1959 1959 1962 1963 1965 1965 1965 1966 1966 1966 1966
     ## 
-    ## $ap
-    ##  [1]  1.480406  6.163129  7.318833  7.451092  7.540415 10.434559 10.867154
-    ##  [8] 12.307876 15.610419 19.207475 19.331478 22.505125 29.307230
+    ## $conacchwy
+    ##  [1] 1937 1937 1939 1939 1939 1939 1941 1941 1941 1941 1941 1942 1942 1943
+    ## [15] 1943 1943 1943 1943 1943 1943 1945 1945 1945 1945 1945 1945 1945 1946
+    ## [29] 1949 1949 1951 1951 1953 1953 1955 1955 1956 1956 1956 1957 1957 1959
 
 Finally `node_names` contains the unique names of nodes (in our case states) in the system.
 
@@ -195,7 +244,7 @@ Finally `node_names` contains the unique names of nodes (in our case states) in 
 node_names[1:10]
 ```
 
-    ##  [1] "a" "j" "f" "t" "s" "i" "n" "r" "m" "p"
+    ##  [1] "k" "p" "n" "i" "e" "g" "f" "j" "m" "l"
 
 ### Plotting Cascades
 
@@ -206,21 +255,21 @@ The `plot()` method allows to plot cascades with varying degrees of detail. The 
 Let's first look at the visualization with labels. Here we plot four cascades, selected by their name:
 
 ``` r
-cascade_ids <- unique(policies$cascade_id)
-selection <- cascade_ids[1:4]
+cascade_ids <- colnames(policies)
+selection <- cascade_ids[c(16, 186)]
 plot(policy_cascades, label_nodes = TRUE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
 
 ``` r
-selection <- cascade_ids[1:30]
+selection <- cascade_ids[5:15]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 ### Inferring the Latent Diffusion Network
 
@@ -230,10 +279,10 @@ The `netinf` algorithm is implemented in the `netinf()` function. Besides the da
 
 `lambda` is the scale parameter for the respective distribution.
 
-`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See Gomez Rodriguez, Leskovec, and Krause (2010) and Desmarais, Harden, and Boehmke (2015) for guidance on choosing this parameter.
+`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See Gomez Rodriguez, Leskovec, and Krause (2010) and Desmarais, Harden, and Boehmke (2015) for guidance on choosing this parameter. The following code will take about a minute to run, so be patient:
 
 ``` r
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 200, 
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 1000, 
                   lambda = 1)
 ```
 
@@ -258,34 +307,34 @@ head(results)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">g</td>
-<td align="center">f</td>
-<td align="center">358.9</td>
+<td align="center">VA</td>
+<td align="center">TX</td>
+<td align="center">1067</td>
 </tr>
 <tr class="even">
-<td align="center">m</td>
-<td align="center">e</td>
-<td align="center">356.4</td>
+<td align="center">CA</td>
+<td align="center">NC</td>
+<td align="center">1043</td>
 </tr>
 <tr class="odd">
-<td align="center">t</td>
-<td align="center">g</td>
-<td align="center">355.2</td>
+<td align="center">CA</td>
+<td align="center">IL</td>
+<td align="center">1040</td>
 </tr>
 <tr class="even">
-<td align="center">e</td>
-<td align="center">s</td>
-<td align="center">343.7</td>
+<td align="center">OR</td>
+<td align="center">KY</td>
+<td align="center">1031</td>
 </tr>
 <tr class="odd">
-<td align="center">i</td>
-<td align="center">n</td>
-<td align="center">342.4</td>
+<td align="center">WA</td>
+<td align="center">CO</td>
+<td align="center">1022</td>
 </tr>
 <tr class="even">
-<td align="center">e</td>
-<td align="center">i</td>
-<td align="center">332.5</td>
+<td align="center">CA</td>
+<td align="center">MD</td>
+<td align="center">1011</td>
 </tr>
 </tbody>
 </table>
@@ -296,13 +345,13 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
-In the plot we can see a kink in the plot at about edge \#25. Let's re-run `netinf` to get the final network.
+In the plot we can see a kink in the plot at about edge \#100. Let's re-run `netinf` to get the final network.
 
 ``` r
 diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
-                            n_edges = 25, lambda = 1)
+                            n_edges = 100, lambda = 1)
 ```
 
 In order to produce a quick visualization of the resulting diffusion network we can use the plot method again, this time with `type = "network"`. Note that in order to use this functionality the igraph package has to be installed.
@@ -312,7 +361,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](readme_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 
@@ -321,8 +370,6 @@ library(igraph)
 g <- graph_from_data_frame(d = results[, 1:2])
 plot(g, edge.arrow.size=.3, vertex.color = "grey70")
 ```
-
-![](readme_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 References
 ----------

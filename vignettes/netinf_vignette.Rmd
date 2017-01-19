@@ -67,7 +67,6 @@ The data for [@desmarais2015persistent] is available in the package. Let's load
 it:
 
 ```{r, message=FALSE}
-devtools::load_all()
 library(NetworkInference)
 # Load the `policies` dataset (?policies for details).
 data(policies)
@@ -143,7 +142,7 @@ plot(policy_cascades, label_nodes = TRUE, selection = selection)
 
 We can also plot more cascades with less detail:
 ```{r, fig.align='center', fig.width=7, fig.height=4}
-selection <- cascade_ids[1:30]
+selection <- cascade_ids[5:15]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
 
