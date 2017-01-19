@@ -21,7 +21,9 @@ BugReports: https://github.com/flinder/NetworkInference/issues
 Suggests:
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    pander,
+    igraph 
 RoxygenNote: 5.0.1
 SystemRequirements: C++11
 LazyData: true
