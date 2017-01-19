@@ -11,5 +11,6 @@ test_that("netinf produces the edges as original netinf executable.", {
     rownames(t1) <- c(1:nrow(t1))
     t2 <- validation[order(validation[, 1], validation[, 2]), -c(3:6)]
     rownames(t2) <- c(1:nrow(t2))
+    class(t2) <- c("diffnet", "data.frame")
     expect_equal(t1, t2)
 })

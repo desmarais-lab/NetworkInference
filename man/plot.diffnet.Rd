@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{Object of class diffnet to be plotted.}
 
-\item{type}{character, one of \code{c("network", "improvement") indicating if 
+\item{type}{character, one of \code{c("network", "improvement")} indicating if 
 the inferred diffusion network (\code{"network"}) or the improvement for each
-edge should be visualized (\code{"improvement"})}.}
+edge should be visualized (\code{"improvement"}).}
 
 \item{...}{additional arguments.}
 }

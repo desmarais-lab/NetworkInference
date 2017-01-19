@@ -125,16 +125,14 @@ plot.cascade <- function(x, label_nodes = TRUE,
     return(p)
 }
 
-
-
 #' Plot a cascade object
 #' 
 #' @import ggplot2
 #' 
 #' @param x Object of class diffnet to be plotted.
-#' @param type character, one of \code{c("network", "improvement") indicating if 
+#' @param type character, one of \code{c("network", "improvement")} indicating if 
 #'     the inferred diffusion network (\code{"network"}) or the improvement for each
-#'     edge should be visualized (\code{"improvement"})}.
+#'     edge should be visualized (\code{"improvement"}).
 #' @param ... additional arguments.
 #' 
 #' @examples 
@@ -155,20 +153,19 @@ plot.diffnet <- function(x, type = "network", ...) {
     
     if(type == "network") {
         # Check if igraph is installed
-        if(!is.element("igraph", rownames(installed.packages()))) {
-            stop("In order to use this functionality the `igraph` package needs
-                 to be installed. Run `install.packages('igraph')` and retry.")
+        if(!is.element("igraph", rownames(utils::installed.packages()))) {
+            stop("In order to use this functionality the `igraph` package needs to be installed. Run `install.packages('igraph')` and retry.")
         }
         
         # Plot network
         g <- igraph::graph_from_data_frame(d = x[, 1:2])
-        plot(g, edge.arrow.size=.3, vertex.color = "grey70")
+        igraph::plot.igraph(g, edge.arrow.size=.3, vertex.color = "grey70")
     }
     else{
         ggplot(x) + 
-            geom_line(aes(x=c(1:nrow(x)), y = improvement), color = "grey80", 
-                      size = 0.5) +
-            geom_point(aes(x=c(1:nrow(x)), y = improvement)) + 
+            geom_line(aes_string(x=c(1:nrow(x)), y = "improvement"), 
+                      color = "grey80", size = 0.5) +
+            geom_point(aes_string(x=c(1:nrow(x)), y = "improvement")) + 
             xlab("Edge Number") + ylab("Improvement") +
             PLOT_THEME_()
     }

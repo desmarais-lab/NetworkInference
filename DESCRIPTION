@@ -23,7 +23,8 @@ Suggests:
     knitr,
     rmarkdown,
     pander,
-    igraph 
+    igraph,
+    utils
 RoxygenNote: 5.0.1
 SystemRequirements: C++11
 LazyData: true
