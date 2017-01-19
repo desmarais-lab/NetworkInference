@@ -17,10 +17,6 @@ with open(INFILE, 'r') as infile, open(OUTFILE, 'w') as outfile:
 process = subprocess.Popen(["/usr/bin/Rscript render_readme.R"], shell=True)
 process.wait()
 
-#if not os.path.exists("../readme_files"):
-#    os.makedirs("../readme_files")
-#    os.makedirs("../readme_files")
-#
 if os.path.isdir('../readme_files'):
     shutil.rmtree('../readme_files')
 
