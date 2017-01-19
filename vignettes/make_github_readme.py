@@ -21,6 +21,7 @@ process.wait()
 #    os.makedirs("../readme_files")
 #    os.makedirs("../readme_files")
 #
+shutil.rmtree('../readme_files')
 shutil.move('readme_files', '../readme_files')
 os.rename("readme.md", "../README.md")
 os.remove("readme.html")

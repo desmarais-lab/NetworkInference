@@ -11,7 +11,9 @@ The `NetworkInference` package provides an R implementation of the `netinf` algo
 Quick start guide
 -----------------
 
-TL;DR: To get started get your data into the `cascades` format required by the `netinf` function: ``` r
+TL;DR: To get started get your data into the `cascades` format required by the `netinf` function:
+
+``` r
 library(NetworkInference)
 
 # Simulate example data
@@ -49,29 +51,29 @@ pander::pandoc.table(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">t</td>
+<td align="center">g</td>
+<td align="center">i</td>
+<td align="center">98.98</td>
+</tr>
+<tr class="even">
+<td align="center">g</td>
 <td align="center">d</td>
-<td align="center">71.14</td>
-</tr>
-<tr class="even">
-<td align="center">s</td>
-<td align="center">e</td>
-<td align="center">69.48</td>
+<td align="center">93.67</td>
 </tr>
 <tr class="odd">
-<td align="center">c</td>
-<td align="center">l</td>
-<td align="center">67.17</td>
+<td align="center">g</td>
+<td align="center">a</td>
+<td align="center">83.94</td>
 </tr>
 <tr class="even">
-<td align="center">h</td>
-<td align="center">p</td>
-<td align="center">64.55</td>
+<td align="center">i</td>
+<td align="center">q</td>
+<td align="center">76.89</td>
 </tr>
 <tr class="odd">
-<td align="center">c</td>
-<td align="center">h</td>
-<td align="center">63.92</td>
+<td align="center">i</td>
+<td align="center">t</td>
+<td align="center">66.28</td>
 </tr>
 </tbody>
 </table>
@@ -193,7 +195,7 @@ Finally `node_names` contains the unique names of nodes (in our case states) in 
 node_names[1:10]
 ```
 
-    ##  [1] "l" "k" "i" "d" "m" "t" "r" "j" "a" "h"
+    ##  [1] "a" "j" "f" "t" "s" "i" "n" "r" "m" "p"
 
 ### Plotting Cascades
 
