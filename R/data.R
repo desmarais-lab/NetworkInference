@@ -1,3 +1,25 @@
+#' US States Policy Adaption
+#'
+#' Adoption dates (years) for 187 policies across 50 US states. Compiled by
+#' Desmarais et al. (2015).
+#' 
+#' @name policies
+#' 
+#' @usage data(policies)  
+#' @docType data
+#' 
+#' @format The data is in a matrix format. Rows correspond to states (see rownames) columns
+#'     to policies. Cell entries indicate the year a state adopted a policy. \code{NA} 
+#'     entries indicate states not having adopted a policy at all. 
+#'     
+#' @source \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/A1GIMB}
+#' 
+#' @references Desmarais, B. A., Harden, J. J., & Boehmke, F. J. (2015). 
+#'     Persistent Policy Pathways: Inferring Diffusion Networks in the American States. 
+#'     American Political Science Review, 109(02), 392-406.
+"policies"
+
+
 #' Example cascades
 #'
 #' An example dataset of 31 nodes and 54 cascades. From the original netinf 
