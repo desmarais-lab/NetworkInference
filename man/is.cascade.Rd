@@ -10,7 +10,7 @@ is.cascade(object)
 \item{object}{The object to be tested}
 }
 \value{
-\code{TRUE} if object is a cascade, \code{FALSE} otherwise
+\code{TRUE} if object is a cascade, \code{FALSE} otherwise.
 }
 \description{
 Is the object a cascade?
