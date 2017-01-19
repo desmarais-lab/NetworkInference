@@ -36,7 +36,7 @@ df_matrix <- as.matrix(cascades) ### Create example matrix
 cascades <- as.cascade(df_matrix, node_names = node_names)
 ```
 
-Fit the model:
+Then fit the model:
 
 ```{r, results = "asis"}
 result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)

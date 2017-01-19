@@ -34,3 +34,5 @@ devel_notes.md
 # Generated test data
 data/test_out.txt
 inst/doc
+
+README_old.md
