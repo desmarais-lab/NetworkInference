@@ -1,0 +1,200 @@
+---
+title: "NetworkInference"
+author: "Fridolin Linder"
+date: "`r Sys.Date()`"
+output: rmarkdown::github_document
+vignette: >
+    %\VignetteIndexEntry{Vignette Title}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+---
+
+## Introduction
+
+The `NetworkInference` package provides an R implementation of the `netinf` 
+algorithm [@gomez2010inferring].
+
+## Quick start guide
+
+TL;DR: To get started get your data into the `cascades` format required by the `netinf` 
+function:
+
+```{r, results='hide', message=FALSE}
+library(NetworkInference)
+
+# Simulate example data
+df <- simulate_cascades(10)
+node_names <- unique(df$node_name)
+
+# Cast data into `cascades` object
+## From dataframe
+cascades <- as.cascade(df, node_names = node_names)
+
+## From matrix
+df_matrix <- as.matrix(cascades) ### Create example matrix
+cascades <- as.cascade(df_matrix, node_names = node_names)
+```
+
+Then fit the model:
+
+```{r, results = "asis"}
+result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
+pander::pandoc.table(result)
+```
+
+## Tutorial
+
+This is a quick tutorial to get started with the package. For more detailed 
+information on the algorithm and functionality of the package see below in this 
+document and the official package documentation.
+
+`netinf` infers the optimal diffusion network from a set of **nodes** 
+and a number of so called **cascades**. A cascade is a series of events occurring at 
+a specified time. For this demo we will replicate the analysis presented in 
+[@desmarais2015persistent]. In this paper Desmarais et al. infer a latent network
+for policy diffusion based on adoption of 187 policies in the US states. In this
+case a node in the network is a state, a cascade refers to a specific policy and
+an event is the adoption of said policy in a state.  
+
+### Preparing the Data
+
+The data for [@desmarais2015persistent] is available in the package. Let's load
+it:
+
+```{r, message=FALSE}
+library(NetworkInference)
+set.seed(9588)
+policies <- simulate_cascades(100)
+state_names <- unique(policies$node_name)
+```
+
+In this case the data is in the shape of a dataframe. Each row corresponds to an
+event, i.e. the adoption of a policy (`colname_policy`) by a state (`colname_state`) 
+at a certain time (`colname_time`):
+
+```{r, eval=FALSE}
+head(policies)
+```
+
+```{r, results = "asis", echo=FALSE}
+pander::pandoc.table(head(policies))
+```
+
+Most functionality of the `NetworkInference` package is based on the `cascades` 
+data format. So before starting with the analysis we have to transform our dataframe
+to such an object (other formats for the input data, such as matrices, are supported,
+too. See the section on data manipulation below for more details). 
+
+```{r}
+policy_cascades <- as.cascade(policies, node_names = state_names)
+```
+
+The `cascades` data type is basically a list containing all the data stored in 
+three separate objects:
+
+```{r}
+names(policy_cascades)
+```
+
+`cascade_nodes` contains one vector per cascade containing the node ids (state names) in the 
+order of the event occurring for the node. Each vector is named by the cascade id
+(policy names):
+
+```{r}
+policy_cascades$cascade_nodes[1:2]
+```
+
+`cascade_times` is a list of vectors containing the event times again in the same
+order as the elements of `cascade_nodes`.
+```{r}
+policy_cascades$cascade_times[1:2]
+```
+
+Finally `node_names` contains the unique names of nodes (in our case states) in the 
+system.
+```{r}
+node_names[1:10]
+```
+
+### Plotting Cascades
+
+It's always good practice to visually inspect the data before working with it. 
+The `NetworkInference` package provides functionality to visualize the cascade 
+data. 
+
+The `plot()` method allows to plot cascades with varying degrees of detail. The 
+argument `label_nodes` (`TRUE/FALSE`) provides node labels which require more space
+but provide more detail. The argument `selection` allows to pick a subset of 
+cascades to visualize in case there are too many to plot. If `label_nodes` is set 
+to `FALSE` each event is depicted by a dot, which allows to visualize more cascades
+simultaneously. 
+
+Let's first look at the visualization with labels. Here we plot four cascades, 
+selected by their name:
+```{r, fig.align='center', fig.width=6, fig.height=4}
+cascade_ids <- unique(policies$cascade_id)
+selection <- cascade_ids[1:4]
+plot(policy_cascades, label_nodes = TRUE, selection = selection)
+```
+
+We can also plot more cascades with less detail:
+```{r, fig.align='center', fig.width=6, fig.height=4}
+selection <- cascade_ids[1:30]
+plot(policy_cascades, label_nodes = FALSE, selection = selection)
+```
+
+
+### Inferring the Latent Diffusion Network
+
+The `netinf` algorithm is implemented in the `netinf()` function. Besides the data, the function takes three parameters. 
+
+`trans_mod` specifies the transition model, or the parametric model according to which the times between diffusion events are distributed. Currently two distributions are available, the exponential and the Rayleigh distribution. For this example we choose the exponential density. 
+
+`lambda` is the scale parameter for the respective distribution. 
+
+`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of  edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter. 
+
+```{r}
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 200, 
+                  lambda = 1)
+```
+
+Let's take a look at the output of the algorithm. The output is a dataframe containing the inferred latent network in the form of an edgelist:
+
+```{r, eval=FALSE, echo=TRUE}
+head(results)
+```
+```{r, results = "asis", echo=FALSE}
+pander::pandoc.table(head(results))
+```
+
+Each row corresponds to a directed edge. The first column indicates the origin node, the second the destination node. The third column displays the gain in model fit from each added edge. Note that the best fitting network would be a fully connected graph, i.e. a diffusion edge between all nodes. However, since we want to infer a sparse network, a model that captures the important diffusion pathways we need to regularize by constraining the number of edges in the network. In order to find a good cutoff, it is good to visualize the gain to check if we can find a sudden drop-off. There is a generic plot method to inspect the results. If more tweaking is required, the results are a dataframe so it should be easy for the more experienced users to make your own plot. With `type = "improvement"` the improvement from each can be plotted.
+
+```{r, fig.align='center', fig.width=6, fig.height=4}
+plot(results, type = "improvement")
+```
+
+In the plot we can see a kink in the plot at about edge #25. Let's re-run `netinf` to get the final network.
+
+```{r}
+diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
+                            n_edges = 25, lambda = 1)
+```
+
+In order to produce a quick visualization of the resulting diffusion network we can use the plot method again, this time with `type = "network"`. Note that in order to use this functionality the igraph package has to be installed.
+
+```{r}
+#install.packages('igraph')
+plot(diffusion_network, type = "network")
+```
+
+If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
+
+```{r}
+library(igraph)
+g <- graph_from_data_frame(d = results[, 1:2])
+plot(g, edge.arrow.size=.3, vertex.color = "grey70")
+```
+
+## References
