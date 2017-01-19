@@ -4,7 +4,7 @@
 #' 
 #' @param object The object to be tested
 #' 
-#' @return \code{TRUE} if object is a cascade, \code{FALSE} otherwise
+#' @return \code{TRUE} if object is a cascade, \code{FALSE} otherwise.
 #' 
 #' @examples
 #' 
