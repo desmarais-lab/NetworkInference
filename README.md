@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">k</td>
+<td align="center">a</td>
 <td align="center">q</td>
-<td align="center">187.8</td>
+<td align="center">206.3</td>
 </tr>
 <tr class="even">
-<td align="center">k</td>
-<td align="center">c</td>
-<td align="center">184.7</td>
+<td align="center">i</td>
+<td align="center">a</td>
+<td align="center">193.2</td>
 </tr>
 <tr class="odd">
-<td align="center">k</td>
-<td align="center">d</td>
-<td align="center">178.7</td>
-</tr>
-<tr class="even">
-<td align="center">p</td>
-<td align="center">h</td>
-<td align="center">178.4</td>
-</tr>
-<tr class="odd">
-<td align="center">k</td>
 <td align="center">t</td>
-<td align="center">176.7</td>
+<td align="center">r</td>
+<td align="center">187.5</td>
+</tr>
+<tr class="even">
+<td align="center">j</td>
+<td align="center">c</td>
+<td align="center">182.8</td>
+</tr>
+<tr class="odd">
+<td align="center">e</td>
+<td align="center">p</td>
+<td align="center">175.6</td>
 </tr>
 </tbody>
 </table>
@@ -241,10 +241,10 @@ policy_cascades$cascade_times[1:2]
 Finally `node_names` contains the unique names of nodes (in our case states) in the system.
 
 ``` r
-node_names[1:10]
+policy_cascades$node_names[1:10]
 ```
 
-    ##  [1] "a" "i" "p" "c" "f" "t" "l" "q" "s" "n"
+    ##  [1] "CT" "ME" "MA" "NH" "RI" "VT" "DE" "NJ" "NY" "PA"
 
 ### Plotting Cascades
 

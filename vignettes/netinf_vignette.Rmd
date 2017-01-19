@@ -116,7 +116,7 @@ policy_cascades$cascade_times[1:2]
 Finally `node_names` contains the unique names of nodes (in our case states) in the 
 system.
 ```{r}
-node_names[1:10]
+policy_cascades$node_names[1:10]
 ```
 
 ### Plotting Cascades
