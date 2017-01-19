@@ -1,0 +1,73 @@
+---
+title: "NetworkInference"
+author: "Fridolin Linder"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+---
+
+## Introduction
+
+The `NetworkInference` package provides an R implementation of the `netinf` 
+algorithm [@gomez2010inferring].
+
+## Quick start guide
+
+TL;DR:
+
+To get started get your data into the `cascades` format required by the `netinf` 
+function:
+
+```{r}
+library(NetworkInference)
+# Simulate example data
+df <- simulate_cascades(10)
+node_names <- unique(df$node_name)
+
+# From dataframe
+cascades <- as.cascade(df, node_names = node_names)
+
+# From matrix
+## Create example matrix
+df_matrix <- as.matrix(cascades)
+cascades <- as.cascade(df_matrix, node_names = node_names)
+```
+
+Fit the model:
+
+```{r, results = "asis"}
+result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
+pander::pandoc.table(result)
+```
+
+## Tutorial
+
+This is a quick tutorial to get started with the package. For more detailed 
+information on the algorithm and functionality of the package see below in this 
+document and the official package documentation.
+
+`netinf` infers the optimal diffusion network from a set of **nodes** 
+and a number of so called **cascades**. A cascade is a series of events occuring at 
+a specified time. For this demo we will replicate the analysis presented in 
+[@desmarais2015persistent]. In this paper Desmarais et al. infer a latent network
+for policy diffusion based on adoption of 187 policies in the US states. In this
+case a node in the network is a state, a cascade refers to a specific policy and
+an event is the adoption of said policy in a state.  
+
+### Preparing the Data
+
+The data for [@desmarais2015persistent] is available in the package. Let's load
+it:
+
+```{r}
+library(NetworkInference)
+policies <- simulate_cascades(10)
+```
+
+In this case the data is in the shape of a dataframe
+
+## References
