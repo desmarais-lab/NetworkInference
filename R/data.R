@@ -1,6 +1,3 @@
-# TODO: 
-# - what is volume in edge_info output? 
-
 #' Example cascades
 #'
 #' An example dataset of 31 nodes and 54 cascades. From the original netinf 
