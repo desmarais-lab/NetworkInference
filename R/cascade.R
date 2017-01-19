@@ -362,9 +362,10 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
     tids <- sapply(cascade_nodes, function(x) assert_that(is.element(class(x), 
                                                           c("numeric", "character",
                                                             "factor", "integer"))))
-    ttimes <- sapply(cascade_times, qtest, rules = 'R+[0,)')
+    ttimes <- sapply(cascade_times, function(x) assert_that(is.element(class(x), 
+                                                          c("numeric", "integer"))))
     if(!all(tids)) {
-      stop("At least one element of cascade_ids is not of class numeric,
+      stop("At least one element of cascade_nodes is not of class numeric,
            integer, character or factor or contains missing values.", 
            call. = FALSE) 
     }
