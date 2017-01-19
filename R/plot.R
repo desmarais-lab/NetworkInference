@@ -165,7 +165,8 @@ plot.diffnet <- function(x, type = "network", ...) {
         ggplot(x) + 
             geom_line(aes_string(x=c(1:nrow(x)), y = "improvement"), 
                       color = "grey80", size = 0.5) +
-            geom_point(aes_string(x=c(1:nrow(x)), y = "improvement")) + 
+            geom_point(aes_string(x=c(1:nrow(x)), y = "improvement"), 
+                       size = 0.5) + 
             xlab("Edge Number") + ylab("Improvement") +
             PLOT_THEME_()
     }
