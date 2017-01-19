@@ -26,9 +26,6 @@ PLOT_THEME_ <- function(mode = NULL) {
 #'     labeled. If the cascades are very dense setting this to \code{FALSE} is
 #'     recommended.
 #' @param selection A vector of cascade ids to plot.
-#' @param plot_elements Addtional ggplot plotting elements to be appended to the
-#'     plot (e.g. axis labels etc.).
-#' @param density_ draw density lines for each cascade.
 #' @param ... additional arguments passed to plot
 #' 
 #' @examples 
@@ -39,9 +36,7 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' 
 #' @return A ggplot plot object
 #' @export
-plot.cascade <- function(x, label_nodes = TRUE, 
-                         selection = NULL, plot_elements = NULL, 
-                         density_ = FALSE, ...) {
+plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
     
     # Check inputs
     assert_that(inherits(x, "cascade"))
@@ -67,6 +62,8 @@ plot.cascade <- function(x, label_nodes = TRUE,
         pdat <- pdat[sel, ]
     }
     
+    pdat$cascade_id <- as.factor(pdat$cascade_id)
+    
     if(length(unique(pdat$cascade_id)) > 20 & label_nodes) {
         msg <- paste("Plotting more than 20 cascades with labels is not",
                      "recommended. Set label_nodes to FALSE or choose a subset",
@@ -77,51 +74,29 @@ plot.cascade <- function(x, label_nodes = TRUE,
     # Plot
     palette <-  PLOT_THEME_(mode = "color")
     
-    ## Base 
-    p <- ggplot() + 
-        geom_line(aes_string(x = "event_time", y = "cascade_id"), 
-                  color = "grey", linetype = 2, data = pdat)    
-        
-    ## Hazard lines
-    if(density_) {
-        n <- 512
-        min_time <- min(pdat$event_time)
-        max_time <- max(pdat$event_time)
-        selected_cascades <- as.cascade(pdat, node_names = unique(pdat$node_name))
-        densities <- lapply(selected_cascades$cascade_times, density, n = n)
-        xs <- do.call(c, lapply(densities, function(x) x$x))
-        ys <- do.call(c, lapply(densities, function(x) x$y))
-        offset <- rep(c(1:length(unique(pdat$cascade_id))), each = n)
-        # [TODO]: This is still a hack
-        scaling_factor <- 5
-        hdat <- data.frame("x" = xs, "y" = ys * scaling_factor + offset, 
-                           id_ = rep(unique(pdat$cascade_id), each = n))
-        # Remove 'extrapolation'
-        hdat <- hdat[!(hdat$x < min_time | hdat$x > max_time), ]
-
-        p <- p + geom_line(data = hdat, aes_string(x = "x", y = "y", 
-                                                   group = "id_"), 
-                           color = palette[3], size = 0.45, alpha = 0.6)
-    }
-   
     ## Labeled Plot
     if(label_nodes) {
-        p <- p + 
+        p <- ggplot() +
+            geom_line(aes_string(x = "event_time", y = "cascade_id"), 
+                      color = "grey", linetype = 2, data = pdat) +
             geom_label_repel(aes_string(label = "node_name", color = "node_name", 
                                         x = "event_time", y = "cascade_id"), 
                              size = 2.5, data = pdat) +
             scale_color_discrete(guide = FALSE)
     ## Unlabeled plot
     } else {
-        p <- p + 
-            geom_point(aes_string(x = "event_time", y = "cascade_id"), size = 1,
-                       data = pdat) 
+        p <- ggplot() +
+            geom_violin(aes_string(x = "cascade_id", y = "event_time"), 
+                        data = pdat) + 
+            geom_point(aes_string(x = "cascade_id", y = "event_time"), size = 1,
+                       data = pdat, alpha = 0.7) +
+            coord_flip()
     }
 
     ## Layout
     p <- p + 
         ylab("Cascade ID") + xlab("Time") +
-        PLOT_THEME_() + plot_elements
+        PLOT_THEME_()
     return(p)
 }
 

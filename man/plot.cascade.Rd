@@ -4,8 +4,7 @@
 \alias{plot.cascade}
 \title{Plot a cascade object}
 \usage{
-\method{plot}{cascade}(x, label_nodes = TRUE, selection = NULL,
-  plot_elements = NULL, density_ = FALSE, ...)
+\method{plot}{cascade}(x, label_nodes = TRUE, selection = NULL, ...)
 }
 \arguments{
 \item{x}{Object of class cascade to be plottet}
@@ -15,11 +14,6 @@ labeled. If the cascades are very dense setting this to \code{FALSE} is
 recommended.}
 
 \item{selection}{A vector of cascade ids to plot.}
-
-\item{plot_elements}{Addtional ggplot plotting elements to be appended to the
-plot (e.g. axis labels etc.).}
-
-\item{density_}{draw density lines for each cascade.}
 
 \item{...}{additional arguments passed to plot}
 }
