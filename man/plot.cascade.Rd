@@ -4,13 +4,11 @@
 \alias{plot.cascade}
 \title{Plot a cascade object}
 \usage{
-\method{plot}{cascade}(x, y = NULL, label_nodes = TRUE, selection = NULL,
+\method{plot}{cascade}(x, label_nodes = TRUE, selection = NULL,
   plot_elements = NULL, density_ = FALSE, ...)
 }
 \arguments{
 \item{x}{Object of class cascade to be plottet}
-
-\item{y}{Generic method placeholder. Leave \code{NULL}}
 
 \item{label_nodes}{Logical, indicating if should the nodes in each cascade be 
 labeled. If the cascades are very dense setting this to \code{FALSE} is

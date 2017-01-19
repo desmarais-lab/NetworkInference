@@ -22,7 +22,6 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' @importFrom stats density
 #' 
 #' @param x Object of class cascade to be plottet
-#' @param y Generic method placeholder. Leave \code{NULL}
 #' @param label_nodes Logical, indicating if should the nodes in each cascade be 
 #'     labeled. If the cascades are very dense setting this to \code{FALSE} is
 #'     recommended.
@@ -40,7 +39,7 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' 
 #' @return A ggplot plot object
 #' @export
-plot.cascade <- function(x, y = NULL, label_nodes = TRUE, 
+plot.cascade <- function(x, label_nodes = TRUE, 
                          selection = NULL, plot_elements = NULL, 
                          density_ = FALSE, ...) {
     
@@ -125,3 +124,32 @@ plot.cascade <- function(x, y = NULL, label_nodes = TRUE,
         PLOT_THEME_() + plot_elements
     return(p)
 }
+
+
+
+#' Plot a cascade object
+#' 
+#' @import ggplot2
+#' @import ggrepel
+#' @importFrom stats density
+#' 
+#' @param x Object of class cascade to be plottet
+#' @param label_nodes Logical, indicating if should the nodes in each cascade be 
+#'     labeled. If the cascades are very dense setting this to \code{FALSE} is
+#'     recommended.
+#' @param selection A vector of cascade ids to plot.
+#' @param plot_elements Addtional ggplot plotting elements to be appended to the
+#'     plot (e.g. axis labels etc.).
+#' @param density_ draw density lines for each cascade.
+#' @param ... additional arguments passed to plot
+#' 
+#' @examples 
+#' 
+#' data(cascades)
+#' plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
+#' plot(cascades, label_nodes = FALSE)
+#' 
+#' @return A ggplot plot object
+#' @export
+plot.netinf_result <- function(x, label_nodes = TRUE, 
+ 
