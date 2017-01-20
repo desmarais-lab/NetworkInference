@@ -288,7 +288,7 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
          
         if(replacement_score > current_score) {
             improvement += replacement_score - current_score; 
-            replacements.push_back(c);
+            replacements.push_back(this_cascade);
             new_scores.push_back(replacement_score);
         }
  
@@ -331,7 +331,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     Rcpp::NumericVector scores(n_edges);
     
     int n_p_edges = possible_edges.size();
-    Rcpp::Rcout << "Number of potential edges: " << n_p_edges << "\n";
     
     if(n_edges > n_p_edges) {
         std::string msg = "Argument `n_edges` exceeds the maximal number of possible edges (which is " +
@@ -339,6 +338,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         throw std::invalid_argument(msg);
     }
     
+    double last_max_improvement = INFINITY;
     for(int e = 0; e < n_edges; e++) {
          
         double max_improvement = 0;
@@ -353,9 +353,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             i++;
         }
         
-        Rcpp::Rcout << "====================================================\n";
-        Rcpp::Rcout << "Next Edge\n";
-        Rcpp::Rcout << "====================================================\n";
         for (int i = 0; i < possible_edges.size(); i++) {
             
             // Get integer ids of edge nodes for current edge 
@@ -379,8 +376,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             // if there is at least one improvement, keep track of edge
             
             double improvement = Rcpp::as<double>(e_replacements[0]);
-            Rcpp::Rcout << "Edge " << this_id << ": " << improvement << "\n";
-            if(improvement > max_improvement) { 
+            if(improvement >= max_improvement) { 
                 // store improvement
                 max_improvement = improvement;
                 // store all replacement information
@@ -388,7 +384,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store best edge id
                 best_edge = this_id;
             }
+
         }
+        last_max_improvement = max_improvement;
         // Store the best results
         Rcpp::IntegerVector pair = possible_edges[best_edge][0];
         edges[e] = pair;
