@@ -19,6 +19,13 @@
 #'     American Political Science Review, 109(02), 392-406.
 "policies"
 
+#load('mkdata-network02.RData')
+#
+#rownames(x) <- x[, 4]
+#policies <- x[, -c(1:4)]
+#policies <- as.matrix(policies)
+#save(policies, file = 'data/policies.RData')
+
 
 #' Example cascades
 #'
