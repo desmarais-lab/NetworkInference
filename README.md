@@ -1,7 +1,7 @@
 NetworkInference
 ================
 Fridolin Linder
-2017-01-19
+2017-01-20
 
 ![](https://travis-ci.org/flinder/NetworkInference.svg)
 
@@ -18,7 +18,7 @@ TL;DR: To get started get your data into the `cascades` format required by the `
 ``` r
 library(NetworkInference)
 
-# Load example data policies
+# Simulate random cascade data
 df <- simulate_cascades(50)
 node_names <- unique(df$node_name)
 
@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">a</td>
-<td align="center">q</td>
-<td align="center">206.3</td>
-</tr>
-<tr class="even">
-<td align="center">i</td>
-<td align="center">a</td>
-<td align="center">193.2</td>
-</tr>
-<tr class="odd">
-<td align="center">t</td>
 <td align="center">r</td>
-<td align="center">187.5</td>
+<td align="center">l</td>
+<td align="center">197.2</td>
 </tr>
 <tr class="even">
-<td align="center">j</td>
-<td align="center">c</td>
-<td align="center">182.8</td>
+<td align="center">k</td>
+<td align="center">o</td>
+<td align="center">192.3</td>
 </tr>
 <tr class="odd">
-<td align="center">e</td>
-<td align="center">p</td>
-<td align="center">175.6</td>
+<td align="center">k</td>
+<td align="center">a</td>
+<td align="center">185.4</td>
+</tr>
+<tr class="even">
+<td align="center">t</td>
+<td align="center">k</td>
+<td align="center">183.4</td>
+</tr>
+<tr class="odd">
+<td align="center">r</td>
+<td align="center">s</td>
+<td align="center">176.5</td>
 </tr>
 </tbody>
 </table>
@@ -88,11 +88,11 @@ Tutorial
 
 This is a quick tutorial to get started with the package. For more detailed information on the algorithm and functionality of the package see below in this document and the official package documentation.
 
-`netinf` infers the optimal diffusion network from a set of **nodes** and a number of so called **cascades**. A cascade is a series of events occurring at a specified time. For this demo we will replicate the analysis presented in (Desmarais, Harden, and Boehmke 2015). In this paper Desmarais et al. infer a latent network for policy diffusion based on adoption of 187 policies in the US states. In this case a node in the network is a state, a cascade refers to a specific policy and an event is the adoption of said policy in a state.
+`netinf` infers the optimal diffusion network from a set of *nodes* and a number of so called *cascades*. A cascade is a series of events occurring at a specified time. For this demo we will replicate the analysis presented in Desmarais, Harden, and Boehmke (2015). In this paper Desmarais et al. infer a latent network for policy diffusion based on adoption of 187 policies in the US states. In this case a node in the network is a state, a cascade refers to a specific policy and an event is the adoption of said policy in a state.
 
 ### Preparing the Data
 
-The data for (Desmarais, Harden, and Boehmke 2015) is available in the package. Let's load it:
+The data for Desmarais, Harden, and Boehmke (2015) is available in the package:
 
 ``` r
 library(NetworkInference)
@@ -101,7 +101,7 @@ data(policies)
 state_names <- rownames(policies)
 ```
 
-In this case the data is stored in a matrix. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper right corner of this matrix:
+In this case the data is stored in a matrix. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper left corner of this matrix:
 
 ``` r
 policies[1:7, 1:7]
@@ -271,6 +271,8 @@ plot(policy_cascades, label_nodes = FALSE, selection = selection)
 
 <img src="readme_files/figure-markdown_github/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
+This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
+
 ### Inferring the Latent Diffusion Network
 
 The `netinf` algorithm is implemented in the `netinf()` function. Besides the data, the function takes three parameters.
@@ -339,7 +341,7 @@ head(results)
 </tbody>
 </table>
 
-Each row corresponds to a directed edge. The first column indicates the origin node, the second the destination node. The third column displays the gain in model fit from each added edge. Note that the best fitting network would be a fully connected graph, i.e. a diffusion edge between all nodes. However, since we want to infer a sparse network, a model that captures the important diffusion pathways we need to regularize by constraining the number of edges in the network. In order to find a good cutoff, it is good to visualize the gain to check if we can find a sudden drop-off. There is a generic plot method to inspect the results. If more tweaking is required, the results are a dataframe so it should be easy for the more experienced users to make your own plot. With `type = "improvement"` the improvement from each can be plotted.
+Each row corresponds to a directed edge. The first column indicates the origin node, the second the destination node. The third column displays the gain in model fit from each added edge. Note that the best fitting network would be a fully connected graph, i.e. a diffusion edge between all nodes. However, since we want to infer a sparse network, a model that captures the important diffusion pathways we need to regularize by constraining the number of edges in the network. In order to find a good cutoff, it is good to visualize the gain to check if we can find a sudden drop-off. There is a generic plot method to inspect the results. If more tweaking is required, the results are a dataframe so it should be easy for the more experienced users to make your own plot. With `type = "improvement"` the improvement from each edge can be plotted.
 
 ``` r
 plot(results, type = "improvement")
