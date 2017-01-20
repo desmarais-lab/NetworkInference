@@ -23,8 +23,7 @@ double edge_weight_(double &event_time_i, double &event_time_j, double &lambda,
         y = drayleigh_(x, lambda);
         out = 0; 
     } else {
-        Rcpp::Rcout << "Not implemented. Use exponential model\n";
-        out = 0;
+        throw std::invalid_argument("Not implemented. Use exponential or rayleigh model\n");
     }
     if (tied) {
         out = log(beta * y);
