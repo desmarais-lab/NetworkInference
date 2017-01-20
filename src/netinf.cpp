@@ -283,6 +283,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     Rcpp::List edges(n_edges); 
     Rcpp::NumericVector scores(n_edges);
     
+    int n_p_edges = possible_edges.size();
+    Rcpp::Rcout << "Number of potential edges: " << n_p_edges << "\n";
+    
+    if(n_edges > n_p_edges) {
+        std::string msg = "Argument `n_edges` exceeds the maximal number of possible edges (which is " +
+            std::to_string(n_p_edges) + ").\n";
+        throw std::invalid_argument(msg);
+    }
+    
     for(int e = 0; e < n_edges; e++) {
          
         double max_improvement = 0;
@@ -296,7 +305,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             keys[i] = x.first;
             i++;
         }
-        
+        Rcpp::Rcout << "====================================================\n";
+        Rcpp::Rcout << "Next Edge\n";
+        Rcpp::Rcout << "====================================================\n";
         for (int i = 0; i < possible_edges.size(); i++) {
             
             // Get integer ids of edge nodes for current edge 
@@ -320,6 +331,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             // if there is at least one improvement, keep track of edge
             
             double improvement = Rcpp::as<double>(e_replacements[0]);
+            Rcpp::Rcout << "Edge " << this_id << ": " << improvement << "\n";
             if(improvement > max_improvement) { 
                 // store improvement
                 max_improvement = improvement;
