@@ -1,13 +1,14 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "NetworkInference"
+author: "Fridolin Linder"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: rmarkdown::github_document
+bibliography: bibliography.bib
 ---
+
+[//]: # (This is an automatically generated document. If you want to change it please make changes in `vignettes/netinf_vignette.Rmd` and then run `vignettes/make_github_readme.py`. This will automatically generate this readme document.)
+
+![](https://travis-ci.org/flinder/NetworkInference.svg)
 
 ## Introduction
 

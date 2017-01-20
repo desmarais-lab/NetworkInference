@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">r</td>
-<td align="center">l</td>
-<td align="center">197.2</td>
-</tr>
-<tr class="even">
-<td align="center">k</td>
-<td align="center">o</td>
-<td align="center">192.3</td>
-</tr>
-<tr class="odd">
-<td align="center">k</td>
-<td align="center">a</td>
-<td align="center">185.4</td>
-</tr>
-<tr class="even">
-<td align="center">t</td>
-<td align="center">k</td>
-<td align="center">183.4</td>
-</tr>
-<tr class="odd">
-<td align="center">r</td>
+<td align="center">e</td>
 <td align="center">s</td>
-<td align="center">176.5</td>
+<td align="center">231</td>
+</tr>
+<tr class="even">
+<td align="center">p</td>
+<td align="center">j</td>
+<td align="center">230</td>
+</tr>
+<tr class="odd">
+<td align="center">s</td>
+<td align="center">k</td>
+<td align="center">229.1</td>
+</tr>
+<tr class="even">
+<td align="center">i</td>
+<td align="center">c</td>
+<td align="center">209.9</td>
+</tr>
+<tr class="odd">
+<td align="center">f</td>
+<td align="center">p</td>
+<td align="center">207.2</td>
 </tr>
 </tbody>
 </table>
@@ -349,11 +349,11 @@ plot(results, type = "improvement")
 
 <img src="readme_files/figure-markdown_github/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
-In the plot we can see a kink in the plot at about edge \#100. Let's re-run `netinf` to get the final network.
+In the plot we can see a kink in the plot at about edge \#25. Let's re-run `netinf` to get the final network.
 
 ``` r
 diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
-                            n_edges = 100, lambda = 1)
+                            n_edges = 25, lambda = 1)
 ```
 
 In order to produce a quick visualization of the resulting diffusion network we can use the plot method again, this time with `type = "network"`. Note that in order to use this functionality the igraph package has to be installed.
