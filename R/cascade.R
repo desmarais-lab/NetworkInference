@@ -393,7 +393,8 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #' 
 #' @importFrom stats runif
 #' 
-#' @param n_cascades Number of cascades to generate 
+#' @param n_cascades Number of cascades to generate.
+#' @param n_nodes Number of nodes in the system.
 #' @param id_class One of \code{c("character", "factor", "numeric")}. What class
 #'     should the cascade_id indicator be. 
 #'     
@@ -406,13 +407,14 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #' head(df)
 #' 
 #' @export
-simulate_cascades <- function(n_cascades, id_class = "character") {
+simulate_cascades <- function(n_cascades, n_nodes, id_class = "character") {
     qassert(n_cascades, "X1[1,)")
+    assert_that(n_nodes <= 26)
     id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
                                                       "numeric"))
     make_cascade_ <- function(cid, id_class) {
-        n <- as.integer(runif(1, 2, 20))
-        ids <- sample(letters[0:20], n, replace = FALSE)
+        n <- runif(1, 1, n_nodes)
+        ids <- sample(letters, n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }

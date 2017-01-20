@@ -4,10 +4,12 @@
 \alias{simulate_cascades}
 \title{Simulate a set of cascades}
 \usage{
-simulate_cascades(n_cascades, id_class = "character")
+simulate_cascades(n_cascades, n_nodes, id_class = "character")
 }
 \arguments{
-\item{n_cascades}{Number of cascades to generate}
+\item{n_cascades}{Number of cascades to generate.}
+
+\item{n_nodes}{Number of nodes in the system.}
 
 \item{id_class}{One of \code{c("character", "factor", "numeric")}. What class
 should the cascade_id indicator be.}
