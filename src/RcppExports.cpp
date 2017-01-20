@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// count_possible_edges_
+int count_possible_edges_(Rcpp::List& cascade_nodes, Rcpp::List& cascade_times);
+RcppExport SEXP NetworkInference_count_possible_edges_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List& >::type cascade_nodes(cascade_nodesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List& >::type cascade_times(cascade_timesSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_possible_edges_(cascade_nodes, cascade_times));
+    return rcpp_result_gen;
+END_RCPP
+}
 // netinf_
 Rcpp::List netinf_(Rcpp::IntegerVector& node_ids, Rcpp::List& cascade_nodes, Rcpp::List& cascade_times, int& n_edges, int& model, double& lambda);
 RcppExport SEXP NetworkInference_netinf_(SEXP node_idsSEXP, SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP n_edgesSEXP, SEXP modelSEXP, SEXP lambdaSEXP) {

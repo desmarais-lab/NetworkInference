@@ -99,3 +99,35 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
 is.diffnet <- function(object) {
     inherits(object, "diffnet")
 }
+
+
+#' Count the number of possible edges in the dataset
+#' 
+#' Across all cascades, count the edges that are possible. An edge u->v is only 
+#' possible if in at least one cascade u experienced an event before v.
+#' 
+#' @param cascades Object of class cascade containing the data.
+#' 
+#' @return An integer count
+#' 
+#' @examples
+#' 
+#' data(cascades)
+#' count_possible_edges(cascades)
+#' 
+#' @export 
+count_possible_edges <- function(cascades) {
+    # Check inputs
+    assert_that(is.cascade(cascades))
+    
+    # Assign integer node ids
+    # Note that the ids start at 0 (c++ is 0 indexed)
+    node_ids <- c(0:(length(cascades$node_names) - 1))
+    names(node_ids) <- cascades$node_names
+    
+    # Transform node ids in cascades to integer ids
+    cascade_nodes <- lapply(cascades$cascade_nodes, function(x) node_ids[x]) 
+ 
+    n <- count_possible_edges_(cascade_nodes, cascades$cascade_times)
+    return(n) 
+}

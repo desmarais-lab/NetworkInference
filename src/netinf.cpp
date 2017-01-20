@@ -154,6 +154,7 @@ std::string make_pair_id_(int &u, int &v) {
 }
 
 
+
 // Find possible edges for each cascade
 //
 // Returns:
@@ -162,7 +163,7 @@ std::string make_pair_id_(int &u, int &v) {
 //     cascades that the edge is possible in
 std::map <std::string, Rcpp::List> find_possible_edges_(
         Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
-        Rcpp::List &cascade_times, int &n_nodes, int n_cascades) {
+        Rcpp::List &cascade_times, int &n_nodes, int &n_cascades) {
     
     std::map <std::string, Rcpp::List> possible_edges;
     for(int c = 0; c < n_cascades; c++) {
@@ -203,6 +204,52 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
         }
     }
     return possible_edges;
+}
+
+
+//' Count the number of possible edges given the data
+//' 
+//' @param cascade_nodes List of integer vectors of node ids in order of event, 
+//'     one per cascade.
+//' @param cascade_times List of numeric vectors of event times corresponding to
+//'     nodes in cascade_nodes (same order). 
+//'     
+//' @return Integer number of possible edges
+// [[Rcpp::export]]
+int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) {
+   
+    int n_cascades = cascade_nodes.size();
+    
+    std::map <std::string, int> possible_edges;
+    for(int c = 0; c < n_cascades; c++) {
+        Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];
+        Rcpp::NumericVector this_cascade_times = cascade_times[c];
+        int csize = this_cascade_nodes.size();
+        
+        // Use the fact that the cascade data is ordered (see cascade.R)
+        for(int i = 0; i < csize; i++) {
+            int u = this_cascade_nodes[i];
+            double tu = this_cascade_times[i];
+            for(int j = i + 1; j < csize; j++) {
+                int v = this_cascade_nodes[j];
+                double tv = this_cascade_times[j];
+                
+                // If times are tied skip this combination
+                if(tu >= tv) {
+                    continue;
+                }
+                
+                // Check if pair is in pair collection. If not include
+                std::string pair_id = make_pair_id_(u, v);
+                if(possible_edges.find(pair_id) == possible_edges.end()) {
+                    possible_edges[pair_id] = 1;
+                } else {
+                    possible_edges[pair_id] += 1;
+                }
+            }
+        }
+    }
+    return possible_edges.size();
 }
 
 // Find potential replacements for edge u->v
@@ -305,6 +352,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             keys[i] = x.first;
             i++;
         }
+        
         Rcpp::Rcout << "====================================================\n";
         Rcpp::Rcout << "Next Edge\n";
         Rcpp::Rcout << "====================================================\n";

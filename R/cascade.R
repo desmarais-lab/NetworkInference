@@ -118,6 +118,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     splt <- split(data, f = data[, cascade_id]) 
     cascade_nodes <- lapply(splt, function(x) x[, cascade_node_name])
     cascade_times <- lapply(splt, function(x) x[, event_time])
+    cascade_times <- lapply(cascade_times, as.numeric)
     names(cascade_nodes) <- names(splt)
     names(cascade_times) <- names(splt)
     
@@ -203,6 +204,7 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
     }
     
     cascade_times <- apply(data, 2, clean_casc_vec, "times") 
+    cascade_times <- lapply(cascade_times, as.numeric)
     cascade_nodes <- apply(data, 2, clean_casc_vec, "nodes") 
        
     # Check if data is consistent
