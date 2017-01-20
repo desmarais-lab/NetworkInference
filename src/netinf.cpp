@@ -289,10 +289,20 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         std::string best_edge;
         Rcpp::List replacement;
         
+        // Create a vector of keys to loop over the map in parallel
+        Rcpp::CharacterVector keys(possible_edges.size());
+        int i = 0;
         for (auto const& x : possible_edges) {
+            keys[i] = x.first;
+            i++;
+        }
+        
+        for (int i = 0; i < possible_edges.size(); i++) {
             
             // Get integer ids of edge nodes for current edge 
-            Rcpp::IntegerVector pair = possible_edges[x.first][0];
+            std::string this_id = Rcpp::as<std::string>(keys[i]);
+            Rcpp::List this_edge = possible_edges[this_id];
+            Rcpp::IntegerVector pair = this_edge[0];
             
             //potential parent
             int u = pair[0];
@@ -316,7 +326,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store all replacement information
                 replacement = e_replacements;
                 // store best edge id
-                best_edge = x.first;
+                best_edge = this_id;
             }
         }
         // Store the best results
