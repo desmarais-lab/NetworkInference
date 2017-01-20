@@ -1,4 +1,4 @@
-NetworkInference
+NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
 2017-01-20
@@ -57,28 +57,28 @@ print(result)
 <tbody>
 <tr class="odd">
 <td align="center">k</td>
-<td align="center">q</td>
-<td align="center">136.7</td>
+<td align="center">w</td>
+<td align="center">148.9</td>
 </tr>
 <tr class="even">
-<td align="center">p</td>
-<td align="center">n</td>
-<td align="center">133.1</td>
+<td align="center">q</td>
+<td align="center">u</td>
+<td align="center">147.9</td>
 </tr>
 <tr class="odd">
+<td align="center">j</td>
 <td align="center">p</td>
-<td align="center">v</td>
-<td align="center">122.4</td>
+<td align="center">146.3</td>
 </tr>
 <tr class="even">
+<td align="center">f</td>
+<td align="center">a</td>
+<td align="center">144.7</td>
+</tr>
+<tr class="odd">
 <td align="center">p</td>
 <td align="center">r</td>
-<td align="center">120.6</td>
-</tr>
-<tr class="odd">
-<td align="center">p</td>
-<td align="center">f</td>
-<td align="center">118.7</td>
+<td align="center">144.1</td>
 </tr>
 </tbody>
 </table>
@@ -281,10 +281,19 @@ The `netinf` algorithm is implemented in the `netinf()` function. Besides the da
 
 `lambda` is the scale parameter for the respective distribution.
 
-`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See Gomez Rodriguez, Leskovec, and Krause (2010) and Desmarais, Harden, and Boehmke (2015) for guidance on choosing this parameter. The following code will take about a minute to run, so be patient:
+`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See Gomez Rodriguez, Leskovec, and Krause (2010) and Desmarais, Harden, and Boehmke (2015) for guidance on choosing this parameter. The number of inferred edges has to be lower than the maximum number of possible edges. An edge `u->v` is only possible if in at least one cascade `u` experiences an event *before* `v`. This means, that the maximum number of edges depends on the data. The function `count_possible_edges()` allows us to compute the maximum number of edges in advance:
 
 ``` r
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 1000, 
+npe <- count_possible_edges(cascades)
+npe
+```
+
+    ## [1] 645
+
+Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
+
+``` r
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = npe, 
                   lambda = 1)
 ```
 
@@ -347,9 +356,9 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
 
-In the plot we can see a kink in the plot at about edge \#25. Let's re-run `netinf` to get the final network.
+After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
 
 ``` r
 diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
@@ -363,7 +372,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](readme_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 

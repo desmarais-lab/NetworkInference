@@ -1,6 +1,6 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "NetworkInference: Inferring Latent Diffusion Networks"
+author: "Fridolin Linder"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -155,10 +155,17 @@ The `netinf` algorithm is implemented in the `netinf()` function. Besides the da
 
 `lambda` is the scale parameter for the respective distribution. 
 
-`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of  edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter. The following code will take about a minute to run, so be patient: 
+`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of  edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter. The number of inferred edges has to be lower than the maximum number of possible edges. An edge `u->v` is only possible if in at least one cascade `u` experiences an event *before* `v`. This means, that the maximum number of edges depends on the data. The function `count_possible_edges()` allows us to compute the maximum number of edges in advance:
+ 
 
 ```{r}
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 1000, 
+npe <- count_possible_edges(cascades)
+npe
+```
+
+Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
+```{r}
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = npe, 
                   lambda = 1)
 ```
 
@@ -177,7 +184,7 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-In the plot we can see a kink in the plot at about edge #25. Let's re-run `netinf` to get the final network.
+After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
 
 ```{r}
 diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
