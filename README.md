@@ -19,7 +19,7 @@ TL;DR: To get started get your data into the `cascades` format required by the `
 library(NetworkInference)
 
 # Simulate random cascade data
-df <- simulate_cascades(50)
+df <- simulate_cascades(50, n_node = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">e</td>
-<td align="center">s</td>
-<td align="center">231</td>
-</tr>
-<tr class="even">
-<td align="center">p</td>
-<td align="center">j</td>
-<td align="center">230</td>
-</tr>
-<tr class="odd">
-<td align="center">s</td>
 <td align="center">k</td>
-<td align="center">229.1</td>
+<td align="center">q</td>
+<td align="center">136.7</td>
 </tr>
 <tr class="even">
-<td align="center">i</td>
-<td align="center">c</td>
-<td align="center">209.9</td>
+<td align="center">p</td>
+<td align="center">n</td>
+<td align="center">133.1</td>
 </tr>
 <tr class="odd">
-<td align="center">f</td>
 <td align="center">p</td>
-<td align="center">207.2</td>
+<td align="center">v</td>
+<td align="center">122.4</td>
+</tr>
+<tr class="even">
+<td align="center">p</td>
+<td align="center">r</td>
+<td align="center">120.6</td>
+</tr>
+<tr class="odd">
+<td align="center">p</td>
+<td align="center">f</td>
+<td align="center">118.7</td>
 </tr>
 </tbody>
 </table>

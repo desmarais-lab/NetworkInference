@@ -23,7 +23,7 @@ function:
 library(NetworkInference)
 
 # Simulate random cascade data
-df <- simulate_cascades(50)
+df <- simulate_cascades(50, n_node = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
@@ -67,7 +67,6 @@ The data for @desmarais2015persistent is available in the package:
 
 ```{r, message=FALSE}
 library(NetworkInference)
-devtools::load_all()
 # Load the `policies` dataset (?policies for details).
 data(policies)
 state_names <- rownames(policies)
