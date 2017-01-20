@@ -47,7 +47,7 @@ is.cascade <- function(object) {
 #' @examples
 #' 
 #' # For data frames 
-#' df <- simulate_cascades(10)
+#' df <- simulate_cascades(10, n_nodes = 20)
 #' cascades <- as.cascade(df)
 #' is.cascade(cascades)
 #' 
@@ -85,7 +85,7 @@ as.cascade <- function(data, ...) {
 #' @examples 
 #' 
 #' # For data frames 
-#' df <- simulate_cascades(10)
+#' df <- simulate_cascades(10, n_nodes = 20)
 #' cascades <- as.cascade(df)
 #' is.cascade(cascades)
 #
@@ -405,7 +405,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
 #'     
 #' @examples
 #' 
-#' df <- simulate_cascades(10)
+#' df <- simulate_cascades(10, n_nodes = 20)
 #' head(df)
 #' 
 #' @export

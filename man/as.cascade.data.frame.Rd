@@ -37,7 +37,7 @@ Create cascade object from data frame
 \examples{
 
 # For data frames 
-df <- simulate_cascades(10)
+df <- simulate_cascades(10, n_nodes = 20)
 cascades <- as.cascade(df)
 is.cascade(cascades)
 }

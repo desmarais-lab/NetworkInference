@@ -24,7 +24,7 @@ diffusion model is underlying these cascades.
 }
 \examples{
 
-df <- simulate_cascades(10)
+df <- simulate_cascades(10, n_nodes = 20)
 head(df)
 
 }
