@@ -85,11 +85,9 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
             scale_color_discrete(guide = FALSE)
     ## Unlabeled plot
     } else {
-        p <- ggplot() +
-            geom_violin(aes_string(x = "cascade_id", y = "event_time"), 
-                        data = pdat) + 
-            geom_point(aes_string(x = "cascade_id", y = "event_time"), size = 1,
-                       data = pdat, alpha = 0.7) +
+        p <- ggplot(pdat, aes_string(x = "cascade_id", y = "event_time")) +
+            geom_violin() + 
+            geom_jitter(height = 0, width = 0.05, alpha = 0.6, size = 0.5) +
             coord_flip()
     }
 
