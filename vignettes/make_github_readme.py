@@ -14,7 +14,7 @@ with open(INFILE, 'r') as infile, open(OUTFILE, 'w') as outfile:
     text = re.sub('---(.|\n)+---', readme_header, text)
     outfile.write(text)
 
-process = subprocess.Popen(["/usr/bin/Rscript render_readme.R"], shell=True)
+process = subprocess.Popen(["Rscript render_readme.R"], shell=True)
 process.wait()
 
 if os.path.isdir('../readme_files'):

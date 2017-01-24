@@ -1,7 +1,7 @@
 NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
-2017-01-20
+2017-01-23
 
 ![](https://travis-ci.org/flinder/NetworkInference.svg)
 
@@ -9,6 +9,16 @@ Introduction
 ------------
 
 The `NetworkInference` package provides an R implementation of the `netinf` algorithm (Gomez Rodriguez, Leskovec, and Krause 2010).
+
+Installation
+------------
+
+The package can be installed from github:
+
+``` r
+#install.packages("devtools")
+devtools::install_github("flinder/NetworkInference")
+```
 
 Quick start guide
 -----------------
@@ -19,7 +29,7 @@ TL;DR: To get started get your data into the `cascades` format required by the `
 library(NetworkInference)
 
 # Simulate random cascade data
-df <- simulate_cascades(50, n_node = 20)
+df <- simulate_cascades(50, n_nodes = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
@@ -41,7 +51,7 @@ result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
 print(result)
 ```
 
-<table style="width:64%;">
+<table>
 <colgroup>
 <col width="19%" />
 <col width="26%" />
@@ -56,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">k</td>
-<td align="center">w</td>
-<td align="center">148.9</td>
+<td align="center">a</td>
+<td align="center">x</td>
+<td align="center">175.4</td>
+</tr>
+<tr class="even">
+<td align="center">a</td>
+<td align="center">q</td>
+<td align="center">172.9</td>
+</tr>
+<tr class="odd">
+<td align="center">s</td>
+<td align="center">t</td>
+<td align="center">163.3</td>
 </tr>
 <tr class="even">
 <td align="center">q</td>
-<td align="center">u</td>
-<td align="center">147.9</td>
+<td align="center">e</td>
+<td align="center">149.2</td>
 </tr>
 <tr class="odd">
-<td align="center">j</td>
-<td align="center">p</td>
-<td align="center">146.3</td>
-</tr>
-<tr class="even">
-<td align="center">f</td>
-<td align="center">a</td>
-<td align="center">144.7</td>
-</tr>
-<tr class="odd">
-<td align="center">p</td>
-<td align="center">r</td>
-<td align="center">144.1</td>
+<td align="center">s</td>
+<td align="center">k</td>
+<td align="center">144.2</td>
 </tr>
 </tbody>
 </table>
@@ -260,7 +270,7 @@ selection <- cascade_ids[c(16, 186)]
 plot(policy_cascades, label_nodes = TRUE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-13-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
 
@@ -269,7 +279,7 @@ selection <- cascade_ids[5:15]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
 
@@ -288,7 +298,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 645
+    ## [1] 648
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
@@ -303,7 +313,7 @@ Let's take a look at the output of the algorithm. The output is a dataframe cont
 head(results)
 ```
 
-<table style="width:64%;">
+<table>
 <colgroup>
 <col width="19%" />
 <col width="26%" />
@@ -356,7 +366,7 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-19-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
 
 After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
 
@@ -372,7 +382,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](readme_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 
@@ -387,4 +397,4 @@ References
 
 Desmarais, Bruce A, Jeffrey J Harden, and Frederick J Boehmke. 2015. “Persistent Policy Pathways: Inferring Diffusion Networks in the American States.” *American Political Science Review* 109 (02). Cambridge Univ Press: 392–406.
 
-Gomez Rodriguez, Manuel, Jure Leskovec, and Andreas Krause. 2010. “Inferring Networks of Diffusion and Influence.” In *Proceedings of the 16th Acm Sigkdd International Conference on Knowledge Discovery and Data Mining*, 1019–28. ACM.
+Gomez Rodriguez, Manuel, Jure Leskovec, and Andreas Krause. 2010. “Inferring Networks of Diffusion and Influence.” In *Proceedings of the 16th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 1019–28. ACM.

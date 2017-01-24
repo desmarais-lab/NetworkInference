@@ -14,6 +14,14 @@ vignette: >
 The `NetworkInference` package provides an R implementation of the `netinf` 
 algorithm [@gomez2010inferring].
 
+## Installation
+
+The package can be installed from github:
+```{r, eval=FALSE}
+#install.packages("devtools")
+devtools::install_github("flinder/NetworkInference")
+```
+
 ## Quick start guide
 
 TL;DR: To get started get your data into the `cascades` format required by the `netinf` 
@@ -23,7 +31,7 @@ function:
 library(NetworkInference)
 
 # Simulate random cascade data
-df <- simulate_cascades(50, n_node = 20)
+df <- simulate_cascades(50, n_nodes = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
