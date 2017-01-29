@@ -24,7 +24,8 @@ Suggests:
     rmarkdown,
     pander,
     igraph,
-    utils
+    utils,
+    stats
 RoxygenNote: 5.0.1
 SystemRequirements: C++11
 LazyData: true

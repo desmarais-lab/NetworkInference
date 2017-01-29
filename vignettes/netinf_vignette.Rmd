@@ -23,7 +23,7 @@ function:
 library(NetworkInference)
 
 # Simulate random cascade data
-df <- simulate_cascades(50, n_node = 20)
+df <- simulate_rnd_cascades(50, n_node = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object

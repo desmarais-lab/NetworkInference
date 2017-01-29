@@ -1,7 +1,7 @@
 NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
-2017-01-20
+2017-01-28
 
 ![](https://travis-ci.org/flinder/NetworkInference.svg)
 
@@ -56,29 +56,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">k</td>
-<td align="center">w</td>
-<td align="center">148.9</td>
-</tr>
-<tr class="even">
-<td align="center">q</td>
-<td align="center">u</td>
-<td align="center">147.9</td>
-</tr>
-<tr class="odd">
-<td align="center">j</td>
-<td align="center">p</td>
-<td align="center">146.3</td>
-</tr>
-<tr class="even">
-<td align="center">f</td>
-<td align="center">a</td>
-<td align="center">144.7</td>
-</tr>
-<tr class="odd">
-<td align="center">p</td>
 <td align="center">r</td>
-<td align="center">144.1</td>
+<td align="center">w</td>
+<td align="center">144.5</td>
+</tr>
+<tr class="even">
+<td align="center">x</td>
+<td align="center">d</td>
+<td align="center">140.3</td>
+</tr>
+<tr class="odd">
+<td align="center">p</td>
+<td align="center">j</td>
+<td align="center">135.8</td>
+</tr>
+<tr class="even">
+<td align="center">k</td>
+<td align="center">z</td>
+<td align="center">135.2</td>
+</tr>
+<tr class="odd">
+<td align="center">s</td>
+<td align="center">u</td>
+<td align="center">132.2</td>
 </tr>
 </tbody>
 </table>
@@ -288,7 +288,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 645
+    ## [1] 649
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 

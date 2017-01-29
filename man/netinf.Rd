@@ -40,7 +40,7 @@ data(cascades)
 out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
 
 # Starting with a dataframe
-df <- simulate_cascades(10, n_nodes = 20)
+df <- simulate_rnd_cascades(10, n_nodes = 20)
 cascades2 <- as.cascade(df, node_names = unique(df$node_name))
 out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, lambda = 1)
 

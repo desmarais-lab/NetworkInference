@@ -8,7 +8,7 @@ n_casc <- round(runif(1, 2, 676), 0)
 # Data Frame methods
 test_that("as.cascade.data.frame works.", {
     for(mode in c("character", "numeric", "factor")) {
-        dat <- simulate_cascades(n_casc, 26, mode)
+        dat <- simulate_rnd_cascades(n_casc, 26, mode)
         casc <- as.cascade(data = dat, cascade_node_name = "node_name", 
                            event_time = "event_time", 
                            cascade_id = "cascade_id",
@@ -26,7 +26,7 @@ test_that("as.cascade.data.frame works.", {
 # Matrix methods
 test_that("as.matrix.cascade", {
     for(mode in c("character", "numeric", "factor")) {
-        dat <- simulate_cascades(n_casc, 26, mode)
+        dat <- simulate_rnd_cascades(n_casc, 26, mode)
         casc <- as.cascade(data = dat, cascade_node_name = "node_name", 
                            event_time = "event_time", 
                            cascade_id = "cascade_id", 
