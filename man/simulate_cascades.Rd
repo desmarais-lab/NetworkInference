@@ -5,7 +5,7 @@
 \title{Simulate cascades from a diffusion network}
 \usage{
 simulate_cascades(diffnet, nsim = 1, seed = NULL, max_time = Inf, lambda,
-  beta, epsilon, model, ...)
+  beta, epsilon, model)
 }
 \arguments{
 \item{diffnet}{Object of class \code{diffnet}.}
@@ -37,6 +37,10 @@ package to be loaded.
 }
 \examples{
 
-
+data(cascades) 
+out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
+simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1, 
+                                        beta = 0.5, epsilon = 10^-9, 
+                                        model = "exponential")
 }
 
