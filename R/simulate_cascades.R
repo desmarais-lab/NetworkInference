@@ -55,9 +55,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 
 #' Simulate cascades from a diffusion network
 #'
-#' Simulate random cascades, for testing and demonstration purposes. No actual 
-#' diffusion model is underlying these cascades. Requires the \code{igraph} 
-#' package to be loaded.
+#' Simulate an arbitrary number of diffusion cascades based on a diffusion
+#' network.
 #' 
 #' @import assertthat
 #' 
@@ -100,40 +99,52 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
     
     ## Create adjacency matrix from edgelist (ordered as in nodes, row -> sender)
     ## with diffusion edge probabilities (normalized epsilon where no edge)
-    norm_epsilon <- epsilon / (epsilon + beta)
-    probs <- matrix(rep(norm_epsilon, n_nodes * n_nodes), ncol = n_nodes)
+    X_ <- matrix(0, ncol = n_nodes, nrow = n_nodes)
     for(k in 1:nrow(diffnet)) {
         i <- which(nodes == diffnet[k, 1])
         j <- which(nodes == diffnet[k, 2])
-        probs[i, j] <- 1
+        X_[i, j] <- 1
     }
-     
-    sim_out <- lapply(c(1:nsim), simulate_cascade_, n_nodes = n_nodes, 
-                      lambda = lambda, probs = probs, max_time = max_time, 
-                      model = model, nodes = nodes)
+    
+    sim_out <- lapply(X = 1:nsim, FUN = simulate_cascade_, n_nodes = n_nodes, 
+                      lambda = lambda, epsilon = epsilon, max_time = max_time, 
+                      model = model, nodes = nodes, beta = beta, X_ = X_)
     out <- do.call(rbind, sim_out)
     rownames(out) <- NULL
     return(out)
 }
 
 # Simulate a single cascade
-simulate_cascade_ <- function(i, nodes, n_nodes, lambda, probs, max_time, model) {
+simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time, 
+                              model, beta, X_) {
+    # Generate relative diffusion times for all pairs
     if(model == "exponential") {
         rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = lambda), nrow = n_nodes)
     } else if(model == "rayleigh") {
         stop("Rayleigh distribution is not implemented yet. Please choose the exponential diffusion model.")
     }
+    
+    # No diffusion of node to itself
     diag(rel_diff_times) <- 0
+    # Censor at maximum observation time
     rel_diff_times[rel_diff_times > max_time] <- 0
     
-    Y <- matrix(stats::rbinom(n_nodes^2, 1, prob = as.numeric(probs)), byrow = FALSE,
-                nrow = n_nodes) * rel_diff_times
-    rownames(Y) <- colnames(Y) <- nodes
+    # Create matrix to transform network for out of network diffusion 
+    norm_epsilon <- epsilon / (epsilon + beta)
+    Y <- matrix(0, ncol = n_nodes, nrow = n_nodes) 
+    # Set colums to 1 with probability norm_ep
+    Y[, as.logical(stats::rbinom(n_nodes, 1, prob = norm_epsilon))] <- 1
+    
+    # Set relative diffusion times with no edge to 0 
+    rel_diff_times <- (X_ - Y)^2 * rel_diff_times
+    rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
     
     start_node <- sample(nodes, 1)
-    g <- igraph::graph.adjacency(Y, weighted=TRUE)
+    # Find shortest path from start node to every other (reachable) node
+    g <- igraph::graph.adjacency(rel_diff_times, weighted=TRUE)
     dists <- igraph::distances(g, v = start_node)
-    dists <- dists[, -c(which(dists == Inf))]
+    # Isolates will have infinite infection time (remove)
+    dists <- dists[, !is.infinite(dists)]
     out <- data.frame("node_name" = names(dists), "event_time" = dists,
                       "cascade_id" = i)
     return(out)

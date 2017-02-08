@@ -31,9 +31,8 @@ A data frame containing (in order of columns) node ids,
     event time and cascade identifier.
 }
 \description{
-Simulate random cascades, for testing and demonstration purposes. No actual 
-diffusion model is underlying these cascades. Requires the \code{igraph} 
-package to be loaded.
+Simulate an arbitrary number of diffusion cascades based on a diffusion
+network.
 }
 \examples{
 
