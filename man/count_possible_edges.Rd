@@ -13,11 +13,11 @@ count_possible_edges(cascades)
 An integer count
 }
 \description{
-Across all cascades, count the edges that are possible. An edge u->v is only 
-possible if in at least one cascade u experienced an event before v.
+Across all cascades, count the edges that are possible. An edge \code{u->v} 
+is only possible if in at least one cascade \code{u} experienced an event 
+before \code{v}.
 }
 \examples{
-
 data(cascades)
 count_possible_edges(cascades)
 

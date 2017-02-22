@@ -103,15 +103,15 @@ is.diffnet <- function(object) {
 
 #' Count the number of possible edges in the dataset
 #' 
-#' Across all cascades, count the edges that are possible. An edge u->v is only 
-#' possible if in at least one cascade u experienced an event before v.
+#' Across all cascades, count the edges that are possible. An edge \code{u->v} 
+#' is only possible if in at least one cascade \code{u} experienced an event 
+#' before \code{v}.
 #' 
 #' @param cascades Object of class cascade containing the data.
 #' 
 #' @return An integer count
 #' 
 #' @examples
-#' 
 #' data(cascades)
 #' count_possible_edges(cascades)
 #' 

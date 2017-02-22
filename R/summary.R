@@ -35,7 +35,7 @@ summary.cascade <- function(object, quiet = FALSE, ...) {
         # Calculate all summaries
         n_nodes <- length(object$node_names)
         n_nodes_in_casc <- length(unique(do.call(c, object$cascade_nodes)))
-        npe <- count_possible_edges(cascades)
+        npe <- count_possible_edges(object)
         pout <- cbind(summary(casc_lengths), summary(dups))
         colnames(pout) <- c("length", "ties")
         cat(paste0('# cascades: ', length(object$cascade_times), '\n'))
