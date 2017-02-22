@@ -1,14 +1,14 @@
 NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
-2017-01-29
+2017-02-22
 
 ![](https://travis-ci.org/flinder/NetworkInference.svg)
 
 Introduction
 ------------
 
-The `NetworkInference` package provides an R implementation of the `netinf` algorithm (Gomez Rodriguez, Leskovec, and Krause 2010).
+This package provides an R implementation of the algorithm created by Gomez Rodriguez, Leskovec, and Krause (2010). Given a set of events that spread between a set of nodes the algorithm infers the most likely stable diffusion network that is underlying the diffusion process.
 
 Installation
 ------------
@@ -23,7 +23,7 @@ devtools::install_github("flinder/NetworkInference")
 Quick start guide
 -----------------
 
-TL;DR: To get started get your data into the `cascades` format required by the `netinf` function:
+To get started get your data into the `cascades` format required by the `netinf` function:
 
 ``` r
 library(NetworkInference)
@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">r</td>
-<td align="center">v</td>
-<td align="center">150.4</td>
-</tr>
-<tr class="even">
-<td align="center">e</td>
-<td align="center">o</td>
-<td align="center">149</td>
-</tr>
-<tr class="odd">
-<td align="center">r</td>
-<td align="center">z</td>
-<td align="center">148</td>
-</tr>
-<tr class="even">
-<td align="center">d</td>
-<td align="center">e</td>
-<td align="center">146.5</td>
-</tr>
-<tr class="odd">
-<td align="center">w</td>
+<td align="center">k</td>
 <td align="center">n</td>
-<td align="center">141.6</td>
+<td align="center">169.5</td>
+</tr>
+<tr class="even">
+<td align="center">q</td>
+<td align="center">a</td>
+<td align="center">162.6</td>
+</tr>
+<tr class="odd">
+<td align="center">a</td>
+<td align="center">k</td>
+<td align="center">147.1</td>
+</tr>
+<tr class="even">
+<td align="center">v</td>
+<td align="center">u</td>
+<td align="center">141.9</td>
+</tr>
+<tr class="odd">
+<td align="center">k</td>
+<td align="center">b</td>
+<td align="center">141.7</td>
 </tr>
 </tbody>
 </table>
@@ -298,7 +298,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 646
+    ## [1] 647
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 

@@ -11,8 +11,10 @@ vignette: >
 
 ## Introduction
 
-The `NetworkInference` package provides an R implementation of the `netinf` 
-algorithm [@gomez2010inferring].
+This package provides an R implementation of the \code{netinf} algorithm 
+created by @gomez2010inferring. Given a set of events that spread between a set 
+of nodes the algorithm infers the most likely stable diffusion network that is 
+underlying the diffusion process.
 
 ## Installation
 
@@ -24,7 +26,7 @@ devtools::install_github("flinder/NetworkInference")
 
 ## Quick start guide
 
-TL;DR: To get started get your data into the `cascades` format required by the `netinf` 
+To get started get your data into the `cascades` format required by the `netinf` 
 function:
 
 ```{r, results='hide', message=FALSE}
