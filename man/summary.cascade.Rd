@@ -4,22 +4,33 @@
 \alias{summary.cascade}
 \title{Summarize cascade object}
 \usage{
-\method{summary}{cascade}(object, ...)
+\method{summary}{cascade}(object, quiet = FALSE, ...)
 }
 \arguments{
 \item{object}{Object of class cascade to be summarized.}
 
+\item{quiet}{logical, if \code{FALSE} summary stats are printed to std out.}
+
 \item{...}{Additional arguments passed to summary}
 }
 \value{
-Prints cascade summary information to the screen and returns summary
-    stats in a list
+Prints cascade summary information to the screen 
+    (if \code{quiet = FALSE}). \code{'# cascades'} is the number of cascades in
+    the object, \code{'# nodes'} is the number of nodes in the system (nodes 
+    that can theoretically experience an event), \code{'# nodes in cascades'} is 
+    the number of unique nodes of the system that experienced an event and 
+    \code{'# possible edges'} is the number of edges that are possible given
+    the cascade data (see \code{\link{count_possible_edges}} for details.). 
+    
+    Additional summaries for each cascade are returned invisibly. 
+    cascade), \code{length} (length of the cascade as an integer of how many
+    nodes experienced and event) and \code{n_ties} (number of tied event 
+    times per cascade).
 }
 \description{
 Summarize cascade object
 }
 \examples{
-
 data(cascades)
 summary(cascades)
 
