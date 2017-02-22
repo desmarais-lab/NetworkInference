@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">h</td>
-<td align="center">w</td>
-<td align="center">148.8</td>
+<td align="center">p</td>
+<td align="center">a</td>
+<td align="center">164.6</td>
 </tr>
 <tr class="even">
-<td align="center">n</td>
-<td align="center">h</td>
-<td align="center">137.9</td>
-</tr>
-<tr class="odd">
-<td align="center">h</td>
-<td align="center">o</td>
-<td align="center">133.6</td>
-</tr>
-<tr class="even">
-<td align="center">j</td>
+<td align="center">k</td>
 <td align="center">b</td>
-<td align="center">132.4</td>
+<td align="center">159.3</td>
 </tr>
 <tr class="odd">
-<td align="center">x</td>
-<td align="center">m</td>
-<td align="center">127.4</td>
+<td align="center">l</td>
+<td align="center">h</td>
+<td align="center">157</td>
+</tr>
+<tr class="even">
+<td align="center">q</td>
+<td align="center">o</td>
+<td align="center">148.6</td>
+</tr>
+<tr class="odd">
+<td align="center">a</td>
+<td align="center">v</td>
+<td align="center">145.5</td>
 </tr>
 </tbody>
 </table>
@@ -210,51 +210,7 @@ Most functionality of the `NetworkInference` package is based on the `cascades` 
 policy_cascades <- as.cascade(policies, node_names = state_names)
 ```
 
-The `cascades` data type is basically a list containing all the data stored in three separate objects:
-
-``` r
-names(policy_cascades)
-```
-
-    ## [1] "cascade_nodes" "cascade_times" "node_names"
-
-`cascade_nodes` contains one vector per cascade containing the node ids (state names) in the order of the event occurring for the node. Each vector is named by the cascade id (policy names):
-
-``` r
-policy_cascades$cascade_nodes[1:2]
-```
-
-    ## $equalpay
-    ##  [1] "MI" "MT" "WA" "NY" "IL" "MA" "RI" "NH" "PA" "CT" "ME" "CA" "NJ" "AR"
-    ## [15] "CO" "OR" "OH" "WY" "AZ" "MO" "ND" "OK" "WV" "SD" "GA" "KY" "MD"
-    ## 
-    ## $conacchwy
-    ##  [1] "RI" "NY" "CT" "ME" "AZ" "CA" "MI" "OH" "SD" "MD" "CO" "VA" "LA" "MA"
-    ## [15] "NH" "IL" "FL" "GA" "TX" "WV" "DE" "NJ" "PA" "IN" "OK" "NM" "UT" "KY"
-    ## [29] "WI" "WY" "ID" "WA" "KS" "AR" "VT" "MT" "AL" "MS" "SC" "NC" "NV" "MN"
-
-`cascade_times` is a list of vectors containing the event times again in the same order as the elements of `cascade_nodes`.
-
-``` r
-policy_cascades$cascade_times[1:2]
-```
-
-    ## $equalpay
-    ##  [1] 1919 1919 1943 1944 1944 1945 1946 1947 1948 1949 1949 1949 1952 1955
-    ## [15] 1955 1955 1959 1959 1962 1963 1965 1965 1965 1966 1966 1966 1966
-    ## 
-    ## $conacchwy
-    ##  [1] 1937 1937 1939 1939 1939 1939 1941 1941 1941 1941 1941 1942 1942 1943
-    ## [15] 1943 1943 1943 1943 1943 1943 1945 1945 1945 1945 1945 1945 1945 1946
-    ## [29] 1949 1949 1951 1951 1953 1953 1955 1955 1956 1956 1956 1957 1957 1959
-
-Finally `node_names` contains the unique names of nodes (in our case states) in the system.
-
-``` r
-policy_cascades$node_names[1:10]
-```
-
-    ##  [1] "CT" "ME" "MA" "NH" "RI" "VT" "DE" "NJ" "NY" "PA"
+The `cascades` data type is basically a list containing all the data stored in three separate objects.
 
 ### Visually Inspecting Cascades
 
@@ -308,7 +264,7 @@ plot(policy_cascades, label_nodes = TRUE, selection = selection)
     ## 3rd Qu.  46.00 29.00
     ## Max.     50.00 45.00
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
 
@@ -331,7 +287,7 @@ plot(policy_cascades, label_nodes = FALSE, selection = selection)
     ## 3rd Qu.  46.00 29.00
     ## Max.     50.00 45.00
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
 
@@ -350,7 +306,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 648
+    ## [1] 650
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
@@ -418,7 +374,7 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-17-1.png" style="display: block; margin: auto;" />
 
 After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
 
@@ -434,7 +390,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](readme_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 

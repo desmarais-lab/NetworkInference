@@ -102,32 +102,7 @@ policy_cascades <- as.cascade(policies, node_names = state_names)
 ```
 
 The `cascades` data type is basically a list containing all the data stored in 
-three separate objects:
-
-```{r}
-names(policy_cascades)
-```
-
-`cascade_nodes` contains one vector per cascade containing the node ids (state names) in the 
-order of the event occurring for the node. Each vector is named by the cascade id
-(policy names):
-
-```{r}
-policy_cascades$cascade_nodes[1:2]
-```
-
-`cascade_times` is a list of vectors containing the event times again in the same
-order as the elements of `cascade_nodes`.
-```{r}
-policy_cascades$cascade_times[1:2]
-```
-
-Finally `node_names` contains the unique names of nodes (in our case states) in the 
-system.
-```{r}
-policy_cascades$node_names[1:10]
-```
-
+three separate objects. 
 
 ### Visually Inspecting Cascades
 
