@@ -298,7 +298,7 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
     # Convert
     cascade_nodes <- do.call(c, x$cascade_nodes)
     cascade_times <- do.call(c, x$cascade_times)
-    smry <- summary(x)
+    smry <- summary(x, quiet = TRUE)
     cascade_ids <- do.call(c, apply(smry, 1, function(x) rep(x[1], each = x[2])))
     out <- data.frame("node_name" = cascade_nodes, 'event_time' = cascade_times, 
                       "cascade_id" = cascade_ids, 
