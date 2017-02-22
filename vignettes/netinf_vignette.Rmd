@@ -110,7 +110,8 @@ It's always good practice to visually inspect the data before working with it.
 The `NetworkInference` package provides functionality to visualize the cascade 
 data. 
 
-The `summary.cascades()` provieds quick summary statistics on the cascade data.
+The function `summary.cascades()` provides quick summary statistics on the 
+cascade data:
 
 ```{r}
 summary(policy_cascades)

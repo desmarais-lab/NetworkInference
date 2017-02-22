@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">l</td>
-<td align="center">p</td>
-<td align="center">155.5</td>
+<td align="center">o</td>
+<td align="center">t</td>
+<td align="center">182.5</td>
 </tr>
 <tr class="even">
-<td align="center">f</td>
+<td align="center">i</td>
+<td align="center">x</td>
+<td align="center">136</td>
+</tr>
+<tr class="odd">
+<td align="center">o</td>
+<td align="center">w</td>
+<td align="center">133.5</td>
+</tr>
+<tr class="even">
 <td align="center">a</td>
-<td align="center">144.8</td>
+<td align="center">z</td>
+<td align="center">128.5</td>
 </tr>
 <tr class="odd">
-<td align="center">f</td>
-<td align="center">r</td>
-<td align="center">128</td>
-</tr>
-<tr class="even">
-<td align="center">b</td>
-<td align="center">k</td>
-<td align="center">124.5</td>
-</tr>
-<tr class="odd">
-<td align="center">f</td>
 <td align="center">s</td>
-<td align="center">121.4</td>
+<td align="center">m</td>
+<td align="center">123.8</td>
 </tr>
 </tbody>
 </table>
@@ -216,7 +216,7 @@ The `cascades` data type is basically a list containing all the data stored in t
 
 It's always good practice to visually inspect the data before working with it. The `NetworkInference` package provides functionality to visualize the cascade data.
 
-The `summary.cascades()` provieds quick summary statistics on the cascade data.
+The function `summary.cascades()` provides quick summary statistics on the cascade data:
 
 ``` r
 summary(policy_cascades)
@@ -278,7 +278,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 637
+    ## [1] 644
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
