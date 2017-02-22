@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">c</td>
-<td align="center">n</td>
-<td align="center">154.2</td>
+<td align="center">h</td>
+<td align="center">w</td>
+<td align="center">148.8</td>
 </tr>
 <tr class="even">
-<td align="center">s</td>
-<td align="center">g</td>
-<td align="center">146</td>
+<td align="center">n</td>
+<td align="center">h</td>
+<td align="center">137.9</td>
 </tr>
 <tr class="odd">
-<td align="center">n</td>
-<td align="center">w</td>
-<td align="center">145.3</td>
+<td align="center">h</td>
+<td align="center">o</td>
+<td align="center">133.6</td>
 </tr>
 <tr class="even">
 <td align="center">j</td>
 <td align="center">b</td>
-<td align="center">136.6</td>
+<td align="center">132.4</td>
 </tr>
 <tr class="odd">
-<td align="center">f</td>
-<td align="center">t</td>
-<td align="center">135.4</td>
+<td align="center">x</td>
+<td align="center">m</td>
+<td align="center">127.4</td>
 </tr>
 </tbody>
 </table>
@@ -96,7 +96,7 @@ print(result)
 Tutorial
 --------
 
-This is a quick tutorial to get started with the package. For more detailed information on the algorithm and functionality of the package see below in this document and the official package documentation.
+This is a quick tutorial to get started with the package. For more detailed information on the algorithm and functionality of the package see the package documentation.
 
 `netinf` infers the optimal diffusion network from a set of *nodes* and a number of so called *cascades*. A cascade is a series of events occurring at a specified time. For this demo we will replicate the analysis presented in Desmarais, Harden, and Boehmke (2015). In this paper Desmarais et al. infer a latent network for policy diffusion based on adoption of 187 policies in the US states. In this case a node in the network is a state, a cascade refers to a specific policy and an event is the adoption of said policy in a state.
 
@@ -204,7 +204,7 @@ policies[1:7, 1:7]
 </tbody>
 </table>
 
-Most functionality of the `NetworkInference` package is based on the `cascades` data format. So before starting with the analysis we have to transform our dataframe to such an object (other formats for the input data, such as matrices, are supported, too. See the section on data manipulation below for more details).
+Most functionality of the `NetworkInference` package is based on the `cascades` data format. So before starting with the analysis we have to transform our dataframe to such an object (other formats for the input data, such as matrices, are supported, too.
 
 ``` r
 policy_cascades <- as.cascade(policies, node_names = state_names)
@@ -256,9 +256,33 @@ policy_cascades$node_names[1:10]
 
     ##  [1] "CT" "ME" "MA" "NH" "RI" "VT" "DE" "NJ" "NY" "PA"
 
-### Plotting Cascades
+### Visually Inspecting Cascades
 
 It's always good practice to visually inspect the data before working with it. The `NetworkInference` package provides functionality to visualize the cascade data.
+
+The `summary.cascades()` provieds quick summary statistics on the cascade data.
+
+``` r
+summary(policy_cascades)
+```
+
+    ## # cascades: 187
+    ## # nodes: 50
+    ## # nodes in cascades: 50
+    ## # possible edges: 2450
+    ## 
+    ## Summary statistics for node length and ties:
+    ##         length  ties
+    ## Min.     10.00  1.00
+    ## 1st Qu.  23.00 11.00
+    ## Median   33.00 19.00
+    ## Mean     33.13 20.18
+    ## 3rd Qu.  46.00 29.00
+    ## Max.     50.00 45.00
+
+The first four lines provide the number of cascades, the number of nodes in the system, the number of nodes involved in cascades (there might be states that we don't have diffusion data on, but we still want them represented in the dataset) and the possible number of edges in a potential diffusion network (a diffusion edge between nodes `u` and `v` only makes sense if there is at least one cascade in which `u` experiences an event before `v`). In this example there are 187 policies and 50 states. Each state is involved in at least one policy cascade and a fully connected diffusion network would have 2450 edges.
+
+It also provides summary statistics on the distribution of the cascade lengths (number of nodes involved in each cascade) and the number of ties in the cascades (two nodes experiencing the same event at the same time). For our example, we can see that the 'smallest' policy was adopted by 10 states and the 'largest' by all 50 states. From the tie summaries we see that there is at least one policy that was adopted by 45 states in the same year.
 
 The `plot()` method allows to plot cascades with varying degrees of detail. The argument `label_nodes` (`TRUE/FALSE`) provides node labels which require more space but provide more detail. The argument `selection` allows to pick a subset of cascades to visualize in case there are too many to plot. If `label_nodes` is set to `FALSE` each event is depicted by a dot, which allows to visualize more cascades simultaneously.
 
@@ -270,7 +294,21 @@ selection <- cascade_ids[c(16, 186)]
 plot(policy_cascades, label_nodes = TRUE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+    ## # cascades: 187
+    ## # nodes: 50
+    ## # nodes in cascades: 50
+    ## # possible edges: 2450
+    ## 
+    ## Summary statistics for node length and ties:
+    ##         length  ties
+    ## Min.     10.00  1.00
+    ## 1st Qu.  23.00 11.00
+    ## Median   33.00 19.00
+    ## Mean     33.13 20.18
+    ## 3rd Qu.  46.00 29.00
+    ## Max.     50.00 45.00
+
+<img src="readme_files/figure-markdown_github/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
 
@@ -279,7 +317,21 @@ selection <- cascade_ids[5:15]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+    ## # cascades: 187
+    ## # nodes: 50
+    ## # nodes in cascades: 50
+    ## # possible edges: 2450
+    ## 
+    ## Summary statistics for node length and ties:
+    ##         length  ties
+    ## Min.     10.00  1.00
+    ## 1st Qu.  23.00 11.00
+    ## Median   33.00 19.00
+    ## Mean     33.13 20.18
+    ## 3rd Qu.  46.00 29.00
+    ## Max.     50.00 45.00
+
+<img src="readme_files/figure-markdown_github/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
 
@@ -298,7 +350,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 646
+    ## [1] 648
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
@@ -366,7 +418,7 @@ Each row corresponds to a directed edge. The first column indicates the origin n
 plot(results, type = "improvement")
 ```
 
-<img src="readme_files/figure-markdown_github/unnamed-chunk-20-1.png" style="display: block; margin: auto;" />
+<img src="readme_files/figure-markdown_github/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
 
 After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
 
@@ -382,7 +434,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 plot(diffusion_network, type = "network")
 ```
 
-![](readme_files/figure-markdown_github/unnamed-chunk-22-1.png)
+![](readme_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://cran.r-project.org/web/packages/igraph/igraph.pdf) for details on how to customize the plot.
 

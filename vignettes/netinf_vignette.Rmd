@@ -60,8 +60,8 @@ pander::pandoc.table(result)
 ## Tutorial
 
 This is a quick tutorial to get started with the package. For more detailed 
-information on the algorithm and functionality of the package see below in this 
-document and the official package documentation.
+information on the algorithm and functionality of the package see the 
+package documentation.
 
 `netinf` infers the optimal diffusion network from a set of *nodes* 
 and a number of so called *cascades*. A cascade is a series of events occurring at 
@@ -95,7 +95,7 @@ pander::pandoc.table(head(policies[1:7, 1:7]))
 Most functionality of the `NetworkInference` package is based on the `cascades` 
 data format. So before starting with the analysis we have to transform our dataframe
 to such an object (other formats for the input data, such as matrices, are supported,
-too. See the section on data manipulation below for more details). 
+too. 
 
 ```{r}
 policy_cascades <- as.cascade(policies, node_names = state_names)
@@ -128,11 +128,34 @@ system.
 policy_cascades$node_names[1:10]
 ```
 
-### Plotting Cascades
+
+### Visually Inspecting Cascades
 
 It's always good practice to visually inspect the data before working with it. 
 The `NetworkInference` package provides functionality to visualize the cascade 
 data. 
+
+The `summary.cascades()` provieds quick summary statistics on the cascade data.
+
+```{r}
+summary(policy_cascades)
+```
+
+The first four lines provide the number of cascades, the number of nodes in the 
+system, the number of nodes involved in cascades (there might be states that we 
+don't have diffusion data on, but we still want them represented in the dataset)
+and the possible number of edges in a potential diffusion network (a diffusion edge 
+between nodes `u` and `v` only makes sense if there is at least one cascade in 
+which `u` experiences an event before `v`). In this example there are 187 
+policies and 50 states. Each state is involved in at least one policy cascade 
+and a fully connected diffusion network would have 2450 edges. 
+
+It also provides summary statistics on the distribution of the cascade lengths 
+(number of nodes involved in each cascade) and the number of ties in the 
+cascades (two nodes experiencing the same event at the same time). For our 
+example, we can see that the 'smallest' policy was adopted by 10 states and the
+'largest' by all 50 states. From the tie summaries we see that there is at least
+one policy that was adopted by 45 states in the same year. 
 
 The `plot()` method allows to plot cascades with varying degrees of detail. The 
 argument `label_nodes` (`TRUE/FALSE`) provides node labels which require more space
