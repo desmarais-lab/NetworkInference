@@ -5,5 +5,5 @@ context("Test  summary function.")
 data(cascades)
 
 test_that("Summary runs.", {
-    s <- summary(cascades)
+    x <- capture.output(s <- summary(cascades))
 })
