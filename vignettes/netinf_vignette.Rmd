@@ -11,7 +11,7 @@ vignette: >
 
 ## Introduction
 
-This package provides an R implementation of the \code{netinf} algorithm 
+This package provides an R implementation of the netinf algorithm 
 created by @gomez2010inferring. Given a set of events that spread between a set 
 of nodes the algorithm infers the most likely stable diffusion network that is 
 underlying the diffusion process.
