@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">k</td>
-<td align="center">n</td>
-<td align="center">169.5</td>
+<td align="center">q</td>
+<td align="center">o</td>
+<td align="center">162.2</td>
 </tr>
 <tr class="even">
 <td align="center">q</td>
-<td align="center">a</td>
-<td align="center">162.6</td>
+<td align="center">p</td>
+<td align="center">155.6</td>
 </tr>
 <tr class="odd">
-<td align="center">a</td>
-<td align="center">k</td>
-<td align="center">147.1</td>
+<td align="center">q</td>
+<td align="center">u</td>
+<td align="center">146.9</td>
 </tr>
 <tr class="even">
-<td align="center">v</td>
 <td align="center">u</td>
-<td align="center">141.9</td>
+<td align="center">t</td>
+<td align="center">137.7</td>
 </tr>
 <tr class="odd">
-<td align="center">k</td>
-<td align="center">b</td>
-<td align="center">141.7</td>
+<td align="center">x</td>
+<td align="center">z</td>
+<td align="center">131.5</td>
 </tr>
 </tbody>
 </table>
@@ -298,7 +298,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 647
+    ## [1] 649
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
