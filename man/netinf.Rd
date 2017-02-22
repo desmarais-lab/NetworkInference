@@ -8,7 +8,7 @@ netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 }
 \arguments{
 \item{cascades}{An object of class cascade containing node and cascade 
-information. See \link{as.cascade} for details.}
+information. See \code{\link{as.cascade}} for details.}
 
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"} or \code{"rayleigh"}.}
@@ -18,20 +18,20 @@ information. See \link{as.cascade} for details.}
 \item{lambda}{Numeric, alpha for transmission model.}
 }
 \value{
-Returns the inferred diffusion network as an object of class 
- \link[base]{data.frame}. If \code{edge_info = FALSE} of dimension \code{k x 2} 
-     where k is the number of edges. If \code{edge_info = TRUE} additional
-     columns contain information on volume, marginal gain and time difference
-     for the respective edge.
+Returns the inferred diffusion network as an edglist in an object of 
+    class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
+    column contains the sender, the second column the receiver node. The 
+    third column contains the improvement in fit from adding the edge that is
+    represented by the row.
 }
 \description{
 Infer the most likely latent diffusion model from a set of nodes and 
-infection times
+infection times.
 }
 \details{
 The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 Additional information can be found on the 
-netinf website (\url{http://snap.stanford.edu/netinf/}).'
+netinf website (\url{http://snap.stanford.edu/netinf/}).
 }
 \examples{
 

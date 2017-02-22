@@ -1,27 +1,27 @@
 #' Infer latent diffusion network.
 #' 
 #' Infer the most likely latent diffusion model from a set of nodes and 
-#' infection times
+#' infection times.
 #' 
 #' The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 #' Additional information can be found on the 
-#' netinf website (\url{http://snap.stanford.edu/netinf/}).' 
+#' netinf website (\url{http://snap.stanford.edu/netinf/}).
 #' 
 #' @import checkmate
 #' @import assertthat
 #' 
 #' @param  cascades An object of class cascade containing node and cascade 
-#'     information. See \link{as.cascade} for details. 
+#'     information. See \code{\link{as.cascade}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda Numeric, alpha for transmission model.
 #' @param n_edges Numeric, number of edges to infer.
 #' 
-#' @return Returns the inferred diffusion network as an object of class 
-#'  \link[base]{data.frame}. If \code{edge_info = FALSE} of dimension \code{k x 2} 
-#'      where k is the number of edges. If \code{edge_info = TRUE} additional
-#'      columns contain information on volume, marginal gain and time difference
-#'      for the respective edge. 
+#' @return Returns the inferred diffusion network as an edglist in an object of 
+#'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
+#'     column contains the sender, the second column the receiver node. The 
+#'     third column contains the improvement in fit from adding the edge that is
+#'     represented by the row.
 #'  
 #' @references 
 #' M. Gomez-Rodriguez, J. Leskovec, A. Krause. Inferring Networks of Diffusion 
