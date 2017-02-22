@@ -102,7 +102,7 @@ policy_cascades <- as.cascade(policies, node_names = state_names)
 ```
 
 The `cascades` data type is basically a list containing all the data stored in 
-three separate objects. 
+three separate objects.
 
 ### Visually Inspecting Cascades
 

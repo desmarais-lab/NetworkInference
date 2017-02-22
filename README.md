@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">p</td>
-<td align="center">a</td>
-<td align="center">164.6</td>
-</tr>
-<tr class="even">
-<td align="center">k</td>
-<td align="center">b</td>
-<td align="center">159.3</td>
-</tr>
-<tr class="odd">
 <td align="center">l</td>
-<td align="center">h</td>
-<td align="center">157</td>
+<td align="center">p</td>
+<td align="center">155.5</td>
 </tr>
 <tr class="even">
-<td align="center">q</td>
-<td align="center">o</td>
-<td align="center">148.6</td>
+<td align="center">f</td>
+<td align="center">a</td>
+<td align="center">144.8</td>
 </tr>
 <tr class="odd">
-<td align="center">a</td>
-<td align="center">v</td>
-<td align="center">145.5</td>
+<td align="center">f</td>
+<td align="center">r</td>
+<td align="center">128</td>
+</tr>
+<tr class="even">
+<td align="center">b</td>
+<td align="center">k</td>
+<td align="center">124.5</td>
+</tr>
+<tr class="odd">
+<td align="center">f</td>
+<td align="center">s</td>
+<td align="center">121.4</td>
 </tr>
 </tbody>
 </table>
@@ -250,20 +250,6 @@ selection <- cascade_ids[c(16, 186)]
 plot(policy_cascades, label_nodes = TRUE, selection = selection)
 ```
 
-    ## # cascades: 187
-    ## # nodes: 50
-    ## # nodes in cascades: 50
-    ## # possible edges: 2450
-    ## 
-    ## Summary statistics for node length and ties:
-    ##         length  ties
-    ## Min.     10.00  1.00
-    ## 1st Qu.  23.00 11.00
-    ## Median   33.00 19.00
-    ## Mean     33.13 20.18
-    ## 3rd Qu.  46.00 29.00
-    ## Max.     50.00 45.00
-
 <img src="readme_files/figure-markdown_github/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 We can also plot more cascades with less detail:
@@ -272,20 +258,6 @@ We can also plot more cascades with less detail:
 selection <- cascade_ids[5:15]
 plot(policy_cascades, label_nodes = FALSE, selection = selection)
 ```
-
-    ## # cascades: 187
-    ## # nodes: 50
-    ## # nodes in cascades: 50
-    ## # possible edges: 2450
-    ## 
-    ## Summary statistics for node length and ties:
-    ##         length  ties
-    ## Min.     10.00  1.00
-    ## 1st Qu.  23.00 11.00
-    ## Median   33.00 19.00
-    ## Mean     33.13 20.18
-    ## 3rd Qu.  46.00 29.00
-    ## Max.     50.00 45.00
 
 <img src="readme_files/figure-markdown_github/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
@@ -306,7 +278,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 650
+    ## [1] 637
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
