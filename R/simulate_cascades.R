@@ -141,11 +141,14 @@ simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time,
     
     start_node <- sample(nodes, 1)
     # Find shortest path from start node to every other (reachable) node
-    g <- igraph::graph.adjacency(rel_diff_times, weighted=TRUE)
-    dists <- igraph::distances(g, v = start_node)
+    g <- igraph::graph.adjacency(rel_diff_times, weighted = TRUE, 
+                                 mode = "directed")
+    dists <- igraph::distances(g, v = start_node, mode = "out")
+    
     # Isolates will have infinite infection time (remove)
-    dists <- dists[, !is.infinite(dists)]
-    out <- data.frame("node_name" = names(dists), "event_time" = dists,
+    dists <- dists[, !is.infinite(dists), drop = FALSE]
+    out <- data.frame("node_name" = colnames(dists), 
+                      "event_time" = as.numeric(dists),
                       "cascade_id" = i)
     return(out)
 }
