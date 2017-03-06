@@ -5,7 +5,7 @@
 \title{Simulate cascades from a diffusion network}
 \usage{
 simulate_cascades(diffnet, nsim = 1, seed = NULL, max_time = Inf, lambda,
-  beta, epsilon, model, partial_cascade = NULL)
+  beta, epsilon, model, partial_cascade = NULL, start_probabilities = NULL)
 }
 \arguments{
 \item{diffnet}{Object of class \code{diffnet}.}
@@ -28,6 +28,10 @@ censored}
 
 \item{partial_cascade}{Object of type cascade, containing one partial 
 cascades for which further development should be simulated.}
+
+\item{start_probabilities}{A vector of probabilities for each node in diffnet,
+to be the node with the first event. If \code{NULL} a node is drawn from
+a uniform distribution over all nodes.}
 }
 \value{
 A data frame containing (in order of columns) node ids, 

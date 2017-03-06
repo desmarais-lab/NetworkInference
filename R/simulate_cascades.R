@@ -68,10 +68,13 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 #' @param epsilon Weight for out of network diffusion
 #' @param model Diffusion model to use. One of \code{c("exponential", 
 #'     "rayleigh")}.
-#' @param partial_cascade Object of type cascade, containing one partial 
-#'     cascades for which further development should be simulated.
 #' @param max_time Numeric, the maximum time after which observations are 
 #'     censored
+#' @param start_probabilities A vector of probabilities for each node in diffnet,
+#'     to be the node with the first event. If \code{NULL} a node is drawn from
+#'     a uniform distribution over all nodes.
+#' @param partial_cascade Object of type cascade, containing one partial 
+#'     cascades for which further development should be simulated.
 #'     
 #' @return A data frame containing (in order of columns) node ids, 
 #'     event time and cascade identifier. 
@@ -89,16 +92,30 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 #' @export
 simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
                               lambda, beta, epsilon, model, 
-                              partial_cascade = NULL) {
+                              partial_cascade = NULL, 
+                              start_probabilities = NULL) {
     
     # Check inputs
     assert_that(is.diffnet(diffnet))
     assert_that(nsim >= 1)
     model <- match.arg(model, c("exponential", "rayleigh"))
-    
+    if(model == "rayleigh") {
+        stop("Rayleigh distribution is not implemented yet. Please choose the exponential diffusion model.")
+    }
     # Extract Nodes and number of nodes
     nodes <- unique(c(diffnet$origin_node, diffnet$destination_node))
     n_nodes <- length(nodes)
+    
+    if(!is.null(start_probabilities) & !is.null(partial_cascade)) {
+        stop("Start probabilities are not allowed with partial cascades")
+    }
+    
+    if(is.null(start_probabilities)) {
+        start_probabilities <- rep(1/n_nodes, n_nodes)
+    }
+    # Check start probabilities
+    qassert(start_probabilities, paste0('N', n_nodes, '[0,1]'))
+    assert_that(sum(start_probabilities) == 1)
     
     # Check partial cascade input 
     if(!is.null(partial_cascade)) {
@@ -121,7 +138,8 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
     sim_out <- lapply(X = 1:nsim, FUN = simulate_cascade_, n_nodes = n_nodes, 
                       lambda = lambda, epsilon = epsilon, max_time = max_time, 
                       model = model, nodes = nodes, beta = beta, X_ = X_, 
-                      partial_cascade = partial_cascade)
+                      partial_cascade = partial_cascade, 
+                      start_probabilities = start_probabilities)
     out <- do.call(rbind, sim_out)
     rownames(out) <- NULL
     return(out) }
@@ -129,14 +147,11 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
 
 # Simulate a single cascade from scratch (random first event node)
 simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time, 
-                              model, beta, X_, partial_cascade) {
+                              model, beta, X_, partial_cascade, 
+                              start_probabilities) {
     
     # Generate relative diffusion times for all pairs
-    if(model == "exponential") {
-        rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = lambda), nrow = n_nodes)
-    } else if(model == "rayleigh") {
-        stop("Rayleigh distribution is not implemented yet. Please choose the exponential diffusion model.")
-    }
+    rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = lambda), nrow = n_nodes)
     
     # No diffusion of node to itself
     diag(rel_diff_times) <- 0
@@ -160,7 +175,7 @@ simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time,
     rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
     
     if(is.null(partial_cascade)) {
-        start_nodes <- sample(nodes, 1)
+        start_nodes <- sample(x = nodes, size = 1, prob = start_probabilities)
     } else {
         start_nodes <- nodes[idx]
     }
