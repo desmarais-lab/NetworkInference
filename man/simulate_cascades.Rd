@@ -5,7 +5,7 @@
 \title{Simulate cascades from a diffusion network}
 \usage{
 simulate_cascades(diffnet, nsim = 1, seed = NULL, max_time = Inf, lambda,
-  beta, epsilon, model)
+  beta, epsilon, model, partial_cascade = NULL)
 }
 \arguments{
 \item{diffnet}{Object of class \code{diffnet}.}
@@ -25,6 +25,9 @@ censored}
 
 \item{model}{Diffusion model to use. One of \code{c("exponential", 
 "rayleigh")}.}
+
+\item{partial_cascade}{Object of type cascade, containing one partial 
+cascades for which further development should be simulated.}
 }
 \value{
 A data frame containing (in order of columns) node ids, 
@@ -41,5 +44,8 @@ out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
 simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1, 
                                         beta = 0.5, epsilon = 10^-9, 
                                         model = "exponential")
+ 
+# Simulation from partial cascade
+
 }
 
