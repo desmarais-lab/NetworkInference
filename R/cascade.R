@@ -178,6 +178,8 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
             node_names <- rownames(data)
         }
     }
+    
+    assert_matrix(data, all.missing = FALSE)
    
     # Transform the data  
     ## Get cascade ids
@@ -190,22 +192,21 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
         cascade_ids <- colnames(data)
     }
     
-    
     ## Transform to cascade data structure
-    clean_casc_vec <- function(x, mode) {
-        n <- rownames(data)[!is.na(x)]
-        x <- x[!is.na(x)]
-        times <- sort(x, decreasing = TRUE)
-        n <- n[order(x, decreasing = TRUE)]
-        names(times) <- NULL
-        names(n) <- NULL
-        if(mode == "times") return(times)
-        else return(n)
+    nona_times <- apply(data, 2, clean_casc_vec_, mode = "times", data = data)
+    nona_nodes <- apply(data, 2, clean_casc_vec_, mode = "nodes", data = data)
+    # If dim(data)[2] = 1 apply returns vector, if > 1 it returns list. Generate
+    # equivalent output in both cases:
+    if(inherits(nona_times, "matrix")) {
+        cascade_times <- list(as.numeric(nona_times))    
+        names(cascade_times) <- colnames(nona_times)
+        cascade_nodes <- list(as.character(nona_nodes))
+        names(cascade_nodes) <- colnames(nona_nodes)
+        
+    } else { # already list
+        cascade_times <- lapply(nona_times, as.numeric)
+        cascade_nodes <- nona_nodes
     }
-    
-    cascade_times <- apply(data, 2, clean_casc_vec, "times") 
-    cascade_times <- lapply(cascade_times, as.numeric)
-    cascade_nodes <- apply(data, 2, clean_casc_vec, "nodes") 
        
     # Check if data is consistent
     assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
@@ -219,6 +220,17 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
     return(out)   
 }
 
+# Clean cascade vector (remove nas and sort)
+clean_casc_vec_ <- function(x, mode, data) {
+    n <- rownames(data)[!is.na(x)]
+    x <- x[!is.na(x)]
+    times <- sort(x, decreasing = TRUE)
+    n <- n[order(x, decreasing = TRUE)]
+    names(times) <- NULL
+    names(n) <- NULL
+    if(mode == "times") return(times)
+    else return(n)
+}
 
 #' Convert a cascade object to a matrix
 #' 
@@ -299,7 +311,14 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
     cascade_nodes <- do.call(c, x$cascade_nodes)
     cascade_times <- do.call(c, x$cascade_times)
     smry <- summary(x, quiet = TRUE)
-    cascade_ids <- do.call(c, apply(smry, 1, function(x) rep(x[1], each = x[2])))
+    ids <- apply(smry, 1, function(x) rep(x[1], each = x[2])) 
+    # apply generates matrix if nrow(smry) = 1 and list if > 1, generate 
+    # consistent output:
+    if(inherits(ids, "matrix")) {
+       cascade_ids <- as.character(ids) 
+    } else {
+       cascade_ids <- do.call(c, ids) 
+    }
     out <- data.frame("node_name" = cascade_nodes, 'event_time' = cascade_times, 
                       "cascade_id" = cascade_ids, 
                       stringsAsFactors = FALSE, ...)
@@ -348,7 +367,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
     # Check if containers for nodes and event times have same length (same number
     # of cascades)
     if(length(cascade_nodes) != length(cascade_times)) {
-       stop("cascade_ids is not the same length as cascade_times.", 
+       stop("cascade_nodes is not the same length as cascade_times.", 
             call. = FALSE)
     }
     
@@ -356,7 +375,7 @@ assert_cascade_consistency_ <- function(cascade_nodes, cascade_times,
     lens_ids <- sapply(cascade_nodes, length)
     lens_times <- sapply(cascade_times, length)
     if(any(lens_ids != lens_times)) {
-       stop("Corresponding elements in cascade_ids and cascade_times are not of 
+       stop("Corresponding elements in cascade_nodes and cascade_times are not of 
        equal length.", call. = FALSE)
     }
     
