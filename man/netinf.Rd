@@ -25,8 +25,8 @@ Returns the inferred diffusion network as an edglist in an object of
     represented by the row.
 }
 \description{
-Infer the most likely latent diffusion model from a set of nodes and 
-infection times.
+Infer a network of diffusion ties from a set of cascades. Each cascade 
+is defined by pairs of node ids and infection times.
 }
 \details{
 The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
