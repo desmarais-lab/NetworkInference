@@ -55,8 +55,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 
 #' Simulate cascades from a diffusion network
 #'
-#' Simulate an arbitrary number of diffusion cascades based on a diffusion
-#' network.
+#' Simulate diffusion cascades based on the generative model underlying netinf
+#' and a diffusion network.
 #' 
 #' @import assertthat
 #' 
