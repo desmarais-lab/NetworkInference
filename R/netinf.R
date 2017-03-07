@@ -1,7 +1,7 @@
 #' Infer latent diffusion network.
 #' 
-#' Infer the most likely latent diffusion model from a set of nodes and 
-#' infection times.
+#' Infer a network of diffusion ties from a set of cascades. Each cascade 
+#' is defined by pairs of node ids and infection times. 
 #' 
 #' The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 #' Additional information can be found on the 
