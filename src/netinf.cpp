@@ -76,7 +76,7 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector &this_cascade_ids,
             int parent;
             double score;
             for (int k = 0; k < n_parents; k++) {
-                double score = edge_weight_(parent_times[k], this_cascade_times[i],
+                score = edge_weight_(parent_times[k], this_cascade_times[i],
                                             lambda, beta, epsilon, false, model);
                 if (score > max_parent_score) {
                     max_parent_score = score;
