@@ -21,7 +21,7 @@ underlying the diffusion process.
 The package can be installed from github:
 ```{r, eval=FALSE}
 #install.packages("devtools")
-devtools::install_github("flinder/NetworkInference")
+devtools::install_github("desmarais-lab/NetworkInference")
 ```
 
 ## Quick start guide
