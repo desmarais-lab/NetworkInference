@@ -1,0 +1,19 @@
+## 
+## To cite NetworkInference in publications use one or more of the following:
+## 
+##
+## Linder, Fridolin and Bruce A. Desmarais (2016). NetworkInference: Inferring 
+## latent diffusion networks. R package version 1.0.
+##
+## Frederick J. Boehmke, Bruce A Desmarais, Jeffrey J Harden, Hanna M Wallach. 
+## “Collaborative Research: An Expanded Framework for Inferring Public Policy 
+## Diffusion Networks." National Science Foundation. SES Awards: 1558661, 
+## 1558781, 1558561, and 1558509. 
+##
+## Frederick J. Boehmke, Mark D. Brockway, Bruce A. Desmarais, Jeff Harden, 
+## Scott J. LaCombe, Fridolin Linder, Hanna Wallach. 2016. "A New Database for 
+## Inferring Public Policy Innovativeness and Diffusion Networks." Presented at 
+## the 2017 Midwest Political Science Association Annual Conference.
+##
+## The package NetworkInference is distributed under the terms of the license: 
+## GPL-3 + file LICENSE
