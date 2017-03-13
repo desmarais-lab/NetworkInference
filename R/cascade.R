@@ -107,6 +107,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     qassert(event_time, 'S1')
     qassert(cascade_id, 'S1')
     assert_data_frame(data, min.rows = 2, min.cols = 3)
+    data <- as.data.frame(data)
 
     # Transform the data  
     ## Transform cascade ids and node names to character to get consistency 
