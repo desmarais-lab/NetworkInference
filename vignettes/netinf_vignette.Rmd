@@ -12,16 +12,17 @@ vignette: >
 ## Introduction
 
 This package provides an R implementation of the netinf algorithm 
-created by @gomez2010inferring. Given a set of events that spread between a set 
-of nodes the algorithm infers the most likely stable diffusion network that is 
-underlying the diffusion process.
+created by @gomez2010inferring (see [here](http://snap.stanford.edu/netinf/) 
+for more information and the original C++ implementation). Given a set of events 
+that spread between a set of nodes the algorithm infers the most likely stable 
+diffusion network that is underlying the diffusion process.
 
 ## Installation
 
 The package can be installed from github:
 ```{r, eval=FALSE}
 #install.packages("devtools")
-devtools::install_github("flinder/NetworkInference")
+devtools::install_github("desmarais-lab/NetworkInference")
 ```
 
 ## Quick start guide

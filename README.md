@@ -1,14 +1,14 @@
 NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
-2017-03-06
+2017-03-09
 
 ![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
 
 Introduction
 ------------
 
-This package provides an R implementation of the netinf algorithm created by Gomez Rodriguez, Leskovec, and Krause (2010). Given a set of events that spread between a set of nodes the algorithm infers the most likely stable diffusion network that is underlying the diffusion process.
+This package provides an R implementation of the netinf algorithm created by Gomez Rodriguez, Leskovec, and Krause (2010) (see [here](http://snap.stanford.edu/netinf/) for more information and the original C++ implementation). Given a set of events that spread between a set of nodes the algorithm infers the most likely stable diffusion network that is underlying the diffusion process.
 
 Installation
 ------------
@@ -17,7 +17,7 @@ The package can be installed from github:
 
 ``` r
 #install.packages("devtools")
-devtools::install_github("flinder/NetworkInference")
+devtools::install_github("desmarais-lab/NetworkInference")
 ```
 
 Quick start guide
@@ -51,7 +51,7 @@ result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
 print(result)
 ```
 
-<table style="width:64%;">
+<table>
 <colgroup>
 <col width="19%" />
 <col width="26%" />
@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">l</td>
-<td align="center">o</td>
-<td align="center">138.9</td>
-</tr>
-<tr class="even">
-<td align="center">m</td>
+<td align="center">r</td>
 <td align="center">g</td>
-<td align="center">138.6</td>
-</tr>
-<tr class="odd">
-<td align="center">b</td>
-<td align="center">q</td>
-<td align="center">128.3</td>
+<td align="center">133.6</td>
 </tr>
 <tr class="even">
-<td align="center">y</td>
-<td align="center">c</td>
-<td align="center">125</td>
+<td align="center">d</td>
+<td align="center">f</td>
+<td align="center">125.9</td>
 </tr>
 <tr class="odd">
-<td align="center">m</td>
-<td align="center">v</td>
-<td align="center">123</td>
+<td align="center">y</td>
+<td align="center">k</td>
+<td align="center">124.1</td>
+</tr>
+<tr class="even">
+<td align="center">l</td>
+<td align="center">y</td>
+<td align="center">123.9</td>
+</tr>
+<tr class="odd">
+<td align="center">w</td>
+<td align="center">q</td>
+<td align="center">123.2</td>
 </tr>
 </tbody>
 </table>
@@ -278,7 +278,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 645
+    ## [1] 649
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
@@ -293,7 +293,7 @@ Let's take a look at the output of the algorithm. The output is a dataframe cont
 head(results)
 ```
 
-<table style="width:64%;">
+<table>
 <colgroup>
 <col width="19%" />
 <col width="26%" />
@@ -377,4 +377,4 @@ References
 
 Desmarais, Bruce A, Jeffrey J Harden, and Frederick J Boehmke. 2015. “Persistent Policy Pathways: Inferring Diffusion Networks in the American States.” *American Political Science Review* 109 (02). Cambridge Univ Press: 392–406.
 
-Gomez Rodriguez, Manuel, Jure Leskovec, and Andreas Krause. 2010. “Inferring Networks of Diffusion and Influence.” In *Proceedings of the 16th Acm Sigkdd International Conference on Knowledge Discovery and Data Mining*, 1019–28. ACM.
+Gomez Rodriguez, Manuel, Jure Leskovec, and Andreas Krause. 2010. “Inferring Networks of Diffusion and Influence.” In *Proceedings of the 16th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining*, 1019–28. ACM.

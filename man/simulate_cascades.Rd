@@ -38,8 +38,8 @@ A data frame containing (in order of columns) node ids,
     event time and cascade identifier.
 }
 \description{
-Simulate an arbitrary number of diffusion cascades based on a diffusion
-network.
+Simulate diffusion cascades based on the generative model underlying netinf
+and a diffusion network.
 }
 \examples{
 
