@@ -1,7 +1,7 @@
 NetworkInference: Inferring Latent Diffusion Networks
 ================
 Fridolin Linder
-2017-03-09
+2017-03-14
 
 ![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
 
@@ -66,29 +66,29 @@ print(result)
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">r</td>
-<td align="center">g</td>
-<td align="center">133.6</td>
-</tr>
-<tr class="even">
-<td align="center">d</td>
-<td align="center">f</td>
-<td align="center">125.9</td>
-</tr>
-<tr class="odd">
-<td align="center">y</td>
-<td align="center">k</td>
-<td align="center">124.1</td>
+<td align="center">o</td>
+<td align="center">i</td>
+<td align="center">150.6</td>
 </tr>
 <tr class="even">
 <td align="center">l</td>
-<td align="center">y</td>
-<td align="center">123.9</td>
+<td align="center">p</td>
+<td align="center">149.1</td>
 </tr>
 <tr class="odd">
-<td align="center">w</td>
-<td align="center">q</td>
-<td align="center">123.2</td>
+<td align="center">a</td>
+<td align="center">r</td>
+<td align="center">132.3</td>
+</tr>
+<tr class="even">
+<td align="center">p</td>
+<td align="center">z</td>
+<td align="center">127.3</td>
+</tr>
+<tr class="odd">
+<td align="center">p</td>
+<td align="center">h</td>
+<td align="center">126.1</td>
 </tr>
 </tbody>
 </table>
@@ -242,7 +242,7 @@ It also provides summary statistics on the distribution of the cascade lengths (
 
 The `plot()` method allows to plot cascades with varying degrees of detail. The argument `label_nodes` (`TRUE/FALSE`) provides node labels which require more space but provide more detail. The argument `selection` allows to pick a subset of cascades to visualize in case there are too many to plot. If `label_nodes` is set to `FALSE` each event is depicted by a dot, which allows to visualize more cascades simultaneously.
 
-Let's first look at the visualization with labels. Here we plot four cascades, selected by their name:
+Let's first look at the visualization with labels. Here we plot two cascades, selected by their name:
 
 ``` r
 cascade_ids <- colnames(policies)
@@ -278,7 +278,7 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-    ## [1] 649
+    ## [1] 643
 
 Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
 
