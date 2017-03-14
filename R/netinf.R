@@ -1,4 +1,4 @@
-#' Infer latent diffusion network.
+#' Infer latent diffusion network
 #' 
 #' Infer a network of diffusion ties from a set of cascades. Each cascade 
 #' is defined by pairs of node ids and infection times. 
@@ -6,6 +6,10 @@
 #' The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 #' Additional information can be found on the 
 #' netinf website (\url{http://snap.stanford.edu/netinf/}).
+#' 
+#' If higher performance is required and for very large data sets, a faster pure C++ 
+#' implementation is available in the Stanford Network Analysis Project (SNAP). 
+#' The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
 #' 
 #' @import checkmate
 #' @import assertthat
