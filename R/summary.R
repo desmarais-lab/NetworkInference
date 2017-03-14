@@ -42,7 +42,7 @@ summary.cascade <- function(object, quiet = FALSE, ...) {
         cat(paste0('# nodes: ', n_nodes, '\n'))
         cat(paste0('# nodes in cascades: ', n_nodes_in_casc, '\n'))
         cat(paste0('# possible edges: ', npe, '\n\n'))
-        cat("Summary statistics for node length and ties:\n") 
+        cat("Summary statistics for cascade length and number of ties:\n") 
         print(pout)
     }
      
