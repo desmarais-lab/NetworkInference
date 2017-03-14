@@ -2,7 +2,7 @@
 % Please edit documentation in R/netinf.R
 \name{netinf}
 \alias{netinf}
-\title{Infer latent diffusion network.}
+\title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 }

@@ -1,4 +1,4 @@
-#' Infer latent diffusion network.
+#' Infer latent diffusion network
 #' 
 #' Infer a network of diffusion ties from a set of cascades. Each cascade 
 #' is defined by pairs of node ids and infection times. 
