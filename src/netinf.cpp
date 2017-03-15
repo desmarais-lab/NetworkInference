@@ -385,7 +385,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             }
 
         }
-        double last_max_improvement = max_improvement;
+        
         // Store the best results
         Rcpp::IntegerVector pair = possible_edges[best_edge][0];
         edges[e] = pair;
