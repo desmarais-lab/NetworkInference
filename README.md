@@ -10,7 +10,7 @@ This package provides an R implementation of the netinf algorithm created by Gom
 Installation
 ------------
 
-The package can be installed from [CRAN](https://cran.r-project.org/):
+The package can be installed from [CRAN](https://CRAN.R-project.org/):
 
 ``` r
 install.packages("NetworkInference")

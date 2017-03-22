@@ -1,11 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
-readme_files/
-vignettes/make_github_readme.py
-vignettes/render_readme.R
 cran-comments.md
 ^README\.Rmd$
-^README-.*\.png$
 readme_figures/
 NEWS.md
+README.md

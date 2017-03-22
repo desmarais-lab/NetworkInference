@@ -3,10 +3,6 @@
 #include <stdlib.h> // for NULL
 #include <R_ext/Rdynload.h>
 
-/* FIXME: 
-   Check these declarations against the C/Fortran source code.
-*/
-
 /* .Call calls */
 extern SEXP NetworkInference_count_possible_edges_(SEXP, SEXP);
 extern SEXP NetworkInference_netinf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
