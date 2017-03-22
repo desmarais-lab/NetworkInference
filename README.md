@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
+
 About
 -----
 

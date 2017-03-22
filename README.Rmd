@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
+
 ## About
 
 This package provides an R implementation of the netinf algorithm 
