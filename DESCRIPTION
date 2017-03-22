@@ -6,8 +6,8 @@ Date: 2017-03-22
 Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@gmail.com",
                   role = c("aut", "cre")),
              person("Bruce", "Desmarais", role = "ctb"))
-Description: This is an R implementation of the netinf algorithm (Leskovic et al.
-    2010). 
+Description: This is an R implementation of the netinf algorithm (Leskovic et
+    al. 2010).
 License: MIT + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
