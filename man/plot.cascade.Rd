@@ -30,4 +30,3 @@ plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
 plot(cascades, label_nodes = FALSE)
 
 }
-

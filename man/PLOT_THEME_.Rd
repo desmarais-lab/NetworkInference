@@ -15,4 +15,3 @@ A ggplot object that can be added to a ggplot plot
 \description{
 Plotting layout for NetworkInference package.
 }
-

@@ -19,4 +19,3 @@ Integer number of possible edges
 \description{
 Count the number of possible edges given the data
 }
-

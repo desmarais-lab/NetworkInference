@@ -23,4 +23,3 @@ Desmarais, B. A., Harden, J. J., & Boehmke, F. J. (2015).
     American Political Science Review, 109(02), 392-406.
 }
 \keyword{datasets}
-

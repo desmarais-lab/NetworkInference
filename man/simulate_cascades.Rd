@@ -52,4 +52,3 @@ simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1,
 # Simulation from partial cascade
 
 }
-

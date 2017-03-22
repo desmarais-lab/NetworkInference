@@ -15,4 +15,3 @@ An integer count of the number of duplicated values.
 \description{
 Count duplicates in a vector
 }
-

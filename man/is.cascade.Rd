@@ -23,4 +23,3 @@ is.cascade(cascades)
 is.cascade(1) 
 # > FALSE
 }
-

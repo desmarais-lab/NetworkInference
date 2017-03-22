@@ -54,4 +54,3 @@ M. Gomez-Rodriguez, J. Leskovec, A. Krause. Inferring Networks of Diffusion
 and Influence.The 16th ACM SIGKDD Conference on Knowledge Discovery and 
 Data Mining (KDD), 2010.
 }
-
