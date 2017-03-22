@@ -25,7 +25,7 @@ the diffusion process.
 
 ## Installation
 
-The package can be installed from [CRAN](https://cran.r-project.org/):
+The package can be installed from [CRAN](https://CRAN.R-project.org/):
 ```{r, eval=FALSE}
 install.packages("NetworkInference")
 ```
