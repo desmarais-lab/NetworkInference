@@ -28,4 +28,3 @@ List containing one vector per edge.
 \description{
 Run the netinf algorithm on a set of nodes and cascades
 }
-

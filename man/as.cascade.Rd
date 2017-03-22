@@ -48,4 +48,3 @@ cascades <- as.cascade(cascade_matrix)
 is.cascade(cascades)
     
 }
-

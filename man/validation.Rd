@@ -25,4 +25,3 @@ data(validation)
 Validation output from netinf source for example cascades
 }
 \keyword{datasets}
-

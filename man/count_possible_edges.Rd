@@ -22,4 +22,3 @@ data(cascades)
 count_possible_edges(cascades)
 
 }
-

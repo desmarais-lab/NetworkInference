@@ -16,4 +16,3 @@ An object of class cascade with each cascade (ids and times) ordered
 \description{
 Sort cascades by event time
 }
-

@@ -35,4 +35,3 @@ data(cascades)
 summary(cascades)
 
 }
-

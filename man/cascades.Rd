@@ -23,4 +23,3 @@ An example dataset of 31 nodes and 54 cascades. From the original netinf
 implementation in SNAP.
 }
 \keyword{datasets}
-

@@ -28,4 +28,3 @@ data(cascades)
 as.matrix(cascades)
 
 }
-

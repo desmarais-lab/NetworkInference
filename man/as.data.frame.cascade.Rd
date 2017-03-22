@@ -31,4 +31,3 @@ data(cascades)
 as.data.frame(cascades)
 
 }
-

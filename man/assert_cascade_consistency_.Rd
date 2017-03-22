@@ -17,4 +17,3 @@ assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
 \description{
 Assert that the cascade information provided by the user is consistent.
 }
-

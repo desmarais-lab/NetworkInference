@@ -41,4 +41,3 @@ df <- simulate_rnd_cascades(10, n_nodes = 20)
 cascades <- as.cascade(df)
 is.cascade(cascades)
 }
-
