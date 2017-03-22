@@ -64,7 +64,6 @@ cascades <- as.cascade(df_matrix, node_names = node_names)
 
 Cascades can be explored using `summary` and `plot`. See the vignette and 
 package documentation for full functionality.
-
 ```{r, fig.align='center', fig.width=7, fig.height=4}
 cascade_ids <- names(cascades[[1]])
 selection <- cascade_ids[c(1, 10)]
