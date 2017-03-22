@@ -39,3 +39,11 @@ class (\code{diffnet, plot.cascade}). Results of the estimation process can
 be visualized using the plotting method of the \code{diffnet} class.
 }
 
+\section{Performance}{
+
+
+If higher performance is required and for very large data sets, a faster pure C++ 
+implementation is available in the Stanford Network Analysis Project (SNAP). 
+The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
+}
+

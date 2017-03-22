@@ -2,7 +2,7 @@
 % Please edit documentation in R/netinf.R
 \name{netinf}
 \alias{netinf}
-\title{Infer latent diffusion network.}
+\title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 }
@@ -32,6 +32,10 @@ is defined by pairs of node ids and infection times.
 The algorithm is describe in detail in Gomez-Rodriguez et al. (2010). 
 Additional information can be found on the 
 netinf website (\url{http://snap.stanford.edu/netinf/}).
+
+If higher performance is required and for very large data sets, a faster pure C++ 
+implementation is available in the Stanford Network Analysis Project (SNAP). 
+The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
 }
 \examples{
 

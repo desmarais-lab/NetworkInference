@@ -338,9 +338,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         throw std::invalid_argument(msg);
     }
     
-    double last_max_improvement = INFINITY;
     for(int e = 0; e < n_edges; e++) {
-         
+        
         double max_improvement = 0;
         std::string best_edge;
         Rcpp::List replacement;
@@ -353,7 +352,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             i++;
         }
         
-        for (int i = 0; i < possible_edges.size(); i++) {
+        for (unsigned int i = 0; i < possible_edges.size(); i++) {
             
             // Get integer ids of edge nodes for current edge 
             std::string this_id = Rcpp::as<std::string>(keys[i]);
@@ -386,7 +385,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             }
 
         }
-        last_max_improvement = max_improvement;
+        
         // Store the best results
         Rcpp::IntegerVector pair = possible_edges[best_edge][0];
         edges[e] = pair;

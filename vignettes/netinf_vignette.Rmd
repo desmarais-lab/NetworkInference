@@ -141,7 +141,7 @@ cascades to visualize in case there are too many to plot. If `label_nodes` is se
 to `FALSE` each event is depicted by a dot, which allows to visualize more cascades
 simultaneously. 
 
-Let's first look at the visualization with labels. Here we plot four cascades, 
+Let's first look at the visualization with labels. Here we plot two cascades, 
 selected by their name:
 ```{r, fig.align='center', fig.width=7, fig.height=4}
 cascade_ids <- colnames(policies)
