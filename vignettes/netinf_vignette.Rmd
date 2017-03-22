@@ -179,9 +179,9 @@ npe <- count_possible_edges(cascades)
 npe
 ```
 
-Let's run the algorithm with the maximum number of edges to see where the improvement drops off significantly:
+Let's run the algorithm with a larger number of edges to see where the improvement drops off significantly:
 ```{r}
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = npe, 
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
                   lambda = 1)
 ```
 
