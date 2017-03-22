@@ -1,8 +1,7 @@
 library(NetworkInference)
 
+set.seed(2552)
 context("Test if cascade data structure and related methods work.")
-
-
 
 for(n_casc in c(1,10)) {
     # Data Frame methods
