@@ -106,7 +106,10 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     qassert(cascade_node_name, 'S1')
     qassert(event_time, 'S1')
     qassert(cascade_id, 'S1')
-    assert_data_frame(data, min.rows = 2, min.cols = 3)
+    assert_that(is.element(cascade_node_name, colnames(data)))
+    assert_that(is.element(event_time, colnames(data)))
+    assert_that(is.element(cascade_id, colnames(data)))
+    assert_data_frame(data, min.rows = 1, min.cols = 3)
     data <- as.data.frame(data)
 
     # Transform the data  
