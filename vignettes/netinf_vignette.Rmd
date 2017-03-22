@@ -19,15 +19,21 @@ diffusion network that is underlying the diffusion process.
 
 ## Installation
 
-The package can be installed from github:
+The package can be installed from [CRAN](https://cran.r-project.org/):
 ```{r, eval=FALSE}
-#install.packages("devtools")
-devtools::install_github("desmarais-lab/NetworkInference")
+install.packages("NetworkInference")
+```
+
+The latest development version can be installed from 
+[github](https://github.com/desmarais-lab/NetworkInference):
+```{r, eval=FALSE}
+#install.packages(devtools)
+devtools::install_github('desmarais-lab/NetworkInference')
 ```
 
 ## Quick start guide
 
-To get started get your data into the `cascades` format required by the `netinf` 
+To get started, get your data into the `cascades` format required by the `netinf` 
 function:
 
 ```{r, results='hide', message=FALSE}

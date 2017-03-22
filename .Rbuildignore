@@ -5,3 +5,6 @@ readme_files/
 vignettes/make_github_readme.py
 vignettes/render_readme.R
 cran-comments.md
+^README\.Rmd$
+^README-.*\.png$
+readme_figures/

@@ -1,0 +1,91 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "readme_figures/README-"
+)
+```
+
+## About
+
+This package provides an R implementation of the netinf algorithm 
+created by Gomez-Rodriguez, Leskovec, and Krause (see 
+[here](http://snap.stanford.edu/netinf/) for more information and the original 
+C++ implementation). Given a set of events that spread between a set of nodes 
+the algorithm infers the most likely stable diffusion network that is underlying 
+the diffusion process.
+
+## Installation
+
+The package can be installed from [CRAN](https://cran.r-project.org/):
+```{r, eval=FALSE}
+install.packages("NetworkInference")
+```
+
+The latest development version can be installed from 
+[github](https://github.com/desmarais-lab/NetworkInference):
+```{r, eval=FALSE}
+#install.packages(devtools)
+devtools::install_github('desmarais-lab/NetworkInference')
+```
+
+## Quick start guide
+
+This gets you started. For more in-depth explanations see the package vignette 
+and documentation.
+
+First, get your data into the `cascades` format required by the `netinf` 
+function:
+
+```{r, results='hide', message=FALSE}
+library(NetworkInference)
+
+# Simulate random cascade data
+set.seed(423399)
+df <- simulate_rnd_cascades(50, n_node = 26) # Simulates random cascade data
+node_names <- unique(df$node_name)
+
+# Cast data into `cascades` object
+## From dataframe
+cascades <- as.cascade(df, node_names = node_names)
+
+## From matrix
+df_matrix <- as.matrix(cascades) ### Create example matrix
+cascades <- as.cascade(df_matrix, node_names = node_names)
+```
+
+Cascades can be explored using `summary` and `plot`. See the vignette and 
+package documentation for full functionality.
+
+```{r, fig.align='center', fig.width=7, fig.height=4}
+cascade_ids <- names(cascades[[1]])
+selection <- cascade_ids[c(1, 10)]
+plot(cascades, label_nodes = TRUE, selection = selection)
+selection <- cascade_ids[c(1:20)]
+plot(cascades, label_nodes = FALSE, selection = selection)
+```
+
+The actual netinf algorithm is used with:
+```{r}
+result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
+```
+
+The resulting network comes in form of an edgelist:
+```{r, eval=FALSE}
+print(result)
+```
+```{r, results="asis", echo=FALSE}
+pander::pandoc.table(result)
+```
+
+The network as well as the improvement in fit by each edge can be visualized:
+```{r}
+plot(result, type = "network")
+plot(result, type = "improvement")
+```
