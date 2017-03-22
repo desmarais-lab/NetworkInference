@@ -34,7 +34,7 @@
 #' implementation is available in the Stanford Network Analysis Project (SNAP). 
 #' The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
 #' 
-#' @useDynLib NetworkInference
+#' @useDynLib NetworkInference, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' @name NetworkInference
 NULL
