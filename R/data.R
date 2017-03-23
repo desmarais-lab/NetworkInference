@@ -50,26 +50,29 @@
 
 
 
-# Validation output from netinf source for example cascades
-# 
-# @name validation
-# 
-# @usage data(validation)  
-# @docType data
-# 
-# @format An object of class \code{data.frame} with 6 columns, containing:
-# \describe{
-#   \item{origin_node}{Origin of diffusion edge.}
-#   \item{destination_node}{Destination node of diffusion edge.}
-#   \item{volume}{??}
-#   \item{marginal_gain}{Marginal gain from edge.}
-#   \item{median_time_difference}{Median time between events in origin and 
-#       destination}
-#   \item{mean_time_difference}{Mean time between events in origin and 
-#       destination}
-# }
-# 
-# @source Output from netinf example program (\url{https://github.com/snap-stanford/snap/tree/master/examples/netinf})
+#' Validation output from netinf source.
+#' 
+#' Contians output from original netinf C++ inmplementation, executed on 
+#' \code{\link{cascades}}. For testing purposes.
+#' 
+#' @name validation
+#' 
+#' @usage data(validation)  
+#' @docType data
+#' 
+#' @format An object of class \code{data.frame} with 6 columns, containing:
+#' \describe{
+#'   \item{origin_node}{Origin of diffusion edge.}
+#'   \item{destination_node}{Destination node of diffusion edge.}
+#'   \item{volume}{??}
+#'   \item{marginal_gain}{Marginal gain from edge.}
+#'   \item{median_time_difference}{Median time between events in origin and 
+#'       destination}
+#'   \item{mean_time_difference}{Mean time between events in origin and 
+#'       destination}
+#' }
+#' 
+#' @source Output from netinf example program (\url{https://github.com/snap-stanford/snap/tree/master/examples/netinf}).
 "validation"
 
 # # Code to generate validation dataset. Data is copied from netinf source example
