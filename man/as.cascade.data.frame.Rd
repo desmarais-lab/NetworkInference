@@ -2,37 +2,37 @@
 % Please edit documentation in R/cascade.R
 \name{as.cascade.data.frame}
 \alias{as.cascade.data.frame}
-\title{Create cascade object from data frame}
+\title{Transform data frame to cascade}
 \usage{
 \method{as.cascade}{data.frame}(data, cascade_node_name = "node_name",
   event_time = "event_time", cascade_id = "cascade_id", node_names = NULL,
   ...)
 }
 \arguments{
-\item{data}{\link{data.frame} containing the cascade data with column names 
+\item{data}{\link{data.frame}, containing the cascade data with column names 
 corresponding to the arguments provided to \code{cascade_node_names}, 
 \code{event_time} and \code{cascade_id}.}
 
-\item{cascade_node_name}{Character, column name of \code{data} that specifies 
+\item{cascade_node_name}{character, column name of \code{data} that specifies 
 the node names in the cascade.}
 
-\item{event_time}{Character, column name of \code{data} that specifies the 
+\item{event_time}{character, column name of \code{data} that specifies the 
 event times for each node involved in a cascade.}
 
-\item{cascade_id}{Character, column name of the cascade identifier.}
+\item{cascade_id}{character, column name of the cascade identifier.}
 
-\item{node_names}{Character, factor or numeric vector of names for each node. 
+\item{node_names}{character, factor or numeric vector containing the names for each node. 
 Optional. If not provided, node names are inferred from the cascade data.
 Note that in this case nodes that are not involved in any cascade (isolates)
 will be dropped (not recommended).}
 
-\item{..., }{Additional arguments}
+\item{..., }{additional arguments.}
 }
 \value{
 An object of class \code{cascade}. See \link{as.cascade} for details.
 }
 \description{
-Create cascade object from data frame
+Create a cascade object from a \code{\link{data.frame}}.
 }
 \examples{
 

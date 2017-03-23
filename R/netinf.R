@@ -14,12 +14,12 @@
 #' @import checkmate
 #' @import assertthat
 #' 
-#' @param  cascades An object of class cascade containing node and cascade 
+#' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as.cascade}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
-#' @param lambda Numeric, alpha for transmission model.
-#' @param n_edges Numeric, number of edges to infer.
+#' @param lambda numeric, alpha for transmission model.
+#' @param n_edges numeric, number of edges to infer.
 #' 
 #' @return Returns the inferred diffusion network as an edglist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -88,9 +88,13 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
 }
 
 
-#' Is the object of class diffnet
+#' Is the object of class diffnet?
 #' 
-#' @param object The object to be tested
+#' Tests if an object is of class diffnet. The class diffnet is appended to the 
+#' object returned by \code{\link{netinf()}} for dispatch of appropriate plotting 
+#' methods.
+#' 
+#' @param object the object to be tested.
 #' 
 #' @return \code{TRUE} if object is a diffnet, \code{FALSE} otherwise.
 #' 
@@ -107,13 +111,14 @@ is.diffnet <- function(object) {
 
 #' Count the number of possible edges in the dataset
 #' 
-#' Across all cascades, count the edges that are possible. An edge \code{u->v} 
+#' Across all cascades, count the edges that are possible. An edge from node
+#' \code{u} to node \code{v}
 #' is only possible if in at least one cascade \code{u} experienced an event 
 #' before \code{v}.
 #' 
 #' @param cascades Object of class cascade containing the data.
 #' 
-#' @return An integer count
+#' @return An integer count.
 #' 
 #' @examples
 #' data(cascades)

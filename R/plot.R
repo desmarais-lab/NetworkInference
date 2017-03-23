@@ -1,10 +1,10 @@
-#' Common plotting elements
-#' 
-#' Plotting layout for NetworkInference package.
-#' 
-#' @param mode What elements to return.
-#' 
-#' @return A ggplot object that can be added to a ggplot plot 
+# Common plotting elements
+# 
+# Plotting layout for NetworkInference package.
+# 
+# @param mode What elements to return.
+# 
+# @return A ggplot object that can be added to a ggplot plot 
 PLOT_THEME_ <- function(mode = NULL) {
     if(is.null(mode)) {
         out <- theme_bw() 
@@ -21,12 +21,12 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' @import ggrepel
 #' @importFrom stats density
 #' 
-#' @param x Object of class cascade to be plottet
-#' @param label_nodes Logical, indicating if should the nodes in each cascade be 
+#' @param x object of class cascade to be plotted.
+#' @param label_nodes logical, indicating if should the nodes in each cascade be 
 #'     labeled. If the cascades are very dense setting this to \code{FALSE} is
 #'     recommended.
-#' @param selection A vector of cascade ids to plot.
-#' @param ... additional arguments passed to plot
+#' @param selection a vector of cascade ids to plot.
+#' @param ... additional arguments passed to plot.
 #' 
 #' @examples 
 #' 
@@ -34,7 +34,7 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
 #' plot(cascades, label_nodes = FALSE)
 #' 
-#' @return A ggplot plot object
+#' @return A ggplot plot object.
 #' @export
 plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
     
@@ -98,11 +98,14 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
     return(p)
 }
 
-#' Plot a cascade object
+#' Visualize netinf output
+#' 
+#' Visualize the inferred diffusion network or the marginal gain in fit obtained
+#' by addition of each edge.
 #' 
 #' @import ggplot2
 #' 
-#' @param x Object of class diffnet to be plotted.
+#' @param x object of class diffnet to be plotted.
 #' @param type character, one of \code{c("network", "improvement")} indicating if 
 #'     the inferred diffusion network (\code{"network"}) or the improvement for each
 #'     edge should be visualized (\code{"improvement"}).

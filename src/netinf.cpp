@@ -207,14 +207,14 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
 }
 
 
-//' Count the number of possible edges given the data
-//' 
-//' @param cascade_nodes List of integer vectors of node ids in order of event, 
-//'     one per cascade.
-//' @param cascade_times List of numeric vectors of event times corresponding to
-//'     nodes in cascade_nodes (same order). 
-//'     
-//' @return Integer number of possible edges
+// Count the number of possible edges given the data
+// 
+// @param cascade_nodes List of integer vectors of node ids in order of event, 
+//     one per cascade.
+// @param cascade_times List of numeric vectors of event times corresponding to
+//     nodes in cascade_nodes (same order). 
+//     
+// @return Integer number of possible edges
 // [[Rcpp::export]]
 int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) {
    
@@ -297,19 +297,19 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
     return out;
 }
 
-//' Run the netinf algorithm on a set of nodes and cascades
-//' 
-//' @param node_ids An integer vector of integer node ids.
-//' @param cascade_nodes A list of integer vectors containing the node ids of
-//'     the cascade in order of infection.
-//' @param  cascade_times A list of numeric vectors each containing infection 
-//'     times for the corresponding nodes in \code{cascade_ids}.
-//' @param model integer indicating the choice of model: 1: exponential, 
-//'     2: power law, 3: rayleigh (only exponential implemented).
-//' @param lambda Numeric, rate parameter for exponential transmission model.
-//' @param n_edges Numeric, number of edges to infer.
-//' 
-//' @return List containing one vector per edge.
+// Run the netinf algorithm on a set of nodes and cascades
+// 
+// @param node_ids An integer vector of integer node ids.
+// @param cascade_nodes A list of integer vectors containing the node ids of
+//     the cascade in order of infection.
+// @param  cascade_times A list of numeric vectors each containing infection 
+//     times for the corresponding nodes in \code{cascade_ids}.
+// @param model integer indicating the choice of model: 1: exponential, 
+//     2: power law, 3: rayleigh (only exponential implemented).
+// @param lambda Numeric, rate parameter for exponential transmission model.
+// @param n_edges Numeric, number of edges to infer.
+// 
+// @return List containing one vector per edge.
 // [[Rcpp::export]]
 Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
                    Rcpp::List &cascade_times, int &n_edges, int &model, 

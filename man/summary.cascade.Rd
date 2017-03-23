@@ -2,19 +2,19 @@
 % Please edit documentation in R/summary.R
 \name{summary.cascade}
 \alias{summary.cascade}
-\title{Summarize cascade object}
+\title{Summarize a cascade object}
 \usage{
 \method{summary}{cascade}(object, quiet = FALSE, ...)
 }
 \arguments{
-\item{object}{Object of class cascade to be summarized.}
+\item{object}{object of class cascade to be summarized.}
 
 \item{quiet}{logical, if \code{FALSE} summary stats are printed to std out.}
 
-\item{...}{Additional arguments passed to summary}
+\item{...}{Additional arguments passed to summary.}
 }
 \value{
-Prints cascade summary information to the screen 
+Prints cascade summary information to the screen
     (if \code{quiet = FALSE}). \code{'# cascades'} is the number of cascades in
     the object, \code{'# nodes'} is the number of nodes in the system (nodes 
     that can theoretically experience an event), \code{'# nodes in cascades'} is 
@@ -28,7 +28,8 @@ Prints cascade summary information to the screen
     times per cascade).
 }
 \description{
-Summarize cascade object
+Generates summary statistics for single cascades and across cascades in a 
+collection, contained in a cascades object.
 }
 \examples{
 data(cascades)

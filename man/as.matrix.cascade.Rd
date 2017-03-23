@@ -17,10 +17,8 @@ A matrix containing all cascade information. See section Details for
     more information.
 }
 \description{
-Generates a matrix containing the cascade information in the cascade object.
-}
-\details{
-Missing values are used for nodes that do not experience an event in a cascade.
+Generates a \code{\link{matrix}} containing the cascade information in the 
+cascade object. Missing values are used for nodes that do not experience an event in a cascade.
 }
 \examples{
 

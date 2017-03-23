@@ -8,34 +8,36 @@ simulate_cascades(diffnet, nsim = 1, seed = NULL, max_time = Inf, lambda,
   beta, epsilon, model, partial_cascade = NULL, start_probabilities = NULL)
 }
 \arguments{
-\item{diffnet}{Object of class \code{diffnet}.}
+\item{diffnet}{object of class \code{diffnet}.}
 
-\item{nsim}{Number of cascades to simulate.}
+\item{nsim}{integer, number of cascades to simulate.}
 
-\item{seed}{Seed for random number generator.}
+\item{seed}{integer, seed for random number generator.}
 
-\item{max_time}{Numeric, the maximum time after which observations are 
+\item{max_time}{numeric, the maximum time after which observations are 
 censored}
 
-\item{lambda}{Parameter for diffusion time distribution.}
+\item{lambda}{numeric, parameter for diffusion time distribution.}
 
-\item{beta}{Weight for in-network diffusion}
+\item{beta}{numeric, weight for in-network diffusion}
 
-\item{epsilon}{Weight for out of network diffusion}
+\item{epsilon}{numeric, weight for out of network diffusion}
 
-\item{model}{Diffusion model to use. One of \code{c("exponential", 
+\item{model}{character, diffusion model to use. One of \code{c("exponential", 
 "rayleigh")}.}
 
-\item{partial_cascade}{Object of type cascade, containing one partial 
+\item{partial_cascade}{object of type cascade, containing one partial 
 cascades for which further development should be simulated.}
 
-\item{start_probabilities}{A vector of probabilities for each node in diffnet,
+\item{start_probabilities}{a vector of probabilities for each node in diffnet,
 to be the node with the first event. If \code{NULL} a node is drawn from
 a uniform distribution over all nodes.}
 }
 \value{
-A data frame containing (in order of columns) node ids, 
-    event time and cascade identifier.
+A data frame with three columns. Containing 1) The names of 
+    the nodes (\code{"node_name"}) that experience an event in each cascade, 
+    2) the event time (\code{"event_time"}) of the corresponding node, 
+    3) the cascade identifier \code{"cascade_id"}.
 }
 \description{
 Simulate diffusion cascades based on the generative model underlying netinf

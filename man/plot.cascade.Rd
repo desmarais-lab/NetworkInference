@@ -7,18 +7,18 @@
 \method{plot}{cascade}(x, label_nodes = TRUE, selection = NULL, ...)
 }
 \arguments{
-\item{x}{Object of class cascade to be plottet}
+\item{x}{object of class cascade to be plotted.}
 
-\item{label_nodes}{Logical, indicating if should the nodes in each cascade be 
+\item{label_nodes}{logical, indicating if should the nodes in each cascade be 
 labeled. If the cascades are very dense setting this to \code{FALSE} is
 recommended.}
 
-\item{selection}{A vector of cascade ids to plot.}
+\item{selection}{a vector of cascade ids to plot.}
 
-\item{...}{additional arguments passed to plot}
+\item{...}{additional arguments passed to plot.}
 }
 \value{
-A ggplot plot object
+A ggplot plot object.
 }
 \description{
 Plot a cascade object

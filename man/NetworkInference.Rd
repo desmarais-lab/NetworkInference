@@ -28,14 +28,14 @@ inputs. See the package vignette for more details.
 
 Diffusion netwoks are estimated using the \code{\link{netinf}} function. It 
 produces a diffusion network in form of an edgelist (of class 
-\code{\link{data.frame}}
+\code{\link{data.frame}}).
 }
 
 \section{Interpretation and Visualization}{
 
 
 Cascade data can be visualized with the \code{plot} method of the \code{cascade}
-class (\code{diffnet, plot.cascade}). Results of the estimation process can 
+class (\code{diffnet, \link{plot.cascade}}). Results of the estimation process can 
 be visualized using the plotting method of the \code{diffnet} class.
 }
 

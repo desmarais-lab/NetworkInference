@@ -10,7 +10,7 @@
 \item{x}{Cascade object to convert.}
 
 \item{row.names}{NULL or a character vector giving the row names for the data 
-frame. Missing values are not allowed. (Not supported)}
+frame. Missing values are not allowed.}
 
 \item{optional}{logical. If TRUE, setting row names and converting column 
 names (to syntactic names: see make.names) is optional. (Not supported)}
@@ -18,9 +18,10 @@ names (to syntactic names: see make.names) is optional. (Not supported)}
 \item{...}{Additional arguments passed to \code{\link{data.frame}}.}
 }
 \value{
-A data frame with three columns. Containing (in order) 1) The names of 
-    the nodes that experience an event in each cascade, 2) the event time of the
-    corresponding node, 3) the cascade identifier.
+A data frame with three columns. Containing 1) The names of 
+    the nodes (\code{"node_name"}) that experience an event in each cascade, 
+    2) the event time (\code{"event_time"}) of the corresponding node, 
+    3) the cascade identifier \code{"cascade_id"}.
 }
 \description{
 Generates a data frame containing the cascade information in the cascade object.

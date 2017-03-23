@@ -10,10 +10,11 @@ count_possible_edges(cascades)
 \item{cascades}{Object of class cascade containing the data.}
 }
 \value{
-An integer count
+An integer count.
 }
 \description{
-Across all cascades, count the edges that are possible. An edge \code{u->v} 
+Across all cascades, count the edges that are possible. An edge from node
+\code{u} to node \code{v}
 is only possible if in at least one cascade \code{u} experienced an event 
 before \code{v}.
 }

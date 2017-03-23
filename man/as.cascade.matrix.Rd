@@ -2,28 +2,30 @@
 % Please edit documentation in R/cascade.R
 \name{as.cascade.matrix}
 \alias{as.cascade.matrix}
-\title{Create cascade object from a matrix}
+\title{Transform matrix to cascade}
 \usage{
 \method{as.cascade}{matrix}(data, node_names = NULL, ...)
 }
 \arguments{
-\item{data}{\link{matrix} Rows corresponding to nodes, columns to cascades.
-Matrix entries are the event times for node, cascade pairs. Specify column 
+\item{data}{\link{matrix}, rows corresponding to nodes, columns to cascades.
+Matrix entries are the event times for each node, cascade pair. 
+Missing values indicate censored observations, that is, nodes that did not
+have an event). Specify column 
 and row names if cascade and node ids other than integer sequences are 
 desired.}
 
-\item{node_names}{Character, factor or numeric vector of names for each node. 
+\item{node_names}{character, factor or numeric vector, containing names for each node. 
 Optional. If not provided, node names are inferred from the provided data.
 Note that in this case nodes that are not involved in any cascade (isolates)
 will be dropped (not recommended).}
 
-\item{..., }{Additional arguments}
+\item{..., }{additional arguments.}
 }
 \value{
 An object of class \code{cascade}. See \link{as.cascade} for details.
 }
 \description{
-Create cascade object from a matrix
+Create a cascade object from a \code{\link{matrix}}.
 }
 \examples{
 

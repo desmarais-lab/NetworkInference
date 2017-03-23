@@ -2,18 +2,18 @@
 % Please edit documentation in R/cascade.R
 \name{is.cascade}
 \alias{is.cascade}
-\title{Is the object a cascade?}
+\title{Is the object of class cascade?}
 \usage{
 is.cascade(object)
 }
 \arguments{
-\item{object}{The object to be tested}
+\item{object}{the object to be tested.}
 }
 \value{
 \code{TRUE} if object is a cascade, \code{FALSE} otherwise.
 }
 \description{
-Is the object a cascade?
+Is the object of class cascade?
 }
 \examples{
 

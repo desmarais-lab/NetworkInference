@@ -2,18 +2,20 @@
 % Please edit documentation in R/netinf.R
 \name{is.diffnet}
 \alias{is.diffnet}
-\title{Is the object of class diffnet}
+\title{Is the object of class diffnet?}
 \usage{
 is.diffnet(object)
 }
 \arguments{
-\item{object}{The object to be tested}
+\item{object}{the object to be tested.}
 }
 \value{
 \code{TRUE} if object is a diffnet, \code{FALSE} otherwise.
 }
 \description{
-Is the object of class diffnet
+Tests if an object is of class diffnet. The class diffnet is appended to the 
+object returned by \code{\link{netinf()}} for dispatch of appropriate plotting 
+methods.
 }
 \examples{
 

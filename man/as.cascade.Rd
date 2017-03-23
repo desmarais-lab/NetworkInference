@@ -7,7 +7,7 @@
 as.cascade(data, ...)
 }
 \arguments{
-\item{data}{Cascades to be converted. See Details for supported classes.}
+\item{data}{cascades to be converted. See Details for supported classes.}
 
 \item{...}{additional arguments passed to dispatched method. See methods 
 linked in Details for more information.}
@@ -16,17 +16,17 @@ linked in Details for more information.}
 An object of class \code{cascade}. This is a list containing three
     (named) elements: 
     \enumerate{
-        \item \code{node_names} A character vector of node names.
-        \item \code{cascade_nodes} A list with one character vector per
+        \item \code{"node_names"} A character vector of node names.
+        \item \code{"cascade_nodes"} A list with one character vector per
             cascade containing the node names in order of the events.
-        \item \code{cascade_times} A list with one element per cascade 
-            containing the event times for the nodes in \code{cascade_names}.
+        \item \code{"cascade_times"} A list with one element per cascade 
+            containing the event times for the nodes in \code{"cascade_names"}.
     }
 }
 \description{
 A generic function to transform input data into a cascade object to be used 
-in other \code{NetworkInference} function. The method invoked depends on the 
-\link{class} of the first argument. See section Details for available methods.
+in other \code{NetworkInference} functions. The method invoked depends on the 
+class of the first argument. See section Details for available methods.
 }
 \details{
 The following methods are available:

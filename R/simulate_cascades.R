@@ -60,24 +60,26 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 #' 
 #' @import assertthat
 #' 
-#' @param diffnet Object of class \code{diffnet}.
-#' @param nsim Number of cascades to simulate.
-#' @param seed Seed for random number generator. 
-#' @param lambda Parameter for diffusion time distribution.
-#' @param beta Weight for in-network diffusion
-#' @param epsilon Weight for out of network diffusion
-#' @param model Diffusion model to use. One of \code{c("exponential", 
+#' @param diffnet object of class \code{diffnet}.
+#' @param nsim integer, number of cascades to simulate.
+#' @param seed integer, seed for random number generator. 
+#' @param lambda numeric, parameter for diffusion time distribution.
+#' @param beta numeric, weight for in-network diffusion
+#' @param epsilon numeric, weight for out of network diffusion
+#' @param model character, diffusion model to use. One of \code{c("exponential", 
 #'     "rayleigh")}.
-#' @param max_time Numeric, the maximum time after which observations are 
+#' @param max_time numeric, the maximum time after which observations are 
 #'     censored
-#' @param start_probabilities A vector of probabilities for each node in diffnet,
+#' @param start_probabilities a vector of probabilities for each node in diffnet,
 #'     to be the node with the first event. If \code{NULL} a node is drawn from
 #'     a uniform distribution over all nodes.
-#' @param partial_cascade Object of type cascade, containing one partial 
+#' @param partial_cascade object of type cascade, containing one partial 
 #'     cascades for which further development should be simulated.
 #'     
-#' @return A data frame containing (in order of columns) node ids, 
-#'     event time and cascade identifier. 
+#' @return A data frame with three columns. Containing 1) The names of 
+#'     the nodes (\code{"node_name"}) that experience an event in each cascade, 
+#'     2) the event time (\code{"event_time"}) of the corresponding node, 
+#'     3) the cascade identifier \code{"cascade_id"}.
 #'     
 #' @examples
 #' 
@@ -141,7 +143,8 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
                       start_probabilities = start_probabilities)
     out <- do.call(rbind, sim_out)
     rownames(out) <- NULL
-    return(out) }
+    return(out) 
+}
 
 
 # Simulate a single cascade from scratch (random first event node)

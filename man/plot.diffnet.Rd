@@ -2,12 +2,12 @@
 % Please edit documentation in R/plot.R
 \name{plot.diffnet}
 \alias{plot.diffnet}
-\title{Plot a cascade object}
+\title{Visualize netinf output}
 \usage{
 \method{plot}{diffnet}(x, type = "network", ...)
 }
 \arguments{
-\item{x}{Object of class diffnet to be plotted.}
+\item{x}{object of class diffnet to be plotted.}
 
 \item{type}{character, one of \code{c("network", "improvement")} indicating if 
 the inferred diffusion network (\code{"network"}) or the improvement for each
@@ -20,7 +20,8 @@ A ggplot plot object if \code{type = "improvement"} otherwise an
     igraph plot.
 }
 \description{
-Plot a cascade object
+Visualize the inferred diffusion network or the marginal gain in fit obtained
+by addition of each edge.
 }
 \examples{
 

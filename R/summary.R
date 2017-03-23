@@ -1,9 +1,12 @@
-#' Summarize cascade object
+#' Summarize a cascade object
 #' 
-#' @param object Object of class cascade to be summarized.
+#' Generates summary statistics for single cascades and across cascades in a 
+#' collection, contained in a cascades object.
+#' 
+#' @param object object of class cascade to be summarized.
 #' @param quiet logical, if \code{FALSE} summary stats are printed to std out.
-#' @param ... Additional arguments passed to summary
-#' @return Prints cascade summary information to the screen 
+#' @param ... Additional arguments passed to summary.
+#' @return Prints cascade summary information to the screen
 #'     (if \code{quiet = FALSE}). \code{'# cascades'} is the number of cascades in
 #'     the object, \code{'# nodes'} is the number of nodes in the system (nodes 
 #'     that can theoretically experience an event), \code{'# nodes in cascades'} is 
@@ -49,12 +52,6 @@ summary.cascade <- function(object, quiet = FALSE, ...) {
     return(invisible(casc_info))
 }
 
-
-#' Count duplicates in a vector
-#' 
-#' @param x vector to count duplicates in
-#' 
-#' @return An integer count of the number of duplicated values.
 count_dups_ <- function(x) {
     return(length(x) - length(unique(x)))
 }
