@@ -91,7 +91,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
 #' Is the object of class diffnet?
 #' 
 #' Tests if an object is of class diffnet. The class diffnet is appended to the 
-#' object returned by \code{\link{netinf()}} for dispatch of appropriate plotting 
+#' object returned by \code{\link{netinf}} for dispatch of appropriate plotting 
 #' methods.
 #' 
 #' @param object the object to be tested.
