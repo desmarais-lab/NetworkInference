@@ -115,7 +115,6 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
     }
     # Check start probabilities
     qassert(start_probabilities, paste0('N', n_nodes, '[0,1]'))
-    assert_that(sum(start_probabilities) == 1)
     
     # Check partial cascade input 
     if(!is.null(partial_cascade)) {
