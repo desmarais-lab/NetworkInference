@@ -1,5 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+NetworkInference: Inferring Latent Diffusion Networks
+=====================================================
+
 ![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
 
 About
