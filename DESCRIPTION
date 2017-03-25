@@ -1,13 +1,12 @@
 Package: NetworkInference
 Type: Package
-Title: Inferring latent diffusion networks
-Version: 1.0.1.9000
-Date: 2017-03-23
+Title: Inferring Latent Diffusion Networks
+Version: 1.0.0
+Date: 2017-03-24
 Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@gmail.com",
                   role = c("aut", "cre")),
              person("Bruce", "Desmarais", role = "ctb"))
-Description: This is an R implementation of the netinf algorithm
-(Gomez-Rodriguez, Leskovec, and Krause, 2010).
+Description: This is an R implementation of the netinf algorithm (Gomez Rodriguez, Leskovec, and Krause, 2010)<doi:10.1145/1835804.1835933>. Given a set of events that spread between a set of nodes the algorithm infers the most likely stable diffusion network that is underlying the diffusion process.
 License: MIT + file LICENSE
 Imports:
     Rcpp (>= 0.12.5),
