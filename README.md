@@ -5,6 +5,7 @@ NetworkInference: Inferring Latent Diffusion Networks
 
 ![](https://travis-ci.org/desmarais-lab/NetworkInference.svg) ![](http://www.r-pkg.org/badges/version/NetworkInference)
 ![](http://cranlogs.r-pkg.org/badges/NetworkInference)
+![](http://cranlogs.r-pkg.org/badges/grand-total/NetworkInference?color=yellow)
 
 About
 -----
