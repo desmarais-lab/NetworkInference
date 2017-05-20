@@ -89,7 +89,7 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
         p <- ggplot(pdat, aes_string(x = "cascade_id", y = "event_time")) +
             geom_violin() + 
             geom_jitter(height = 0, width = 0.05, alpha = 0.6, size = 0.5) +
-            ylab("Cascade ID") + xlab("Time") +
+            xlab("Cascade ID") + ylab("Time") +
             coord_flip()
     }
 
