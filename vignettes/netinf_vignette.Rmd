@@ -44,12 +44,12 @@ df <- simulate_rnd_cascades(50, n_node = 20)
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
-## From dataframe
-cascades <- as.cascade(df, node_names = node_names)
+## From long format
+cascades <- as_cascade_long(df, node_names = node_names)
 
-## From matrix
+## From wide format
 df_matrix <- as.matrix(cascades) ### Create example matrix
-cascades <- as.cascade(df_matrix, node_names = node_names)
+cascades <- as_cascade_wide(df_matrix, node_names = node_names)
 ```
 
 Then fit the model:
@@ -89,7 +89,7 @@ data(policies)
 state_names <- rownames(policies)
 ```
 
-In this case the data is stored in a matrix. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper left corner of this matrix:
+In this case the data is stored in a matrix in wide format. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper left corner of this matrix:
 
 ```{r, eval=FALSE}
 policies[1:7, 1:7]
@@ -100,13 +100,16 @@ pander::pandoc.table(head(policies[1:7, 1:7]))
 ```
 
 Most functionality of the `NetworkInference` package is based on the `cascades` 
-data format. So before starting with the analysis we have to transform our dataframe
-to such an object (other formats for the input data, such as matrices, are supported,
-too. 
+data format. So before starting with the analysis we have to transform our data
+to such an object.
 
 ```{r}
-policy_cascades <- as.cascade(policies, node_names = state_names)
+policy_cascades <- as_cascade_wide(policies, node_names = state_names)
 ```
+
+In this case we used the function `as_cascade_wide`. If your data is in long format
+(i.e. each row corresponds to an event rather than a node or unit) you can convert
+it using the function `as_cascade_long`.
 
 The `cascades` data type is basically a list containing all the data stored in 
 three separate objects.

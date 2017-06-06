@@ -13,12 +13,14 @@
 (Currently not supported.)}
 }
 \value{
-A matrix containing all cascade information. See section Details for
-    more information.
+A matrix containing all cascade information in wide format. That is,
+each row of the matrix corresponds to a node and each column to a cascade. 
+Cell entries are event times. Censored nodes have \code{NA} for their entry.
 }
 \description{
 Generates a \code{\link{matrix}} containing the cascade information in the 
-cascade object. Missing values are used for nodes that do not experience an event in a cascade.
+cascade object in wide format. Missing values are used for nodes that do not 
+experience an event in a cascade.
 }
 \examples{
 

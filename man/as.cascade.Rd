@@ -28,15 +28,9 @@ A generic function to transform input data into a cascade object to be used
 in other \code{NetworkInference} functions. The method invoked depends on the 
 class of the first argument. See section Details for available methods.
 }
-\details{
-The following methods are available:
-\itemize{
-    \item \link{as.cascade.data.frame}
-    \item \link{as.cascade.matrix}
-}
-}
 \examples{
 
+\dontrun{
 # For data frames 
 df <- simulate_rnd_cascades(10, n_nodes = 20)
 cascades <- as.cascade(df)
@@ -46,5 +40,5 @@ is.cascade(cascades)
 cascade_matrix <- as.matrix(cascades)
 cascades <- as.cascade(cascade_matrix)
 is.cascade(cascades)
-    
+}
 }

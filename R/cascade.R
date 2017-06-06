@@ -24,12 +24,6 @@ is.cascade <- function(object) {
 #' in other \code{NetworkInference} functions. The method invoked depends on the 
 #' class of the first argument. See section Details for available methods.
 #' 
-#' The following methods are available:
-#' \itemize{
-#'     \item \link{as.cascade.data.frame}
-#'     \item \link{as.cascade.matrix}
-#' }
-#'  
 #' @param data cascades to be converted. See Details for supported classes.
 #' @param ... additional arguments passed to dispatched method. See methods 
 #'     linked in Details for more information.
@@ -46,6 +40,7 @@ is.cascade <- function(object) {
 #'     
 #' @examples
 #' 
+#' \dontrun{
 #' # For data frames 
 #' df <- simulate_rnd_cascades(10, n_nodes = 20)
 #' cascades <- as.cascade(df)
@@ -55,48 +50,71 @@ is.cascade <- function(object) {
 #' cascade_matrix <- as.matrix(cascades)
 #' cascades <- as.cascade(cascade_matrix)
 #' is.cascade(cascades)
-#'     
+#' }
 #' @export
 as.cascade <- function(data, ...) {
-   UseMethod("as.cascade", data)
+    msg <- paste("`as.cascade` is no longer available (as of version 1.1.0).", 
+                 "Please use `as_cascade_long` or `as_cascade_wide` depending", 
+                 "on your input data format. Type `?as_cascade_long` and", 
+                 "`?as_cascade_wide` for more information.") 
+    stop(msg)
 }
 
-#' Transform data frame to cascade
+#' Transform long data to cascade 
 #'
-#' Create a cascade object from a \code{\link{data.frame}}.
+#' Create a cascade object from data in long format.
+#' 
+#' Each row of the data describes one event in the cascade. The data must 
+#' contain at least three columns:
+#' \enumerate{
+#'    \item Cascade node name: The identifier of the node that experiences the 
+#'        event.
+#'    \item Event time: The time when the node experiences the event.
+#'    \item Cascade id: The identifier of the cascade that the event pertains to.
+#' }
+#' The default names for these columns are \code{node_name}, \code{event_time} 
+#' and \code{cascade_id}. If other names are used in the \code{data} object the 
+#' names have to be specified in the corresponding arguments (see argument 
+#' documentation)
 #' 
 #' @import checkmate 
 #' @import assertthat
 #' 
+#' @param data \link{data.frame}, containing the cascade data 
+#'     with column names corresponding to the arguments provided to 
+#'     \code{cascade_node_names}, \code{event_time} and \code{cascade_id}.
 #' @param cascade_node_name character, column name of \code{data} that specifies 
 #'     the node names in the cascade. 
 #' @param event_time character, column name of \code{data} that specifies the 
 #'     event times for each node involved in a cascade.
 #' @param cascade_id character, column name of the cascade identifier.
-#' @param data \link{data.frame}, containing the cascade data with column names 
-#'     corresponding to the arguments provided to \code{cascade_node_names}, 
-#'     \code{event_time} and \code{cascade_id}.
 #' @param node_names character, factor or numeric vector containing the names for each node. 
 #'     Optional. If not provided, node names are inferred from the cascade data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
 #'     will be dropped (not recommended).
-#' @param ..., additional arguments.
 #'     
-#' @return An object of class \code{cascade}. See \link{as.cascade} for details.
+#' @return An object of class \code{cascade}. This is a list containing three
+#'     (named) elements: 
+#'     \enumerate{
+#'         \item \code{"node_names"} A character vector of node names.
+#'         \item \code{"cascade_nodes"} A list with one character vector per
+#'             cascade containing the node names in order of the events.
+#'         \item \code{"cascade_times"} A list with one element per cascade 
+#'             containing the event times for the nodes in \code{"cascade_names"}.
+#'     }
 #' 
 #' @examples 
 #' 
-#' # For data frames 
 #' df <- simulate_rnd_cascades(10, n_nodes = 20)
-#' cascades <- as.cascade(df)
+#' cascades <- as_cascade_long(df)
 #' is.cascade(cascades)
 #
 #' @export
-as.cascade.data.frame <- function(data, cascade_node_name = "node_name", 
-                                  event_time = "event_time", 
-                                  cascade_id = "cascade_id", 
-                                  node_names = NULL, ...) {
+as_cascade_long <- function(data, cascade_node_name = "node_name", 
+                             event_time = "event_time", 
+                             cascade_id = "cascade_id", node_names = NULL) {
     
+     
     # Check all inputs 
     if(is.null(node_names)) {
         msg <- paste("Argument node_names not provided. Inferring node names",
@@ -113,7 +131,7 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     assert_that(is.element(cascade_id, colnames(data)))
     assert_data_frame(data, min.rows = 1, min.cols = 3)
     data <- as.data.frame(data)
-
+    
     # Transform the data  
     ## Transform cascade ids and node names to character to get consistency 
     ## down the line
@@ -139,38 +157,51 @@ as.cascade.data.frame <- function(data, cascade_node_name = "node_name",
     out <- order_cascade_(out)
     
     return(out)
+    
 }
 
-#' Transform matrix to cascade
+
+#' Transform wide data to cascade
 #' 
-#' Create a cascade object from a \code{\link{matrix}}.
+#' Create a cascade object from data in wide format.
+#' 
+#' If data is in wide format, each row corresponds to a node and each column to
+#' a cascade. Each cell indicates the event time for a node - cascade 
+#' combination. If a node did not experience an event for a cascade (the node
+#' is censored) the cell entry must be \code{NA}.
 #' 
 #' @import checkmate 
 #' @import assertthat
 #' 
-#' @param data \link{matrix}, rows corresponding to nodes, columns to cascades.
-#'     Matrix entries are the event times for each node, cascade pair. 
-#'     Missing values indicate censored observations, that is, nodes that did not
-#'     have an event). Specify column 
-#'     and row names if cascade and node ids other than integer sequences are 
-#'     desired.
+#' @param data \link{data.frame} or \link{matrix}, rows corresponding to nodes, 
+#'     columns to cascades. Matrix entries are the event times for each node, 
+#'     cascade pair. Missing values indicate censored observations, that is, 
+#'     nodes that did not have an event). Specify column and row names if 
+#'     cascade and node ids other than integer sequences are  desired.
 #' @param node_names character, factor or numeric vector, containing names for each node. 
 #'     Optional. If not provided, node names are inferred from the provided data.
 #'     Note that in this case nodes that are not involved in any cascade (isolates)
-#'     will be dropped (not recommended).
-#' @param ..., additional arguments.
+#'     will be dropped.
 #'     
-#' @return An object of class \code{cascade}. See \link{as.cascade} for details.
-#' 
+#' @return An object of class \code{cascade}. This is a list containing three
+#'     (named) elements: 
+#'     \enumerate{
+#'         \item \code{"node_names"} A character vector of node names.
+#'         \item \code{"cascade_nodes"} A list with one character vector per
+#'             cascade containing the node names in order of the events.
+#'         \item \code{"cascade_times"} A list with one element per cascade 
+#'             containing the event times for the nodes in \code{"cascade_names"}.
+#'     }
+#
 #' @examples 
 #' 
-#' # For matrices
-#' cascade_matrix <- as.matrix(cascades)
-#' cascades <- as.cascade(cascade_matrix)
+#' data("policies")
+#' cascades <- as_cascade_wide(policies, node_names = rownames(policies))
 #' is.cascade(cascades)
 #' 
 #' @export
-as.cascade.matrix <- function(data, node_names = NULL, ...) {
+#' 
+as_cascade_wide <- function(data, node_names) {
     
     # Check all inputs 
     if(is.null(node_names)) {
@@ -189,8 +220,13 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
         }
     }
     
+    assert(
+        checkClass(data, "data.frame"),
+        checkClass(data, "matrix")
+    ) 
+    data <- as.matrix(data)
     assert_matrix(data, all.missing = FALSE)
-   
+ 
     # Transform the data  
     ## Get cascade ids
     if(is.null(colnames(data))) {
@@ -230,6 +266,7 @@ as.cascade.matrix <- function(data, node_names = NULL, ...) {
     return(out)   
 }
 
+
 # Clean cascade vector (remove nas and sort)
 clean_casc_vec_ <- function(x, mode, data) {
     n <- rownames(data)[!is.na(x)]
@@ -245,14 +282,16 @@ clean_casc_vec_ <- function(x, mode, data) {
 #' Convert a cascade object to a matrix
 #' 
 #' Generates a \code{\link{matrix}} containing the cascade information in the 
-#' cascade object. Missing values are used for nodes that do not experience an event in a cascade.
+#' cascade object in wide format. Missing values are used for nodes that do not 
+#' experience an event in a cascade.
 #' 
 #' @param x cascade object to convert.
 #' @param ... additional arguments to be passed to or from methods. 
 #'     (Currently not supported.)
 #' 
-#' @return A matrix containing all cascade information. See section Details for
-#'     more information.
+#' @return A matrix containing all cascade information in wide format. That is,
+#' each row of the matrix corresponds to a node and each column to a cascade. 
+#' Cell entries are event times. Censored nodes have \code{NA} for their entry.
 #'     
 #' @examples
 #' 
