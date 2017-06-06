@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
 
 # NetworkInference: Inferring Latent Diffusion Networks
 
-![](https://travis-ci.org/desmarais-lab/NetworkInference.svg)
+![](https://travis-ci.org/desmarais-lab/NetworkInference.svg) ![](http://www.r-pkg.org/badges/version/NetworkInference)
+![](http://cranlogs.r-pkg.org/badges/NetworkInference)
+![](http://cranlogs.r-pkg.org/badges/grand-total/NetworkInference?color=yellow)
 
 ## About
 
@@ -57,11 +59,11 @@ node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
 ## From dataframe
-cascades <- as.cascade(df, node_names = node_names)
+cascades <- as_cascade_long(df, node_names = node_names)
 
 ## From matrix
 df_matrix <- as.matrix(cascades) ### Create example matrix
-cascades <- as.cascade(df_matrix, node_names = node_names)
+cascades <- as_cascade_wide(df_matrix, node_names = node_names)
 ```
 
 Cascades can be explored using `summary` and `plot`. See the vignette and 
