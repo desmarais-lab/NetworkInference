@@ -2,10 +2,10 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 count_possible_edges_ <- function(cascade_nodes, cascade_times) {
-    .Call('NetworkInference_count_possible_edges_', PACKAGE = 'NetworkInference', cascade_nodes, cascade_times)
+    .Call(NetworkInference_count_possible_edges_, cascade_nodes, cascade_times)
 }
 
 netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda) {
-    .Call('NetworkInference_netinf_', PACKAGE = 'NetworkInference', node_ids, cascade_nodes, cascade_times, n_edges, model, lambda)
+    .Call(NetworkInference_netinf_, node_ids, cascade_nodes, cascade_times, n_edges, model, lambda)
 }
 
