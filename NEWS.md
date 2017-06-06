@@ -1,5 +1,5 @@
 
-# NetworkInference 1.0.0.9000
+# NetworkInference 1.1.0
 
 ## New Features
 
