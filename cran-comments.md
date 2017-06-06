@@ -8,6 +8,17 @@ Version 1.1.0
 ## R CMD check results
 There were no ERRORs, WARNINGs or NOTES. 
 
+There was 1 NOTE:
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: ‘Fridolin Linder <fridolin.linder@gmail.com>’
+
+Possibly mis-spelled words in DESCRIPTION:
+  Krause (9:98)
+  Leskovec (9:84)
+  netinf (9:49)
+  
+The spelling is correct, these are all names.
 
 ## Downstream dependencies
 I have also run R CMD check on downstream dependencies.
