@@ -1,7 +1,7 @@
 Package: NetworkInference
 Type: Package
 Title: Inferring Latent Diffusion Networks
-Version: 1.0.0.9000
+Version: 1.1.0
 Date: 2017-05-19
 Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@gmail.com",
                   role = c("aut", "cre")),
