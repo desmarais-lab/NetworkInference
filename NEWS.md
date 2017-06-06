@@ -1,3 +1,6 @@
+# NetworkInference 1.1.0.9000
+
+Latest development version.
 
 # NetworkInference 1.1.0
 
