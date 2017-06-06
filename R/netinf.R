@@ -21,7 +21,7 @@
 #' @param lambda numeric, alpha for transmission model.
 #' @param n_edges numeric, number of edges to infer.
 #' 
-#' @return Returns the inferred diffusion network as an edglist in an object of 
+#' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
 #'     column contains the sender, the second column the receiver node. The 
 #'     third column contains the improvement in fit from adding the edge that is

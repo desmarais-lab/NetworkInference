@@ -52,7 +52,7 @@
 
 #' Validation output from netinf source.
 #' 
-#' Contians output from original netinf C++ inmplementation, executed on 
+#' Contians output from original netinf C++ implementation, executed on 
 #' \code{\link{cascades}}. For testing purposes.
 #' 
 #' @name validation

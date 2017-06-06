@@ -12,13 +12,13 @@
 #' 
 #' The core estimation function \code{\link{netinf}} requires an object of class 
 #' \code{cascade} (\link{as.cascade}). Cascade data contains information on the 
-#' potential nodes in the netwok as well as on event times for each node in each 
+#' potential nodes in the network as well as on event times for each node in each 
 #' cascade. \code{\link{as.cascade}} can handle \code{data.frame} and \code{matrix}
 #' inputs. See the package vignette for more details.
 #' 
 #' @section Estimation:
 #' 
-#' Diffusion netwoks are estimated using the \code{\link{netinf}} function. It 
+#' Diffusion networks are estimated using the \code{\link{netinf}} function. It 
 #' produces a diffusion network in form of an edgelist (of class 
 #' \code{\link{data.frame}}).
 #' 
