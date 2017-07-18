@@ -214,15 +214,21 @@ In order to produce a quick visualization of the resulting diffusion network we 
 
 ```{r, fig.width=7, fig.height=5.5}
 #install.packages('igraph')
-plot(diffusion_network, type = "network")
+# For this functionality the igraph package has to be installed
+# This code is only executed if the package is found:
+if(requireNamespace("igraph", quietly = TRUE)) {
+    plot(diffusion_network, type = "network")
+}
 ```
 
 If additional tweaking of the plot is desired, the network can be visualized using `igraph` explicitly. We refer you you to the [igraph documentation](https://CRAN.R-project.org/package=igraph) for details on how to customize the plot.
 
 ```{r, message=FALSE, eval=FALSE}
-library(igraph)
-g <- graph_from_data_frame(d = results[, 1:2])
-plot(g, edge.arrow.size=.3, vertex.color = "grey70")
+if(requireNamespace("igraph", quietly = TRUE)) {
+    library(igraph) 
+    g <- graph_from_data_frame(d = results[, 1:2])
+    plot(g, edge.arrow.size=.3, vertex.color = "grey70")
+}
 ```
 
 ## References
