@@ -1,4 +1,4 @@
-Version 1.1.0
+Version 1.1.1
 
 ## Test environments
 * Mac OS 10.12.5 (Sierra)
