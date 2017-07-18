@@ -4,12 +4,12 @@
 #include <R_ext/Rdynload.h>
 
 /* .Call calls */
-extern SEXP NetworkInference_count_possible_edges_(SEXP, SEXP);
-extern SEXP NetworkInference_netinf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _NetworkInference_count_possible_edges_(SEXP, SEXP);
+extern SEXP _NetworkInference_netinf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"NetworkInference_count_possible_edges_", (DL_FUNC) &NetworkInference_count_possible_edges_, 2},
-    {"NetworkInference_netinf_",               (DL_FUNC) &NetworkInference_netinf_,               6},
+    {"_NetworkInference_count_possible_edges_", (DL_FUNC) &_NetworkInference_count_possible_edges_, 2},
+    {"_NetworkInference_netinf_",               (DL_FUNC) &_NetworkInference_netinf_,               6},
     {NULL, NULL, 0}
 };
 
