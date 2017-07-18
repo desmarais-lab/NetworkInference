@@ -129,14 +129,13 @@ plot.diffnet <- function(x, type = "network", ...) {
     type <- match.arg(type, c("network", "improvement"))
     
     if(type == "network") {
-        # Check if igraph is installed
-        if(!is.element("igraph", rownames(utils::installed.packages()))) {
+        if (requireNamespace("igraph", quietly = TRUE)) {
+            # Plot network
+            g <- igraph::graph_from_data_frame(d = x[, 1:2])
+            igraph::plot.igraph(g, edge.arrow.size=.3, vertex.color = "grey70")
+        } else {
             stop("In order to use this functionality the `igraph` package needs to be installed. Run `install.packages('igraph')` and retry.")
-        }
-        
-        # Plot network
-        g <- igraph::graph_from_data_frame(d = x[, 1:2])
-        igraph::plot.igraph(g, edge.arrow.size=.3, vertex.color = "grey70")
+        } 
     }
     else{
         ggplot(x) + 

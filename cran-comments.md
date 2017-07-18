@@ -1,12 +1,12 @@
 Version 1.1.0
 
 ## Test environments
-* local ubuntu 16.04, R 3.4.0
+* Mac OS 10.12.5 (Sierra)
 * ubuntu 12.04.5 (on travis-ci), R 3.4.0
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs
+There were no ERRORs or WARNINGs or NOTEs
 
 There was 1 NOTE:
 
@@ -21,6 +21,4 @@ Possibly mis-spelled words in DESCRIPTION:
 The spelling is correct, these are all names.
 
 ## Downstream dependencies
-I have also run R CMD check on downstream dependencies.
-
-No problems were found.
+There are currently no downstream dependencies
