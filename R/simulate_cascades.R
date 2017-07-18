@@ -182,9 +182,13 @@ simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time,
         start_nodes <- nodes[idx]
     }
     # Find shortest path from start node to every other (reachable) node
-    g <- igraph::graph.adjacency(rel_diff_times, weighted = TRUE, 
+    if (requireNamespace("igraph", quietly = TRUE)) {
+        g <- igraph::graph.adjacency(rel_diff_times, weighted = TRUE, 
                                  mode = "directed")
-    dists <- igraph::distances(g, v = start_nodes, mode = "out")
+        dists <- igraph::distances(g, v = start_nodes, mode = "out")
+    } else {
+        stop("In order to use this functionality the `igraph` package needs to be installed. Run `install.packages('igraph')` and retry.")
+    } 
     
     if(is.null(partial_cascade)) {
         prev_event_times <- 0
