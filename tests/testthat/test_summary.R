@@ -6,4 +6,4 @@ data(cascades)
 
 test_that("Summary runs.", {
     x <- capture.output(s <- summary(cascades))
-})
+}) 

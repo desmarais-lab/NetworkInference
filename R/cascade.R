@@ -18,48 +18,6 @@ is.cascade <- function(object) {
     inherits(object, "cascade")
 }
 
-#' Create a cascade object from input data
-#'
-#' A generic function to transform input data into a cascade object to be used 
-#' in other \code{NetworkInference} functions. The method invoked depends on the 
-#' class of the first argument. See section Details for available methods.
-#' 
-#' @param data cascades to be converted. See Details for supported classes.
-#' @param ... additional arguments passed to dispatched method. See methods 
-#'     linked in Details for more information.
-#' 
-#' @return An object of class \code{cascade}. This is a list containing three
-#'     (named) elements: 
-#'     \enumerate{
-#'         \item \code{"node_names"} A character vector of node names.
-#'         \item \code{"cascade_nodes"} A list with one character vector per
-#'             cascade containing the node names in order of the events.
-#'         \item \code{"cascade_times"} A list with one element per cascade 
-#'             containing the event times for the nodes in \code{"cascade_names"}.
-#'     }
-#'     
-#' @examples
-#' 
-#' \dontrun{
-#' # For data frames 
-#' df <- simulate_rnd_cascades(10, n_nodes = 20)
-#' cascades <- as.cascade(df)
-#' is.cascade(cascades)
-#' 
-#' # For matrices
-#' cascade_matrix <- as.matrix(cascades)
-#' cascades <- as.cascade(cascade_matrix)
-#' is.cascade(cascades)
-#' }
-#' @export
-as.cascade <- function(data, ...) {
-    msg <- paste("`as.cascade` is no longer available (as of version 1.1.0).", 
-                 "Please use `as_cascade_long` or `as_cascade_wide` depending", 
-                 "on your input data format. Type `?as_cascade_long` and", 
-                 "`?as_cascade_wide` for more information.") 
-    stop(msg)
-}
-
 #' Transform long data to cascade 
 #'
 #' Create a cascade object from data in long format.
