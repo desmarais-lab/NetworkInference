@@ -11,10 +11,9 @@
 #' @section Data preparation:
 #' 
 #' The core estimation function \code{\link{netinf}} requires an object of class 
-#' \code{cascade} (\link{as.cascade}). Cascade data contains information on the 
-#' potential nodes in the network as well as on event times for each node in each 
-#' cascade. \code{\link{as.cascade}} can handle \code{data.frame} and \code{matrix}
-#' inputs. See the package vignette for more details.
+#' \code{cascade} (see \link{as_cascade_long} and \link{as_cascade_wide}). 
+#' Cascade data contains information on the potential nodes in the network as 
+#' well as on event times for each node in each cascade. 
 #' 
 #' @section Estimation:
 #' 

@@ -15,7 +15,8 @@
 #' @import assertthat
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
-#'     information. See \code{\link{as.cascade}} for details. 
+#'     information. See \code{\link{as_cascade_long}} and 
+#'     \code{\link{as_cascade_wide}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.

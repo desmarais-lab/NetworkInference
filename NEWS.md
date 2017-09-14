@@ -2,6 +2,11 @@
 
 Current development version
 
+* `as.cascade` is now completely removed (see release note on version 1.1.0)
+* The `node_names` argument for `as_cascade_long` and `as_cascade_wide` will be 
+phased out since it is not doing much. It is still available but not recommended
+anymore.
+
 # NetworkInference 1.1.1
 
 ## Bug Fixes

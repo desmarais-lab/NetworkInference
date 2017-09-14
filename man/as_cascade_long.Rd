@@ -21,9 +21,7 @@ event times for each node involved in a cascade.}
 \item{cascade_id}{character, column name of the cascade identifier.}
 
 \item{node_names}{character, factor or numeric vector containing the names for each node. 
-Optional. If not provided, node names are inferred from the cascade data.
-Note that in this case nodes that are not involved in any cascade (isolates)
-will be dropped (not recommended).}
+Optional. If not provided, node names are inferred from the cascade data.}
 }
 \value{
 An object of class \code{cascade}. This is a list containing three

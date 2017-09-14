@@ -4,7 +4,7 @@
 \alias{as_cascade_wide}
 \title{Transform wide data to cascade}
 \usage{
-as_cascade_wide(data, node_names)
+as_cascade_wide(data, node_names = NULL)
 }
 \arguments{
 \item{data}{\link{data.frame} or \link{matrix}, rows corresponding to nodes, 
@@ -14,9 +14,7 @@ nodes that did not have an event). Specify column and row names if
 cascade and node ids other than integer sequences are  desired.}
 
 \item{node_names}{character, factor or numeric vector, containing names for each node. 
-Optional. If not provided, node names are inferred from the provided data.
-Note that in this case nodes that are not involved in any cascade (isolates)
-will be dropped.}
+Optional. If not provided, node names are inferred from the provided data.}
 }
 \value{
 An object of class \code{cascade}. This is a list containing three
@@ -41,7 +39,7 @@ is censored) the cell entry must be \code{NA}.
 \examples{
 
 data("policies")
-cascades <- as_cascade_wide(policies, node_names = rownames(policies))
+cascades <- as_cascade_wide(policies)
 is.cascade(cascades)
 
 }

@@ -12,8 +12,7 @@ for(n_casc in c(1,10)) {
             dat <- simulate_rnd_cascades(n_casc, 26, mode)
             casc <- as_cascade_long(data = dat, cascade_node_name = "node_name", 
                                     event_time = "event_time", 
-                                    cascade_id = "cascade_id",
-                                    node_names = letters)
+                                    cascade_id = "cascade_id")
             df <- as.data.frame(casc)
             df <- df[order(df$cascade_id, df$node_name), ]
             dat$cascade_id <- as.character(dat$cascade_id)
@@ -32,10 +31,9 @@ for(n_casc in c(1,10)) {
             dat <- simulate_rnd_cascades(n_casc, 26, mode)
             casc <- as_cascade_long(data = dat, cascade_node_name = "node_name", 
                                     event_time = "event_time", 
-                                    cascade_id = "cascade_id", 
-                                    node_names = letters)
+                                    cascade_id = "cascade_id")
             m <- as.matrix(casc)
-            cascade <- as_cascade_wide(m, node_names = letters)
+            cascade <- as_cascade_wide(m)
             expect_equal(casc, cascade)
         }
     })

@@ -8,7 +8,8 @@ netinf(cascades, trans_mod = "exponential", n_edges, lambda)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
-information. See \code{\link{as.cascade}} for details.}
+information. See \code{\link{as_cascade_long}} and 
+\code{\link{as_cascade_wide}} for details.}
 
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"} or \code{"rayleigh"}.}

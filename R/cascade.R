@@ -18,6 +18,7 @@ is.cascade <- function(object) {
     inherits(object, "cascade")
 }
 
+
 #' Transform long data to cascade 
 #'
 #' Create a cascade object from data in long format.
@@ -48,8 +49,6 @@ is.cascade <- function(object) {
 #' @param cascade_id character, column name of the cascade identifier.
 #' @param node_names character, factor or numeric vector containing the names for each node. 
 #'     Optional. If not provided, node names are inferred from the cascade data.
-#'     Note that in this case nodes that are not involved in any cascade (isolates)
-#'     will be dropped (not recommended).
 #'     
 #' @return An object of class \code{cascade}. This is a list containing three
 #'     (named) elements: 
@@ -75,10 +74,6 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
      
     # Check all inputs 
     if(is.null(node_names)) {
-        msg <- paste("Argument node_names not provided. Inferring node names",
-                     "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.\n")
-        warning(msg)
         node_names <- as.character(unique(data[, cascade_node_name]))
     }
     qassert(cascade_node_name, 'S1')
@@ -138,8 +133,6 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
 #'     cascade and node ids other than integer sequences are  desired.
 #' @param node_names character, factor or numeric vector, containing names for each node. 
 #'     Optional. If not provided, node names are inferred from the provided data.
-#'     Note that in this case nodes that are not involved in any cascade (isolates)
-#'     will be dropped.
 #'     
 #' @return An object of class \code{cascade}. This is a list containing three
 #'     (named) elements: 
@@ -154,19 +147,15 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
 #' @examples 
 #' 
 #' data("policies")
-#' cascades <- as_cascade_wide(policies, node_names = rownames(policies))
+#' cascades <- as_cascade_wide(policies)
 #' is.cascade(cascades)
 #' 
 #' @export
 #' 
-as_cascade_wide <- function(data, node_names) {
+as_cascade_wide <- function(data, node_names = NULL) {
     
     # Check all inputs 
     if(is.null(node_names)) {
-        msg <- paste("Argument node_names not provided. Inferring node names",
-                     "from cascade data. Nodes not involved in any cascade will",
-                     "be dropped.\n")
-        warning(msg)
         # Get node names
         if(is.null(rownames(data))) {
             msg <- paste("No rownames provided for data matrix. Assigning integer",
