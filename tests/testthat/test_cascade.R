@@ -38,3 +38,21 @@ for(n_casc in c(1,10)) {
         }
     })
 }
+
+# Subsetting
+test_that("Subsetting works", {
+    data("cascades") 
+    reduced_cascade <- subset_cascade_time(cascades, 10, 20, drop=TRUE)
+    expect_equal(length(reduced_cascade), length(cascades))
+    expect_equal(length(reduced_cascade$cascade_nodes), length(reduced_cascade$cascade_times))
+    expect_equal(min(do.call(c, reduced_cascade$cascade_times)), 10.1, tolerance = 0.1)
+    expect_equal(max(do.call(c, reduced_cascade$cascade_times)), 19.8, tolerance = 0.1)
+    reduced_cascade <- subset_cascade_time(cascades, 10, 20, drop=FALSE)
+    expect_equal(length(reduced_cascade), length(cascades))
+    expect_equal(length(reduced_cascade$cascade_nodes), length(reduced_cascade$cascade_times))
+    expect_equal(length(reduced_cascade$cascade_nodes), length(cascades$cascade_nodes))
+    expect_equal(length(reduced_cascade$cascade_times), length(cascades$cascade_times))
+    expect_equal(min(do.call(c, reduced_cascade$cascade_times)), 10.1, tolerance = 0.1)
+    expect_equal(max(do.call(c, reduced_cascade$cascade_times)), 19.8, tolerance = 0.1)
+    expect_warning(as.data.frame(reduced_cascade))
+})

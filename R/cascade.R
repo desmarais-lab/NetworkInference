@@ -70,9 +70,8 @@ is.cascade <- function(object) {
 as_cascade_long <- function(data, cascade_node_name = "node_name", 
                              event_time = "event_time", 
                              cascade_id = "cascade_id", node_names = NULL) {
-    
-     
     # Check all inputs 
+    data <- as.data.frame(data)
     if(is.null(node_names)) {
         node_names <- as.character(unique(data[, cascade_node_name]))
     }
@@ -83,7 +82,6 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
     assert_that(is.element(event_time, colnames(data)))
     assert_that(is.element(cascade_id, colnames(data)))
     assert_data_frame(data, min.rows = 1, min.cols = 3)
-    data <- as.data.frame(data)
     
     # Transform the data  
     ## Transform cascade ids and node names to character to get consistency 
@@ -276,6 +274,86 @@ as.matrix.cascade <- function(x, ...) {
     return(out)    
 }
 
+#' Select a subset of cascades from cascade object
+#' 
+#' @param cascacde cascade, object to select from
+#' @param selection character or integer, vector of cascade_ids to select
+#' 
+#' @return An object of class cascade containing just the selected cascades
+#' 
+#' @examples
+#' 
+#' data(policies)
+#' cascades <- as_cascade_wide(policies) 
+#' cascade_names <- names(cascades$cascade_times)
+#' subset_cascade(cascades, selection = cascade_names[1:10])
+subset_cascade <- function(cascade, selection) {
+    # Check inputs
+    assert_that(inherits(cascade, 'cascade'))
+    cascade_names <- names(cascade$cascade_times)
+    assert_that(all(selection %in% cascade_names))
+    
+    cascade_times <- cascade$cascade_times[selection]
+    cascade_nodes <- cascade$cascade_nodes[selection]
+    node_names <- unique(do.call(c, cascade_nodes))
+    out <- list(cascade_nodes = cascade_nodes, cascade_times = cascade_times,
+                node_names = node_names)
+    class(out) <- c('cascade', 'list')
+    return(out)
+}
+
+#' Subset a cascade object in time
+#' 
+#' Remove each all events occuring outside the desired subset for each cascade 
+#' in a cascade object.
+#' 
+#' @param cascade cascade, object to subset.
+#' @param start_time numeric, start time of the subset.
+#' @param end_time numeric, end time of the subset.
+#' @param drop logical, should empty sub-cascades be dropped?
+#'
+#' @return An object of class cascade, where only events are included that have 
+#'     times \code{start_time} <= t < \code{end_time}.
+#'     
+#' @examples
+#' 
+#' data(cascades)
+#' sub_cascades <- subset(cascades, 10, 20, drop=True)
+subset_cascade_time <- function(cascade, start_time, end_time, drop=TRUE) {
+   # Check inputs
+   assert_that(inherits(cascade, 'cascade'))
+   qassert(start_time, 'N1')
+   qassert(end_time, 'N1')
+   qassert(drop, 'B1')
+    
+   casc_length <- length(cascade$cascade_nodes)    
+   subset_idxs <- lapply(cascade$cascade_times, function(x) {
+       out <- which(x >= start_time & x < end_time)
+       }) 
+   subset_times <- lapply(1:casc_length, function(x) {
+      return(cascade$cascade_times[[x]][subset_idxs[[x]]])
+   }) 
+   subset_nodes <- lapply(1:casc_length, function(x) {
+      return(cascade$cascade_nodes[[x]][subset_idxs[[x]]])
+   }) 
+   names(subset_times) <- names(subset_nodes) <- names(cascade$cascade_times)
+   if(drop) {
+       subset_times <- remove_zero_length_(subset_times)
+       subset_nodes <- remove_zero_length_(subset_nodes)
+   }
+   subset_node_names <- unique(do.call(c, subset_nodes))
+   out <- list(cascade_times = subset_times, cascade_nodes = subset_nodes,
+               node_names = subset_node_names)
+   class(out) <- c("cascade", "list")
+   return(out)
+}
+
+# Remove vectors of length zero from a list of vectors
+remove_zero_length_ <- function(x) {
+    out <- lapply(x, function(y) if(length(y) == 0) return() else return(y))
+    return(Filter(Negate(is.null), out))
+}
+
 #' Convert a cascade object to a data frame
 #' 
 #' Generates a data frame containing the cascade information in the cascade object.
@@ -303,6 +381,15 @@ as.data.frame.cascade <- function(x, row.names = NULL, optional = FALSE,
     # Check inputs
     assert_that(inherits(x, "cascade"))
     
+    # Warning for zero length cascades that will be dropped
+    zero_length <- sapply(x$cascade_nodes, function(y) length(y) == 0)
+    if(any(zero_length)) {
+        dropped <- names(x$cascade_nodes)[zero_length]
+        msg <- paste("The following cascades have no events and will be dropped: ", 
+                     paste(dropped, collapse = " "))
+        warning(msg)        
+    }
+
     # Convert
     cascade_nodes <- do.call(c, x$cascade_nodes)
     cascade_times <- do.call(c, x$cascade_times)

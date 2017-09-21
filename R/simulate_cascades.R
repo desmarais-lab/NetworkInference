@@ -208,3 +208,4 @@ simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time,
                       "cascade_id" = i)
     return(out)
 }
+

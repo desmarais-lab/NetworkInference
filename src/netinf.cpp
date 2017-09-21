@@ -225,6 +225,7 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
         Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];
         Rcpp::NumericVector this_cascade_times = cascade_times[c];
         int csize = this_cascade_nodes.size();
+        //Rcpp::Rcout << "Cascade: " << c << ". Size: " << csize << "\n";
         
         // Use the fact that the cascade data is ordered (see cascade.R)
         for(int i = 0; i < csize; i++) {
@@ -314,14 +315,16 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
 Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
                    Rcpp::List &cascade_times, int &n_edges, int &model, 
                    double &lambda) {
-    
+     
     int n_cascades = cascade_nodes.size();
     int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
+    //Rcpp::Rcout << "Initializing parents\n";
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
                                                  n_cascades);
+    //Rcpp::Rcout << "Finding possible edges\n";
     std::map <std::string, Rcpp::List> possible_edges = find_possible_edges_(
         node_ids, cascade_nodes, cascade_times, n_nodes, n_cascades);
 
@@ -337,9 +340,10 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             std::to_string(n_p_edges) + ").\n";
         throw std::invalid_argument(msg);
     }
-    
+     
     for(int e = 0; e < n_edges; e++) {
-        
+            
+        //Rcpp::Rcout << "Searching " << e << "th edge\n";
         double max_improvement = 0;
         std::string best_edge;
         Rcpp::List replacement;

@@ -6,6 +6,7 @@ Current development version
 * The `node_names` argument for `as_cascade_long` and `as_cascade_wide` will be 
 phased out since it is not doing much. It is still available but not recommended
 anymore.
+* New convenience function to subset cascades by time (`subset_cascade_time`) and by cascade id (`subset_cascade`)
 
 # NetworkInference 1.1.1
 
