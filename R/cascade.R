@@ -287,6 +287,8 @@ as.matrix.cascade <- function(x, ...) {
 #' cascades <- as_cascade_wide(policies) 
 #' cascade_names <- names(cascades$cascade_times)
 #' subset_cascade(cascades, selection = cascade_names[1:10])
+#' 
+#' @export
 subset_cascade <- function(cascade, selection) {
     # Check inputs
     assert_that(inherits(cascade, 'cascade'))
@@ -319,6 +321,8 @@ subset_cascade <- function(cascade, selection) {
 #' 
 #' data(cascades)
 #' sub_cascades <- subset(cascades, 10, 20, drop=True)
+#' 
+#' @export
 subset_cascade_time <- function(cascade, start_time, end_time, drop=TRUE) {
    # Check inputs
    assert_that(inherits(cascade, 'cascade'))

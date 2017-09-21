@@ -23,4 +23,5 @@ data(policies)
 cascades <- as_cascade_wide(policies) 
 cascade_names <- names(cascades$cascade_times)
 subset_cascade(cascades, selection = cascade_names[1:10])
+
 }
