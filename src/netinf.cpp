@@ -157,7 +157,6 @@ std::string make_pair_id_(int &u, int &v) {
 }
 
 
-
 // Find possible edges for each cascade
 //
 // Returns:
@@ -189,12 +188,13 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
                 
                 // Check if pair is in pair collection. If not include
                 std::string pair_id = make_pair_id_(u, v);
-                if(possible_edges.find(pair_id) == possible_edges.end()) {
+                auto it = possible_edges.find(pair_id);
+                if(it == possible_edges.end()) {
                     Rcpp::List value = Rcpp::List::create(
                         Rcpp::IntegerVector::create(u, v),
                         Rcpp::IntegerVector::create(c)
                     );
-                    possible_edges[pair_id] = value;
+                    possible_edges.insert(make_pair(pair_id, value));
                 } else {
                     Rcpp::List value = possible_edges.find(pair_id)->second;;
                     Rcpp::IntegerVector current_cascades = value[1];
@@ -208,29 +208,6 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
     }
     return possible_edges;
 }
-
-
-// [[Rcpp::export]]
-int test_hashmap_(int n_keys) {
-    std::map<std::string, Rcpp::List> hm;
-    for(int i = 0; i < n_keys; i++) {
-        std::string key = std::to_string(i);
-        hm.insert(std::map<std::string, int>::value_type(key, 0));
-    }
-    return 0;
-}
-
-// [[Rcpp::export]]
-int test_hashmap2_(int n_keys) {
-    std::map<std::string, Rcpp::List> hm;
-    for(int i = 0; i < n_keys; i++) {
-        std::string key = std::to_string(i);
-        hm[key] = 0;
-    }
-    return 0;
-}
-
-
 
 // [[Rcpp::export]]
 int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) {
