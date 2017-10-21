@@ -56,6 +56,29 @@ test_that("netinf scales.", {
     
     
     library(microbenchmark)
+    library(tidyverse)
+    
+    ns = c(c(1,2,5,9) %o% 10^(0:3))
+    times = matrix(NA, ncol = 3, nrow = length(ns))
+    for(i in  1:length(ns)) {
+        n = ns[i]
+        print(n)
+        times[i, 1] = microbenchmark(test_hashmap_(n), times=1)$time / 1e9
+        times[i, 2] = microbenchmark(test_hashmap2_(n), times=1)$time / 1e9
+        times[i, 3] = microbenchmark(test_hashmap3_(n), times=1)$time / 1e9
+    }
+    
+    df <- as_data_frame(times) %>%
+        rename(hashmap = V1, hashmap2 = V2) %>%
+        gather() %>%
+        rename(fun = key, time = value) %>%
+        mutate(n = rep(ns, 3))
+    
+    ggplot(df, aes(x=n, y=time, color=fun)) +
+        geom_point() +
+        geom_line() +
+        theme_bw()
+    
     n_cascades = 100
     n_nodes = 100
     cascades <- as_cascade_long(simulate_rnd_cascades(n_cascades, n_nodes))
