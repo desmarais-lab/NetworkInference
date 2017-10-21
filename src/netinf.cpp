@@ -2,7 +2,8 @@
 #include <cmath>
 #include <string>
 #include <chrono>
-//#include "chrono_io"
+#include <array>
+//#include "chono_io"
 
 
 // Exponential density
@@ -208,6 +209,52 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
     }
     return possible_edges;
 }
+
+
+
+std::map<std::array<int, 2>, std::vector<int> > find_possible_edges2_(
+        Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
+        Rcpp::List &cascade_times, int &n_nodes, int &n_cascades) {
+    
+    std::map<std::array<int, 2>, std::vector<int> > possible_edges;
+    for(int c = 0; c < n_cascades; c++) {
+        Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];
+        Rcpp::NumericVector this_cascade_times = cascade_times[c];
+        int csize = this_cascade_nodes.size();
+        
+        // Use the fact that the cascade data is ordered (see cascade.R)
+        for(int i = 0; i < csize; i++) {
+            int u = this_cascade_nodes[i];
+            double tu = this_cascade_times[i];
+            for(int j = i + 1; j < csize; j++) {
+                int v = this_cascade_nodes[j];
+                double tv = this_cascade_times[j];
+                
+                // If times are tied skip this combination
+                if(tu >= tv) {
+                    continue;
+                }
+                
+                // Check if pair is in pair collection. If not include
+                std::array<int, 2> pair_id = {{u, v}};
+                
+                auto it = possible_edges.find(pair_id);
+                if(it == possible_edges.end()) {
+                    std::vector<int> value;
+                    value.push_back(c);
+                    possible_edges.insert(make_pair(pair_id, value));
+                } else {
+                    it->second.push_back(c);
+                }
+            }
+        }
+    }
+    return possible_edges;
+}
+
+
+
+
 
 // [[Rcpp::export]]
 int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) {
