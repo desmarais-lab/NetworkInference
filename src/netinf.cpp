@@ -209,20 +209,32 @@ std::map <std::string, Rcpp::List> find_possible_edges_(
     return possible_edges;
 }
 
+// [[Rcpp::export]]
+int test_hashmap_(int n_keys) {
+    std::map <std::string, Rcpp::List> hm;
+    for(int i = 0; i < n_keys; i++) {
+        std::string key = std::to_string(i);
+        hm.insert(std::map<std::string, int>::value_type(key, 0));
+    }
+    return 0;
+}
 
-// Count the number of possible edges given the data
-// 
-// @param cascade_nodes List of integer vectors of node ids in order of event, 
-//     one per cascade.
-// @param cascade_times List of numeric vectors of event times corresponding to
-//     nodes in cascade_nodes (same order). 
-//     
-// @return Integer number of possible edges
+// [[Rcpp::export]]
+int test_hashmap2_(int n_keys) {
+    std::map <std::string, Rcpp::List> hm;
+    for(int i = 0; i < n_keys; i++) {
+        std::string key = std::to_string(i);
+        hm[key] = 0;
+    }
+    return 0;
+}
+
+
+
 // [[Rcpp::export]]
 int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) {
    
     int n_cascades = cascade_nodes.size();
-    
     std::map <std::string, int> possible_edges;
     for(int c = 0; c < n_cascades; c++) {
         Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];

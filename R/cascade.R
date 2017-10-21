@@ -297,7 +297,8 @@ subset_cascade <- function(cascade, selection) {
     
     cascade_times <- cascade$cascade_times[selection]
     cascade_nodes <- cascade$cascade_nodes[selection]
-    node_names <- unique(do.call(c, cascade_nodes))
+    #node_names <- unique(do.call(c, cascade_nodes))
+    node_names <- cascade$node_names
     out <- list(cascade_nodes = cascade_nodes, cascade_times = cascade_times,
                 node_names = node_names)
     class(out) <- c('cascade', 'list')
@@ -345,7 +346,8 @@ subset_cascade_time <- function(cascade, start_time, end_time, drop=TRUE) {
        subset_times <- remove_zero_length_(subset_times)
        subset_nodes <- remove_zero_length_(subset_nodes)
    }
-   subset_node_names <- unique(do.call(c, subset_nodes))
+   #subset_node_names <- unique(do.call(c, subset_nodes))
+   subset_node_names <- cascade$node_names
    out <- list(cascade_times = subset_times, cascade_nodes = subset_nodes,
                node_names = subset_node_names)
    class(out) <- c("cascade", "list")
