@@ -7,9 +7,9 @@
 subset_cascade(cascade, selection)
 }
 \arguments{
-\item{selection}{character or integer, vector of cascade_ids to select}
+\item{cascade}{cascade, object to select from}
 
-\item{cascacde}{cascade, object to select from}
+\item{selection}{character or integer, vector of cascade_ids to select}
 }
 \value{
 An object of class cascade containing just the selected cascades
