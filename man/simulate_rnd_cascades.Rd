@@ -4,7 +4,7 @@
 \alias{simulate_rnd_cascades}
 \title{Simulate a set of random cascades}
 \usage{
-simulate_rnd_cascades(n_cascades, n_nodes, id_class = "character")
+simulate_rnd_cascades(n_cascades, n_nodes)
 }
 \arguments{
 \item{n_cascades}{Number of cascades to generate.}

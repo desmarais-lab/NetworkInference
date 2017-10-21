@@ -19,34 +19,18 @@
 #' head(df)
 #' 
 #' @export
-simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
+simulate_rnd_cascades <- function(n_cascades, n_nodes) {
     qassert(n_cascades, "X1[1,)")
-    assert_that(n_nodes <= 26)
-    id_class <- match.arg(arg = id_class, choices = c("character", "factor", 
-                                                      "numeric"))
-    make_cascade_ <- function(cid, id_class) {
+    
+    make_cascade_ <- function(cid) {
         n <- runif(1, 1, n_nodes)
-        ids <- sample(letters, n, replace = FALSE)
+        ids <- sample(1:n_nodes, n, replace = FALSE)
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }
      
-    if(id_class == "character"){
-        ids <- as.character(outer(letters, letters, FUN = paste0))
-        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
-                                                 replace = FALSE), 
-                                          make_cascade_))
-    } else if(id_class == "factor") {
-        ids <- as.character(outer(letters, letters, FUN = paste0))
-        cascades <- do.call(rbind, lapply(sample(ids, n_cascades, 
-                                                 replace = FALSE), 
-                                          make_cascade_))
-        cascades[, 3] <- as.factor(cascades[, 3])
-    } else if(id_class == "numeric") {
-         cascades <- do.call(rbind, lapply(sample(c(1:n_cascades), n_cascades, 
-                                                  replace = FALSE), 
-                                          make_cascade_))
-    }
+    cascades <- do.call(rbind, lapply(sample(c(1:n_cascades), n_cascades, 
+                                             replace = FALSE), make_cascade_))
     colnames(cascades) <- c("node_name", "event_time", "cascade_id")
     rownames(cascades) <- as.character(c(1:nrow(cascades)))
     return(cascades)
@@ -75,6 +59,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 #'     a uniform distribution over all nodes.
 #' @param partial_cascade object of type cascade, containing one partial 
 #'     cascades for which further development should be simulated.
+#' @param nodes vector of node names, optional, if nodes should be included in 
+#'     simulation that do not occur in \code{diffnet}
 #'     
 #' @return A data frame with three columns. Containing 1) The names of 
 #'     the nodes (\code{"node_name"}) that experience an event in each cascade, 
@@ -95,7 +81,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes, id_class = "character") {
 simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
                               lambda, beta, epsilon, model, 
                               partial_cascade = NULL, 
-                              start_probabilities = NULL) {
+                              start_probabilities = NULL,
+                              nodes = NULL) {
     
     # Check inputs
     assert_that(is.diffnet(diffnet))
@@ -104,8 +91,9 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
     if(model == "rayleigh") {
         stop("Rayleigh distribution is not implemented yet. Please choose the exponential diffusion model.")
     }
-    # Extract Nodes and number of nodes
-    nodes <- unique(c(diffnet$origin_node, diffnet$destination_node))
+    if(is.null(nodes)) {
+        nodes <- unique(c(diffnet$origin_node, diffnet$destination_node)) 
+    } 
     n_nodes <- length(nodes)
     
     if(!is.null(start_probabilities) & !is.null(partial_cascade)) {
@@ -123,7 +111,7 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
         assert_that(is.cascade(partial_cascade))
         assert_that(length(partial_cascade$cascade_nodes) == 1)
         assert_that(length(partial_cascade$cascade_times) == 1)
-        assert_that(all(is.element(partial_cascade$cascade_nodes[[1]], nodes)))
+        see_if(all(is.element(partial_cascade$cascade_nodes[[1]], nodes)))
     }
     
     set.seed(seed)
