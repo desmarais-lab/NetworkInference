@@ -397,14 +397,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
         
-        // Create a vector of keys to loop over the map in parallel
-        //Rcpp::CharacterVector keys(possible_edges.size());
-        //int i = 0;
-        //for (auto const& x : possible_edges) {
-        //    keys[i] = x.first;
-        //    i++;
-        //}
-        
         for (auto const& x : possible_edges) {
             
             //potential parent
