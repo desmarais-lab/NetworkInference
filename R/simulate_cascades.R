@@ -24,7 +24,7 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
     
     make_cascade_ <- function(cid) {
         n <- runif(1, 1, n_nodes)
-        ids <- sample(1:n_nodes, n, replace = FALSE)
+        ids <- as.character(sample(1:n_nodes, n, replace = FALSE))
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }
