@@ -5,28 +5,6 @@
 
 using namespace Rcpp;
 
-// test_hashmap_
-int test_hashmap_(int n_keys);
-RcppExport SEXP _NetworkInference_test_hashmap_(SEXP n_keysSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n_keys(n_keysSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_hashmap_(n_keys));
-    return rcpp_result_gen;
-END_RCPP
-}
-// test_hashmap2_
-int test_hashmap2_(int n_keys);
-RcppExport SEXP _NetworkInference_test_hashmap2_(SEXP n_keysSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n_keys(n_keysSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_hashmap2_(n_keys));
-    return rcpp_result_gen;
-END_RCPP
-}
 // count_possible_edges_
 int count_possible_edges_(Rcpp::List& cascade_nodes, Rcpp::List& cascade_times);
 RcppExport SEXP _NetworkInference_count_possible_edges_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP) {

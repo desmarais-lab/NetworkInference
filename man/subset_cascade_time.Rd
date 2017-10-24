@@ -26,6 +26,6 @@ in a cascade object.
 \examples{
 
 data(cascades)
-sub_cascades <- subset(cascades, 10, 20, drop=True)
+sub_cascades <- subset_cascade_time(cascades, 10, 20, drop=TRUE)
 
 }

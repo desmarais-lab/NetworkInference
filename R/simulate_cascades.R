@@ -7,8 +7,6 @@
 #' 
 #' @param n_cascades Number of cascades to generate.
 #' @param n_nodes Number of nodes in the system.
-#' @param id_class One of \code{c("character", "factor", "numeric")}. What class
-#'     should the cascade_id indicator be. 
 #'     
 #' @return A data frame containing (in order of columns) node ids, 
 #'     event time and cascade identifier.
@@ -24,7 +22,7 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
     
     make_cascade_ <- function(cid) {
         n <- runif(1, 1, n_nodes)
-        ids <- sample(1:n_nodes, n, replace = FALSE)
+        ids <- as.character(sample(1:n_nodes, n, replace = FALSE))
         times <- sort(runif(n, 0, 30), decreasing = TRUE)
         return(data.frame(ids, times, rep(cid, n), stringsAsFactors = FALSE))
     }

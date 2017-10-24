@@ -276,7 +276,7 @@ as.matrix.cascade <- function(x, ...) {
 
 #' Select a subset of cascades from cascade object
 #' 
-#' @param cascacde cascade, object to select from
+#' @param cascade cascade, object to select from
 #' @param selection character or integer, vector of cascade_ids to select
 #' 
 #' @return An object of class cascade containing just the selected cascades
@@ -321,7 +321,7 @@ subset_cascade <- function(cascade, selection) {
 #' @examples
 #' 
 #' data(cascades)
-#' sub_cascades <- subset(cascades, 10, 20, drop=True)
+#' sub_cascades <- subset_cascade_time(cascades, 10, 20, drop=TRUE)
 #' 
 #' @export
 subset_cascade_time <- function(cascade, start_time, end_time, drop=TRUE) {
