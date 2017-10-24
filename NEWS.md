@@ -7,6 +7,7 @@ Current development version
 phased out since it is not doing much. It is still available but not recommended
 anymore.
 * New convenience function to subset cascades by time (`subset_cascade_time`) and by cascade id (`subset_cascade`)
+* We made changes to the internal data structures of the netinf function, so it is much faster and memory efficient now
 
 # NetworkInference 1.1.1
 
