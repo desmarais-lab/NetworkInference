@@ -392,7 +392,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
      
     for(int e = 0; e < n_edges; e++) {
         t1 = Clock::now();
-        Rcpp::Rcout << "Searching " << e << "th edge\n";
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
