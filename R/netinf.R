@@ -74,18 +74,31 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
                           lambda = lambda, n_edges = n_edges)
-    
+
     # Reformat output 
-    out <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), netinf_out[[2]]),
+    network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
+                                   netinf_out[[2]]),
                          stringsAsFactors = FALSE)
-     
-    # Replace integer node_ids with node_names
-    out[, 1] <- cascades$node_names[(out[, 1] + 1)] # node ids are 0-indexed
-    out[, 2] <- cascades$node_names[(out[, 2] + 1)]
+    tree_dfs <- lapply(netinf_out[[3]], 
+                       function(x) as.data.frame(cbind(x[[1]], x[[2]])))
+    for(i in 1:length(tree_dfs)) {
+        tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
+    }       
+    trees_df <- do.call(rbind, tree_dfs)
+
+    ## Replace integer node_ids with node_names
+    ### In the edgelist
+    network[, 1] <- cascades$node_names[(network[, 1] + 1)]
+    network[, 2] <- cascades$node_names[(network[, 2] + 1)]
+    colnames(network) <- c("origin_node", "destination_node", "improvement")
+    ### In the trees
+    trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+    trees_df$child <- do.call(c, cascades$cascade_nodes)
+    colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
+    trees_df <- trees_df[!is.na(trees_df$parent), ]
     
-    colnames(out) <- c("origin_node", "destination_node", "improvement")
-    class(out) <- c("diffnet", "data.frame")
-    return(out)
+    class(network) <- c("diffnet", "data.frame")
+    return(list('network' = network, 'trees' = trees_df))
 }
 
 

@@ -392,7 +392,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
      
     for(int e = 0; e < n_edges; e++) {
         t1 = Clock::now();
-        Rcpp::Rcout << "Searching " << e << "th edge\n";
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
@@ -458,15 +457,13 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         }
         
         // Remove best edge from possible edges
-        possible_edges.erase(best_edge);       
+        possible_edges.erase(best_edge); 
         t2 = Clock::now();
         fp_ms = t2 - t1;
         Rcpp::Rcout << "Add edge: " << std::to_string(e) << ": " << fp_ms.count() << "\n";
-
-    
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
-    Rcpp::List out = Rcpp::List::create(edges, scores);
+    Rcpp::List out = Rcpp::List::create(edges, scores, parent_data);
     return out;
 }
