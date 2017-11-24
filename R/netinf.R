@@ -91,11 +91,14 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
     colnames(network) <- c("origin_node", "destination_node", "improvement")
+
     ### In the trees
-    trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
     trees_df$child <- do.call(c, cascades$cascade_nodes)
+    trees_df <- na.omit(trees_df)
+    trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
+    trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+
     colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
-    trees_df <- trees_df[!is.na(trees_df$parent), ]
     
     class(network) <- c("diffnet", "data.frame")
     return(list('network' = network, 'trees' = trees_df))
