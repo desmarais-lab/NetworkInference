@@ -74,18 +74,18 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
                           lambda = lambda, n_edges = n_edges)
-    
+    return(netinf_out) 
     # Reformat output 
-    out <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), netinf_out[[2]]),
-                         stringsAsFactors = FALSE)
-     
-    # Replace integer node_ids with node_names
-    out[, 1] <- cascades$node_names[(out[, 1] + 1)] # node ids are 0-indexed
-    out[, 2] <- cascades$node_names[(out[, 2] + 1)]
-    
-    colnames(out) <- c("origin_node", "destination_node", "improvement")
-    class(out) <- c("diffnet", "data.frame")
-    return(out)
+    #out <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), netinf_out[[2]]),
+    #                     stringsAsFactors = FALSE)
+    # 
+    ## Replace integer node_ids with node_names
+    #out[, 1] <- cascades$node_names[(out[, 1] + 1)] # node ids are 0-indexed
+    #out[, 2] <- cascades$node_names[(out[, 2] + 1)]
+    #
+    #colnames(out) <- c("origin_node", "destination_node", "improvement")
+    #class(out) <- c("diffnet", "data.frame")
+    #return(out)
 }
 
 
