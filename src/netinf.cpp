@@ -5,7 +5,6 @@
 #include <array>
 //#include "chono_io"
 
-
 // Exponential density
 double dexp_(float x, float lambda) {
     return lambda * std::exp(-1 * lambda * x);
