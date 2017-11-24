@@ -462,8 +462,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         t2 = Clock::now();
         fp_ms = t2 - t1;
         Rcpp::Rcout << "Add edge: " << std::to_string(e) << ": " << fp_ms.count() << "\n";
-
-    
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
