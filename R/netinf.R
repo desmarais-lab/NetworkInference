@@ -96,7 +96,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     trees_df$child <- do.call(c, cascades$cascade_nodes)
     trees_df <- na.omit(trees_df)
     trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
-    print(which(trees_df[, 1] <= 0))
+    print(trees_df[110:120, ])
     trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
 
     colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
