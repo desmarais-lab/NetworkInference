@@ -1,9 +1,7 @@
 #include <Rcpp.h>
 #include <cmath>
 #include <string>
-#include <chrono>
 #include <array>
-//#include "chono_io"
 
 
 // Exponential density
@@ -358,24 +356,14 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
-    // start the timer
-    typedef std::chrono::high_resolution_clock Clock;
-    auto t1 = Clock::now();
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
                                                  n_cascades);
-    auto t2 = Clock::now();
-    std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-    Rcpp::Rcout << "Initialize Parents: " << fp_ms.count() << "\n";
 
-    t1 = Clock::now();
     std::map <std::array<int, 2>, std::vector<int> > 
         possible_edges = find_possible_edges2_(node_ids, cascade_nodes, 
                                                cascade_times, n_nodes, 
                                                n_cascades);
-    t2 = Clock::now();
-    fp_ms = t2 - t1;
-    Rcpp::Rcout << "Find Possible edges: " << fp_ms.count() << "\n";
 
    
     // Output containers
@@ -391,8 +379,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     }
      
     for(int e = 0; e < n_edges; e++) {
-        t1 = Clock::now();
-        Rcpp::Rcout << "Searching " << e << "th edge\n";
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
@@ -459,11 +445,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         
         // Remove best edge from possible edges
         possible_edges.erase(best_edge);       
-        t2 = Clock::now();
-        fp_ms = t2 - t1;
-        Rcpp::Rcout << "Add edge: " << std::to_string(e) << ": " << fp_ms.count() << "\n";
-
-    
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
