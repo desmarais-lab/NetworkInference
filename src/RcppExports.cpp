@@ -18,8 +18,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // netinf_
-Rcpp::List netinf_(Rcpp::IntegerVector& node_ids, Rcpp::List& cascade_nodes, Rcpp::List& cascade_times, int& n_edges, int& model, double& lambda);
-RcppExport SEXP _NetworkInference_netinf_(SEXP node_idsSEXP, SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP n_edgesSEXP, SEXP modelSEXP, SEXP lambdaSEXP) {
+Rcpp::List netinf_(Rcpp::IntegerVector& node_ids, Rcpp::List& cascade_nodes, Rcpp::List& cascade_times, int& n_edges, int& model, double& lambda, bool quiet);
+RcppExport SEXP _NetworkInference_netinf_(SEXP node_idsSEXP, SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP n_edgesSEXP, SEXP modelSEXP, SEXP lambdaSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,7 +29,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int& >::type n_edges(n_edgesSEXP);
     Rcpp::traits::input_parameter< int& >::type model(modelSEXP);
     Rcpp::traits::input_parameter< double& >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(netinf_(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(netinf_(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda, quiet));
     return rcpp_result_gen;
 END_RCPP
 }

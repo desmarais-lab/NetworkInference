@@ -15,7 +15,9 @@ Imports:
     ggplot2,
     ggrepel,
     stats
-LinkingTo: Rcpp
+LinkingTo: 
+    Rcpp,
+    RcppProgress
 BugReports: https://github.com/desmarais-lab/NetworkInference/issues
 Suggests:
     testthat,

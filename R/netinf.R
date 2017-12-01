@@ -20,7 +20,8 @@
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.
-#' @param n_edges numeric, number of edges to infer.
+#' @param n_edges integer, number of edges to infer.
+#' @param quiet, logical, Should output on progress by suppressed.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -45,7 +46,8 @@
 #' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, lambda = 1)
 #' 
 #' @export
-netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
+netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
+                   quiet = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
@@ -73,7 +75,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda) {
     # Run netinf
     netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
-                          lambda = lambda, n_edges = n_edges)
+                          lambda = lambda, n_edges = n_edges, quiet = quiet)
     
     # Reformat output 
     out <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), netinf_out[[2]]),

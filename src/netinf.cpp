@@ -1,3 +1,6 @@
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
 #include <Rcpp.h>
 #include <cmath>
 #include <string>
@@ -300,14 +303,16 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
 // @param model integer indicating the choice of model: 1: exponential, 
 //     2: power law, 3: rayleigh (only exponential implemented).
 // @param lambda Numeric, rate parameter for exponential transmission model.
-// @param n_edges Numeric, number of edges to infer.
+// @param n_edges Integer, number of edges to infer.
+// @param quiet, Boolean, Should output on progress by suppressed.
 // 
 // @return List containing one vector per edge.
 // [[Rcpp::export]]
 Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
                    Rcpp::List &cascade_times, int &n_edges, int &model, 
-                   double &lambda) {
-    
+                   double &lambda, bool quiet) {
+    if(!quiet)
+        Rcpp::Rcout << "Initializing...\n";
     int n_cascades = cascade_nodes.size();
     int n_nodes = node_ids.size();
     double beta = 0.5;
@@ -333,7 +338,10 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             std::to_string(n_p_edges) + ").\n";
         throw std::invalid_argument(msg);
     }
-     
+    
+    if(!quiet) 
+        Rcpp::Rcout << "Inferring Edges...\n";
+    Progress p(n_edges*possible_edges.size(), !quiet);
     for(int e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
@@ -367,7 +375,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store best edge id
                 best_edge = this_id;
             }
-
+        p.increment();
         }
         
         // Store the best results
