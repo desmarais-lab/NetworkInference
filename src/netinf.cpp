@@ -315,6 +315,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     double beta = 0.5;
     double epsilon = 0.000000001;
     typedef std::chrono::high_resolution_clock Clock;
+    auto t1 = Clock::now();
+    auto t2 = Clock::now();
+    std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
 
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
@@ -337,7 +340,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             std::to_string(n_p_edges) + ").\n";
         throw std::invalid_argument(msg);
     }
-     
+    
     for(int e = 0; e < n_edges; e++) {
         t1 = Clock::now();
         double max_improvement = 0;
