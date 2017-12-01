@@ -15,6 +15,7 @@ anymore.
 ## Bug Fixes
 * Long running functions (that call compiled code) can now be interrupted without crashing the R session.
 * `as_cascade_long()` and `as_cascade_wide()` handle date input correctly now.
+* `as_cascade_wide()` couldn't handle data input of class `data.table`. 
 
 
 # NetworkInference 1.1.1
