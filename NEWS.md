@@ -2,16 +2,20 @@
 
 Current development version
 
-* `as.cascade` is now completely removed (see release note on version 1.1.0)
-* The `node_names` argument for `as_cascade_long` and `as_cascade_wide` will be 
+# New Features
+
+* `as.cascade` is now completely removed (see release note on version 1.1.0).
+* The `node_names` argument for `as_cascade_long` and `as_cascade_wide` will be
 phased out since it is not doing much. It is still available but not recommended
 anymore.
-* New convenience function to subset cascades by time (`subset_cascade_time`) and by cascade id (`subset_cascade`)
-* We made changes to the internal data structures of the netinf function, so it is much faster and memory efficient now
+* New convenience function to subset cascades by time (`subset_cascade_time`) and by cascade id (`subset_cascade`).
+* We made changes to the internal data structures of the netinf function, so it is much faster and memory efficient now.
 * `netinf()` now has a shiny progress bar!
 
 ## Bug Fixes
-* Long running functions (that call compiled code) can now be interrupted without crashing the R session
+* Long running functions (that call compiled code) can now be interrupted without crashing the R session.
+* `as_cascade_long()` and `as_cascade_wide()` handle date input correctly now.
+
 
 # NetworkInference 1.1.1
 

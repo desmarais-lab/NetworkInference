@@ -18,7 +18,7 @@ information. See \code{\link{as_cascade_long}} and
 
 \item{lambda}{numeric, alpha for transmission model.}
 
-\item{quiet, }{logical, Should output on progress by suppressed.}
+\item{quiet}{logical, Should output on progress by suppressed.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 

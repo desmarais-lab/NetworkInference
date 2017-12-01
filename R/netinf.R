@@ -21,7 +21,7 @@
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.
 #' @param n_edges integer, number of edges to infer.
-#' @param quiet, logical, Should output on progress by suppressed.
+#' @param quiet logical, Should output on progress by suppressed.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
