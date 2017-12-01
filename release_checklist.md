@@ -8,6 +8,7 @@
 * Check reverse dependencies (`devtools::revdep_check()`)
 * Update cran-comments.md
 * Release on cran
+* Wait until released
 * Create Github tag
 * Set version number to devel in DESCRIPTION
 * Set version number to devel in R/zzz.R
