@@ -1,6 +1,6 @@
 # NetworkInference 1.1.2
 
-# New Features
+## New Features
 
 * We made changes to the internal data structures of the netinf function, so it is much faster and memory efficient now.
 * `netinf()` now has a shiny progress bar!
