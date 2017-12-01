@@ -32,14 +32,14 @@ citEntry(entry = "misc",
 
 
 citEntry(entry = "article",
-  title        = "A New Database for Inferring Public Policy Innovativeness and                         Diffusion Networks.",
+  title        = "A New Database for Inferring Public Policy Innovativeness and Diffusion Networks.",
   author       = personList(as.person("Frederick J. Boehmke"),
                             as.person("Mark D. Brockway"),
                             as.person("Bruce A. Desmarais"),
                             as.person("Jeffrey J. Harden"),
                             as.person("Scott J. LaCombe"),
-                            as.person("Fridolin Linder")),
-                            as.person("Hanna M. Wallach"),
+                            as.person("Fridolin Linder"),
+                            as.person("Hanna M. Wallach")),
   journal      = "Presented at the 2017 Midwest Political Science Association Annual Conference",
   year         = "2017",
 
@@ -49,4 +49,3 @@ citEntry(entry = "article",
         'Inferring Public Policy Innovativeness and Diffusion Networks. Presented at',
         'the 2017 Midwest Political Science Association Annual Conference.')
 )
-
