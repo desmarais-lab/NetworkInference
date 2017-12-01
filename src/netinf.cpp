@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <array>
+#include <chrono>
 
 // Exponential density
 double dexp_(float x, float lambda) {
@@ -308,10 +309,13 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                    Rcpp::List &cascade_times, int &n_edges, int &model, 
                    double &lambda) {
     
+
     int n_cascades = cascade_nodes.size();
     int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
+    typedef std::chrono::high_resolution_clock Clock;
+
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
                                                  n_cascades);
