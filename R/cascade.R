@@ -28,7 +28,9 @@ is.cascade <- function(object) {
 #' \enumerate{
 #'    \item Cascade node name: The identifier of the node that experiences the 
 #'        event.
-#'    \item Event time: The time when the node experiences the event.
+#'    \item Event time: The time when the node experiences the event. Note that
+#'        if the time column is of class date or any other special time class, 
+#'        it will be converted to an integer with `as.numeric()`. 
 #'    \item Cascade id: The identifier of the cascade that the event pertains to.
 #' }
 #' The default names for these columns are \code{node_name}, \code{event_time} 
@@ -92,7 +94,7 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
     ## Transform to cascade data structure
     splt <- split(data, f = data[, cascade_id]) 
     cascade_nodes <- lapply(splt, function(x) x[, cascade_node_name])
-    cascade_times <- lapply(splt, function(x) x[, event_time])
+    cascade_times <- lapply(splt, function(x) as.numeric(x[, event_time]))
     cascade_times <- lapply(cascade_times, as.numeric)
     names(cascade_nodes) <- names(splt)
     names(cascade_times) <- names(splt)
@@ -128,7 +130,9 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
 #'     columns to cascades. Matrix entries are the event times for each node, 
 #'     cascade pair. Missing values indicate censored observations, that is, 
 #'     nodes that did not have an event). Specify column and row names if 
-#'     cascade and node ids other than integer sequences are  desired.
+#'     cascade and node ids other than integer sequences are  desired. Note that, 
+#'     if the time column is of class date or any other special time class, it 
+#'     will be converted to an integer with `as.numeric()`. 
 #' @param node_names character, factor or numeric vector, containing names for each node. 
 #'     Optional. If not provided, node names are inferred from the provided data.
 #'     
@@ -215,7 +219,7 @@ as_cascade_wide <- function(data, node_names = NULL) {
 # Clean cascade vector (remove nas and sort)
 clean_casc_vec_ <- function(x, mode, data) {
     n <- rownames(data)[!is.na(x)]
-    x <- x[!is.na(x)]
+    x <- as.numeric(x[!is.na(x)])
     times <- sort(x, decreasing = TRUE)
     n <- n[order(x, decreasing = TRUE)]
     names(times) <- NULL

@@ -43,7 +43,9 @@ contain at least three columns:
 \enumerate{
    \item Cascade node name: The identifier of the node that experiences the 
        event.
-   \item Event time: The time when the node experiences the event.
+   \item Event time: The time when the node experiences the event. Note that
+       if the time column is of class date or any other special time class, 
+       it will be converted to an integer with `as.numeric()`. 
    \item Cascade id: The identifier of the cascade that the event pertains to.
 }
 The default names for these columns are \code{node_name}, \code{event_time} 
