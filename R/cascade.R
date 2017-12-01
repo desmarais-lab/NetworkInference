@@ -175,6 +175,7 @@ as_cascade_wide <- function(data, node_names = NULL) {
     ) 
     data <- as.matrix(data)
     assert_matrix(data, all.missing = FALSE)
+    assert_that(length(node_names) == nrow(data))
  
     # Transform the data  
     ## Get cascade ids
@@ -188,26 +189,27 @@ as_cascade_wide <- function(data, node_names = NULL) {
     }
     
     ## Transform to cascade data structure
-    nona_times <- apply(data, 2, clean_casc_vec_, mode = "times", data = data)
-    nona_nodes <- apply(data, 2, clean_casc_vec_, mode = "nodes", data = data)
+    nona_times <- apply(data, 2, clean_casc_vec_, mode = "times", data = data,
+                        node_names = node_names)
+    nona_nodes <- apply(data, 2, clean_casc_vec_, mode = "nodes", data = data,
+                        node_names = node_names)
     # If dim(data)[2] = 1 apply returns vector, if > 1 it returns list. Generate
     # equivalent output in both cases:
     if(inherits(nona_times, "matrix")) {
-        cascade_times <- list(as.numeric(nona_times))    
+        nona_times <- list(nona_times)
         names(cascade_times) <- colnames(nona_times)
         cascade_nodes <- list(as.character(nona_nodes))
         names(cascade_nodes) <- colnames(nona_nodes)
         
     } else { # already list
-        cascade_times <- lapply(nona_times, as.numeric)
         cascade_nodes <- nona_nodes
     }
        
     # Check if data is consistent
-    assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
+    assert_cascade_consistency_(cascade_nodes, nona_times, node_names)
     
     out <- list("cascade_nodes" = cascade_nodes, 
-                "cascade_times" = cascade_times, 
+                "cascade_times" = nona_times, 
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
     out <- order_cascade_(out)
@@ -217,8 +219,8 @@ as_cascade_wide <- function(data, node_names = NULL) {
 
 
 # Clean cascade vector (remove nas and sort)
-clean_casc_vec_ <- function(x, mode, data) {
-    n <- rownames(data)[!is.na(x)]
+clean_casc_vec_ <- function(x, mode, data, node_names) {
+    n <- node_names[!is.na(x)]
     x <- as.numeric(x[!is.na(x)])
     times <- sort(x, decreasing = TRUE)
     n <- n[order(x, decreasing = TRUE)]
