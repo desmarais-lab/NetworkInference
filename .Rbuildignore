@@ -6,3 +6,4 @@ cran-comments.md
 readme_figures/
 README.md
 release_checklist.md
+^revdep$
