@@ -28,7 +28,9 @@ is.cascade <- function(object) {
 #' \enumerate{
 #'    \item Cascade node name: The identifier of the node that experiences the 
 #'        event.
-#'    \item Event time: The time when the node experiences the event.
+#'    \item Event time: The time when the node experiences the event. Note that
+#'        if the time column is of class date or any other special time class, 
+#'        it will be converted to an integer with `as.numeric()`. 
 #'    \item Cascade id: The identifier of the cascade that the event pertains to.
 #' }
 #' The default names for these columns are \code{node_name}, \code{event_time} 
@@ -92,7 +94,7 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
     ## Transform to cascade data structure
     splt <- split(data, f = data[, cascade_id]) 
     cascade_nodes <- lapply(splt, function(x) x[, cascade_node_name])
-    cascade_times <- lapply(splt, function(x) x[, event_time])
+    cascade_times <- lapply(splt, function(x) as.numeric(x[, event_time]))
     cascade_times <- lapply(cascade_times, as.numeric)
     names(cascade_nodes) <- names(splt)
     names(cascade_times) <- names(splt)
@@ -128,7 +130,9 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
 #'     columns to cascades. Matrix entries are the event times for each node, 
 #'     cascade pair. Missing values indicate censored observations, that is, 
 #'     nodes that did not have an event). Specify column and row names if 
-#'     cascade and node ids other than integer sequences are  desired.
+#'     cascade and node ids other than integer sequences are  desired. Note that, 
+#'     if the time column is of class date or any other special time class, it 
+#'     will be converted to an integer with `as.numeric()`. 
 #' @param node_names character, factor or numeric vector, containing names for each node. 
 #'     Optional. If not provided, node names are inferred from the provided data.
 #'     
@@ -171,6 +175,7 @@ as_cascade_wide <- function(data, node_names = NULL) {
     ) 
     data <- as.matrix(data)
     assert_matrix(data, all.missing = FALSE)
+    assert_that(length(node_names) == nrow(data))
  
     # Transform the data  
     ## Get cascade ids
@@ -184,26 +189,27 @@ as_cascade_wide <- function(data, node_names = NULL) {
     }
     
     ## Transform to cascade data structure
-    nona_times <- apply(data, 2, clean_casc_vec_, mode = "times", data = data)
-    nona_nodes <- apply(data, 2, clean_casc_vec_, mode = "nodes", data = data)
+    nona_times <- apply(data, 2, clean_casc_vec_, mode = "times", data = data,
+                        node_names = node_names)
+    nona_nodes <- apply(data, 2, clean_casc_vec_, mode = "nodes", data = data,
+                        node_names = node_names)
     # If dim(data)[2] = 1 apply returns vector, if > 1 it returns list. Generate
     # equivalent output in both cases:
     if(inherits(nona_times, "matrix")) {
-        cascade_times <- list(as.numeric(nona_times))    
+        nona_times <- list(nona_times)
         names(cascade_times) <- colnames(nona_times)
         cascade_nodes <- list(as.character(nona_nodes))
         names(cascade_nodes) <- colnames(nona_nodes)
         
     } else { # already list
-        cascade_times <- lapply(nona_times, as.numeric)
         cascade_nodes <- nona_nodes
     }
        
     # Check if data is consistent
-    assert_cascade_consistency_(cascade_nodes, cascade_times, node_names)
+    assert_cascade_consistency_(cascade_nodes, nona_times, node_names)
     
     out <- list("cascade_nodes" = cascade_nodes, 
-                "cascade_times" = cascade_times, 
+                "cascade_times" = nona_times, 
                 "node_names" = node_names)
     class(out) <- c("cascade", "list")
     out <- order_cascade_(out)
@@ -213,9 +219,9 @@ as_cascade_wide <- function(data, node_names = NULL) {
 
 
 # Clean cascade vector (remove nas and sort)
-clean_casc_vec_ <- function(x, mode, data) {
-    n <- rownames(data)[!is.na(x)]
-    x <- x[!is.na(x)]
+clean_casc_vec_ <- function(x, mode, data, node_names) {
+    n <- node_names[!is.na(x)]
+    x <- as.numeric(x[!is.na(x)])
     times <- sort(x, decreasing = TRUE)
     n <- n[order(x, decreasing = TRUE)]
     names(times) <- NULL

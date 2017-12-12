@@ -11,7 +11,9 @@ as_cascade_wide(data, node_names = NULL)
 columns to cascades. Matrix entries are the event times for each node, 
 cascade pair. Missing values indicate censored observations, that is, 
 nodes that did not have an event). Specify column and row names if 
-cascade and node ids other than integer sequences are  desired.}
+cascade and node ids other than integer sequences are  desired. Note that, 
+if the time column is of class date or any other special time class, it 
+will be converted to an integer with `as.numeric()`.}
 
 \item{node_names}{character, factor or numeric vector, containing names for each node. 
 Optional. If not provided, node names are inferred from the provided data.}

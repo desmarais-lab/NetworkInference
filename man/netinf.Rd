@@ -4,7 +4,7 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges, lambda)
+netinf(cascades, trans_mod = "exponential", n_edges, lambda, quiet = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -14,9 +14,11 @@ information. See \code{\link{as_cascade_long}} and
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"} or \code{"rayleigh"}.}
 
-\item{n_edges}{numeric, number of edges to infer.}
+\item{n_edges}{integer, number of edges to infer.}
 
 \item{lambda}{numeric, alpha for transmission model.}
+
+\item{quiet}{logical, Should output on progress by suppressed.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 

@@ -17,6 +17,12 @@ PLOT_THEME_ <- function(mode = NULL) {
 
 #' Plot a cascade object
 #' 
+#' Allows plotting of one or multiple, labeled or unlabeled cascades.
+#' 
+#' The function returns a ggplot plot object (class \code{gg, ggplot}) which 
+#' can be modified like any other ggplot. See the ggplot documentation and the 
+#' examples below for more details.
+#' 
 #' @import ggplot2
 #' @import ggrepel
 #' @importFrom stats density
@@ -32,7 +38,18 @@ PLOT_THEME_ <- function(mode = NULL) {
 #' 
 #' data(cascades)
 #' plot(cascades, selection = names(cascades$cascade_nodes)[1:5])
-#' plot(cascades, label_nodes = FALSE)
+#' plot(cascades, label_nodes = FALSE, selection = sample(1:54, 20))
+#' 
+#' # Modify resulting ggplot object
+#' library(ggplot2) 
+#' p <- plot(cascades, label_nodes = FALSE, selection = sample(1:54, 20))
+#' ## Add a title
+#' p <- p + ggtitle('Your Title')
+#' p
+#' ## Change Axis
+#' p <- p + xlab("Your modified y axis label") #x and y labels are flipped here
+#' p <- p + ylab("Your modified x axis label") #x and y labels are flipped here
+#' p
 #' 
 #' @return A ggplot plot object.
 #' @export
@@ -103,6 +120,10 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
 #' 
 #' Visualize the inferred diffusion network or the marginal gain in fit obtained
 #' by addition of each edge.
+#' 
+#' If `type = improvement` a ggplot object is returned. It can be modified like
+#' any other ggplot. See the ggplot documentation and the examples in 
+#' \link{plot.cascade}.
 #' 
 #' @import ggplot2
 #' 

@@ -23,6 +23,11 @@ A ggplot plot object if \code{type = "improvement"} otherwise an
 Visualize the inferred diffusion network or the marginal gain in fit obtained
 by addition of each edge.
 }
+\details{
+If `type = improvement` a ggplot object is returned. It can be modified like
+any other ggplot. See the ggplot documentation and the examples in 
+\link{plot.cascade}.
+}
 \examples{
 
 \dontrun{

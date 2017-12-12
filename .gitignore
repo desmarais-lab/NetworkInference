@@ -37,5 +37,4 @@ inst/doc
 README_old.md
 readme.html
 /revdep
-
-sandbox/
+/revdep/.cache.rds

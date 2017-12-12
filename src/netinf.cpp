@@ -1,8 +1,12 @@
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
 #include <Rcpp.h>
 #include <cmath>
 #include <string>
 #include <array>
 #include <chrono>
+#include <memory>
 
 // Exponential density
 double dexp_(float x, float lambda) {
@@ -253,19 +257,21 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
                              Rcpp::List &cascade_nodes,
                              Rcpp::List &parent_data, double &lambda, 
                              double &beta, double &epsilon, int &model) {
-     
-    std::array<int, 2> pair_id = {{u, v}};
-    double improvement = 0;
-    Rcpp::IntegerVector replacements;
-    Rcpp::NumericVector new_scores;
-     
+
     // Get the cascades the edge is possible in:
+    std::array<int, 2> pair_id = {{u, v}};
     std::vector<int> cascades = possible_edges.find(pair_id)->second;
+    int n_possible_cascades = cascades.size();
+    double improvement = 0;
+    Rcpp::IntegerVector replacements(n_possible_cascades);
+    Rcpp::NumericVector new_scores(n_possible_cascades);
+
     for(int c = 0; c < cascades.size(); c++) {
+       
         int this_cascade = cascades[c];
         Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
         Rcpp::NumericVector this_cascade_times = cascade_times[this_cascade];
-        
+       
         int idx_u = which_int_(u, this_cascade_nodes);
         int idx_v = which_int_(v, this_cascade_nodes);
         double timing_u = this_cascade_times[idx_u];
@@ -275,17 +281,16 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         Rcpp::List this_parent_data = parent_data[this_cascade];
         Rcpp::NumericVector scores = this_parent_data[1];
         double current_score = scores[idx_v];
-        
+       
         // what would the score be with the propspective parent
         double replacement_score = edge_weight_(timing_u, timing_v, lambda, 
                                                 beta, epsilon, true, model);
-         
+        
         if(replacement_score > current_score) {
             improvement += replacement_score - current_score; 
-            replacements.push_back(this_cascade);
-            new_scores.push_back(replacement_score);
+            replacements[c] = this_cascade;
+            new_scores[c] = replacement_score;
         }
- 
     }
     Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores);
     return out;
@@ -301,24 +306,21 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
 // @param model integer indicating the choice of model: 1: exponential, 
 //     2: power law, 3: rayleigh (only exponential implemented).
 // @param lambda Numeric, rate parameter for exponential transmission model.
-// @param n_edges Numeric, number of edges to infer.
+// @param n_edges Integer, number of edges to infer.
+// @param quiet, Boolean, Should output on progress by suppressed.
 // 
 // @return List containing one vector per edge.
 // [[Rcpp::export]]
 Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
                    Rcpp::List &cascade_times, int &n_edges, int &model, 
-                   double &lambda) {
-    
-
+                   double &lambda, bool quiet) {
+    if(!quiet)
+        Rcpp::Rcout << "Initializing...\n";
     int n_cascades = cascade_nodes.size();
     int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
-    typedef std::chrono::high_resolution_clock Clock;
-    auto t1 = Clock::now();
-    auto t2 = Clock::now();
-    std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-
+   
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
                                                  n_cascades);
@@ -341,13 +343,16 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         throw std::invalid_argument(msg);
     }
     
+    if(!quiet) 
+        Rcpp::Rcout << "Inferring Edges...\n";
+    Progress p(n_edges*possible_edges.size(), !quiet);
     for(int e = 0; e < n_edges; e++) {
-        t1 = Clock::now();
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
-        
+
         for (auto const& x : possible_edges) {
+           
             Rcpp::checkUserInterrupt();
             //potential parent
             int u = x.first[0];
@@ -363,7 +368,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                                                           cascade_nodes,
                                                           parent_data, lambda,
                                                           beta, epsilon, model);
-            
+           
             // if there is at least one improvement, keep track of edge
             
             double improvement = Rcpp::as<double>(e_replacements[0]);
@@ -375,9 +380,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store best edge id
                 best_edge = this_id;
             }
-
+        p.increment();
         }
-        
+       
         // Store the best results
         edges[e] = best_edge;
         scores[e] = max_improvement;
@@ -406,12 +411,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                                                          this_scores);
             parent_data[this_cascade] = updated_tree;
         }
-        
+       
         // Remove best edge from possible edges
         possible_edges.erase(best_edge); 
-        t2 = Clock::now();
-        fp_ms = t2 - t1;
-        Rcpp::Rcout << "Add edge: " << std::to_string(e) << ": " << fp_ms.count() << "\n";
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
