@@ -4,6 +4,8 @@ Development version
 
 ## New Features
 
+* `netinf()` gives an estimate for the completion time if option `quiet=FALSE` (default).
+
 ## Bug Fixes
 
 
