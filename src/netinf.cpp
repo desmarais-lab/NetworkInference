@@ -7,6 +7,7 @@
 #include <array>
 #include <chrono>
 #include <memory>
+#include <math.h>
 
 // Exponential density
 double dexp_(float x, float lambda) {
@@ -345,14 +346,19 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     
     if(!quiet) 
         Rcpp::Rcout << "Inferring Edges...\n";
-    Progress p(n_edges*possible_edges.size(), !quiet);
+    
+    // Set up for timing first iteration
+    typedef std::chrono::high_resolution_clock Clock;
+    auto t1 = Clock::now();
+    Progress p((n_edges - 1) * possible_edges.size(), !quiet);
+    
     for(int e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
 
         for (auto const& x : possible_edges) {
-           
+    
             Rcpp::checkUserInterrupt();
             //potential parent
             int u = x.first[0];
@@ -380,7 +386,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store best edge id
                 best_edge = this_id;
             }
-        p.increment();
+            if(e > 0)
+                p.increment();
         }
        
         // Store the best results
@@ -413,7 +420,36 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         }
        
         // Remove best edge from possible edges
-        possible_edges.erase(best_edge); 
+        possible_edges.erase(best_edge);       
+        // In the first iteration give an estimate for how long estimation will
+        // take
+        if (!quiet) {
+            if (e == 0) {
+                auto t2 = Clock::now();
+                std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
+                float estimate = fp_ms.count() * n_edges;
+                std::string unit = "milliseconds";
+                if (estimate > 1000) {
+                    estimate /= 1000;  
+                    unit = "seconds";
+                } 
+                if (estimate > 60) {
+                    estimate /= 60;
+                    unit = "minutes";
+                }
+                if (estimate > 60) {
+                    estimate /= 60;
+                    unit = "hours";
+                } 
+                if (estimate > 24) {
+                    estimate /= 24;
+                    unit = "days";
+                }
+                float out = roundf(estimate * 100) / 100;
+                Rcpp::Rcout << "Estimated completion time: " << 
+                    out << " " << unit << ".\n";
+            }           
+        }
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
