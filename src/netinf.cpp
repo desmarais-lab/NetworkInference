@@ -8,6 +8,95 @@
 #include <chrono>
 #include <memory>
 #include <math.h>
+#include <numeric>
+
+
+bool comparator(double i, double j) { 
+    return abs(i) < abs(j); 
+};
+
+double normal_cdf(double x) {
+    // constants
+    double a1 =  0.254829592;
+    double a2 = -0.284496736;
+    double a3 =  1.421413741;
+    double a4 = -1.453152027;
+    double a5 =  1.061405429;
+    double p  =  0.3275911;
+    
+    // Save the sign of x
+    int sign = 1;
+    if (x < 0)
+    sign = -1;
+    x = fabs(x)/sqrt(2.0);
+    
+    // A&S formula 7.1.26
+    double t = 1.0/(1.0 + p*x);
+    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
+    
+    return 0.5*(1.0 + sign*y);
+}
+
+// Adapted from: https://github.com/stenver/wilcoxon-test/
+Rcpp::NumericVector rank_vector(Rcpp::NumericVector values) {
+    Rcpp::NumericVector ranks(values.size());
+    int i = 0;
+    while (i < values.size()) {
+        int j = i + 1;
+        while (j < values.size()) {
+            if(values[i] != values[j]) break;
+            j++;
+        }
+        for(int k = i; k <= j-1; k++) {   
+            ranks[k] = 1 + (double)(i + j-1)/(double)2;
+        }
+            i = j;
+    }
+    return ranks;
+}
+
+// one sided wilcoxon test (normal approximation)
+double wilcoxon_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2) {
+
+    // Get vector of differences
+    Rcpp::NumericVector diff = x2 - x1;
+    
+    // Remove equal pairs
+    Rcpp::NumericVector nz_diff; 
+    for(int i = 0; i < diff.size(); i ++) {
+        if(diff[i] != 0) nz_diff.push_back(diff[i]);
+    }
+    
+    // Sort by absolute value
+    std::sort(nz_diff.begin(), nz_diff.end(), comparator);
+
+    // Get the signs of the differences
+    Rcpp::IntegerVector signs(nz_diff.size());
+    for(int i = 0; i < signs.size(); i++) {
+        if(nz_diff[i] > 0) signs[i] = 1;
+        if(nz_diff[i] < 0) signs[i] = -1;
+    }
+    
+    // Rank the absolute values of the differences
+    Rcpp::NumericVector nz_abs_diff = Rcpp::abs(nz_diff);
+    Rcpp::NumericVector ranks = rank_vector(Rcpp::abs(nz_diff));
+
+    // Calculate the test statistic
+    double W = 0;
+    for(int i = 0; i < ranks.size(); i++) {
+        W += (ranks[i] * signs[i]);
+    }
+
+    // Calculate the z-score for normal approximation
+    double n_r = ranks.size();
+    double sigma_w = sqrt((n_r * (n_r + 1) * (2 * n_r + 1) / 6));
+    double z = W / sigma_w;
+
+    // Calculate P(Z > z) (p-value)
+    float p = 1 - normal_cdf(z);
+    return p;
+}
+
 
 // Exponential density
 double dexp_(float x, float lambda) {
@@ -250,6 +339,15 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
     return possible_edges.size();
 }
 
+// Sum up rcpp vector excluding first element
+double sum_vector(Rcpp::NumericVector x) {
+    double out = 0;
+    for(int i = 1; i < x.size(); i++)  {
+       out += x[i];
+    }
+    return out;
+}
+
 // Find potential replacements for edge u->v
 Rcpp::List tree_replacement_(int &n_cascades, int u, int v, 
                              std::map <std::array<int, 2>, std::vector<int> > 
@@ -266,6 +364,8 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
     double improvement = 0;
     Rcpp::IntegerVector replacements(n_possible_cascades);
     Rcpp::NumericVector new_scores(n_possible_cascades);
+    Rcpp::NumericVector tree_scores_before(n_possible_cascades);
+    Rcpp::NumericVector tree_scores_after(n_possible_cascades);
 
     for(int c = 0; c < cascades.size(); c++) {
        
@@ -281,6 +381,10 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         // extract score associated with the current parent
         Rcpp::List this_parent_data = parent_data[this_cascade];
         Rcpp::NumericVector scores = this_parent_data[1];
+        //tree_scores_before[c] = Rcpp::sum(scores);
+        tree_scores_before[c] = sum_vector(scores);
+        //tree_scores_after[c] = Rcpp::sum(scores);
+        tree_scores_after[c] = sum_vector(scores);
         double current_score = scores[idx_v];
        
         // what would the score be with the propspective parent
@@ -291,9 +395,12 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
             improvement += replacement_score - current_score; 
             replacements[c] = this_cascade;
             new_scores[c] = replacement_score;
+            tree_scores_after[c] += improvement;
         }
     }
-    Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores);
+   
+    Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores,
+                                        tree_scores_before, tree_scores_after);
     return out;
 }
 
@@ -335,6 +442,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     // Output containers
     Rcpp::List edges(n_edges); 
     Rcpp::NumericVector scores(n_edges);
+    Rcpp::NumericVector p_values(n_edges);
     
     int n_p_edges = possible_edges.size();
     
@@ -352,11 +460,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     auto t1 = Clock::now();
     Progress p((n_edges - 1) * possible_edges.size(), !quiet);
     
+    
     for(int e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
-
+        
+        Rcpp::NumericVector tree_scores_before(cascade_nodes.size());
+        Rcpp::NumericVector tree_scores_after(cascade_nodes.size());
+    
         for (auto const& x : possible_edges) {
     
             Rcpp::checkUserInterrupt();
@@ -393,6 +505,13 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Store the best results
         edges[e] = best_edge;
         scores[e] = max_improvement;
+        
+        // Test if the edge improves fit
+        Rcpp::NumericVector old = replacement[3];
+        Rcpp::NumericVector new_ = replacement[4];
+         
+        p_values[e] = wilcoxon_test(old, new_);
+        //Rcpp::Rcout << "p-value for this edge: " << std::to_string(p) << "\n";
 
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
@@ -453,6 +572,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     }
     Rcpp::IntegerVector origin(n_edges);
     Rcpp::IntegerVector destination(n_edges);
-    Rcpp::List out = Rcpp::List::create(edges, scores, parent_data);
+    Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
 }
+

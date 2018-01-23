@@ -81,6 +81,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
                                    netinf_out[[2]]),
                          stringsAsFactors = FALSE)
+    
     tree_dfs <- lapply(netinf_out[[3]], 
                        function(x) as.data.frame(cbind(x[[1]], x[[2]])))
     for(i in 1:length(tree_dfs)) {
@@ -93,6 +94,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
     colnames(network) <- c("origin_node", "destination_node", "improvement")
+    network$p_value <- netinf_out[[4]]
 
     ### In the trees
     trees_df$child <- do.call(c, cascades$cascade_nodes)
