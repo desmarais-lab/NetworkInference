@@ -67,6 +67,10 @@ double wilcoxon_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2) {
         if(diff[i] != 0) nz_diff.push_back(diff[i]);
     }
     
+    if(nz_diff.size() == 0) {
+        return 1;
+    }
+    
     // Sort by absolute value
     std::sort(nz_diff.begin(), nz_diff.end(), comparator);
 
@@ -363,6 +367,9 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
     int n_possible_cascades = cascades.size();
     double improvement = 0;
     Rcpp::IntegerVector replacements(n_possible_cascades);
+    for(int i = 0; i < replacements.size(); i++) {
+        replacements[i] = -1;
+    }
     Rcpp::NumericVector new_scores(n_possible_cascades);
     Rcpp::NumericVector tree_scores_before(n_possible_cascades);
     Rcpp::NumericVector tree_scores_after(n_possible_cascades);
@@ -381,11 +388,14 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         // extract score associated with the current parent
         Rcpp::List this_parent_data = parent_data[this_cascade];
         Rcpp::NumericVector scores = this_parent_data[1];
+
         //tree_scores_before[c] = Rcpp::sum(scores);
         tree_scores_before[c] = sum_vector(scores);
         //tree_scores_after[c] = Rcpp::sum(scores);
         tree_scores_after[c] = sum_vector(scores);
+
         double current_score = scores[idx_v];
+        
        
         // what would the score be with the propspective parent
         double replacement_score = edge_weight_(timing_u, timing_v, lambda, 
@@ -397,6 +407,7 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
             new_scores[c] = replacement_score;
             tree_scores_after[c] += improvement;
         }
+
     }
    
     Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores,
@@ -460,7 +471,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     auto t1 = Clock::now();
     Progress p((n_edges - 1) * possible_edges.size(), !quiet);
     
-    
     for(int e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
@@ -516,23 +526,30 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
         Rcpp::NumericVector replacement_score = replacement[2];
-        
+       
         // Get u and v of best edge
         int u = best_edge[0];
         int v = best_edge[1];
         
+
         // Update the parent data 
         for(int i = 0; i < replacement_data.size(); i++) {
             int this_cascade = replacement_data[i];
+            if(this_cascade < 0) {
+                continue;
+            }
             Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
             int idx_v = which_int_(v, this_cascade_nodes);
             Rcpp::List casc_tree = parent_data[this_cascade];
+
             Rcpp::IntegerVector this_parents = casc_tree[0];
             Rcpp::NumericVector this_scores = casc_tree[1];
+            
             //update parent id for v
             this_parents[idx_v] = u;
             // update branch score
             this_scores[idx_v] = replacement_score[i];
+            
             Rcpp::List updated_tree = Rcpp::List::create(this_parents,
                                                          this_scores);
             parent_data[this_cascade] = updated_tree;

@@ -87,8 +87,9 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     for(i in 1:length(tree_dfs)) {
         tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
     }       
+    
     trees_df <- do.call(rbind, tree_dfs)
-
+    
     ## Replace integer node_ids with node_names
     ### In the edgelist
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
