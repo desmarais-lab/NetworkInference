@@ -18,7 +18,7 @@ if (requireNamespace("igraph", quietly = TRUE)) {
         from_netinf <- from_netinf[order(as.numeric(from_netinf[, 1])), ]
         from_netinf <- from_netinf[order(as.numeric(from_netinf[, 2])), ]
         rownames(rec) <- rownames(from_netinf) <- NULL
-        expect_equal(from_netinf[, -3], rec[, -3])
+        expect_equal(from_netinf[, c(-3, -4)], rec[, c(-3, -4)])
     })
     test_that("Simulation function with partial cascade works.", {
         partial_cascade <- cascades
