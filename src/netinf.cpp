@@ -265,6 +265,9 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
     int n_possible_cascades = cascades.size();
     double improvement = 0;
     Rcpp::IntegerVector replacements(n_possible_cascades);
+    for(int i = 0; i < replacements.size(); i++) {
+        replacements[i] = -1;
+    }
     Rcpp::NumericVector new_scores(n_possible_cascades);
 
     for(int c = 0; c < cascades.size(); c++) {
@@ -406,6 +409,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Update the parent data 
         for(int i = 0; i < replacement_data.size(); i++) {
             int this_cascade = replacement_data[i];
+            if(this_cascade < 0) {
+                continue;
+            }
             Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
             int idx_v = which_int_(v, this_cascade_nodes);
             Rcpp::List casc_tree = parent_data[this_cascade];

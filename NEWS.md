@@ -6,6 +6,7 @@ Development version
 
 ## Bug Fixes
 
+* Inference of very uninformative edges could lead for the software to break.
 
 # NetworkInference 1.1.2
 
