@@ -22,6 +22,9 @@
 #' @param lambda numeric, alpha for transmission model.
 #' @param n_edges integer, number of edges to infer.
 #' @param quiet logical, Should output on progress by suppressed.
+#' @param trees logical, Should the tree for each cascade be returned. This is 
+#'     experimental option that will change the output of the function. Use with
+#'     caution.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -47,7 +50,7 @@
 #' 
 #' @export
 netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
-                   quiet = FALSE) {
+                   quiet = FALSE, trees = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
@@ -82,32 +85,35 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
                                    netinf_out[[2]]),
                          stringsAsFactors = FALSE)
     
-    tree_dfs <- lapply(netinf_out[[3]], 
-                       function(x) as.data.frame(cbind(x[[1]], x[[2]])))
-    for(i in 1:length(tree_dfs)) {
-        tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
-    }       
-    
-    trees_df <- do.call(rbind, tree_dfs)
-    
+   
     ## Replace integer node_ids with node_names
     ### In the edgelist
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
-
-    ### In the trees
-    trees_df$child <- do.call(c, cascades$cascade_nodes)
-    trees_df <- na.omit(trees_df)
-    trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
-    trees_df <- trees_df[trees_df[, 1] >= 0, ]
-    trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
-
-    colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
-    
     class(network) <- c("diffnet", "data.frame")
-    return(list('network' = network, 'trees' = trees_df))
+    
+    if(trees) {
+        # Extract the trees
+        tree_dfs <- lapply(netinf_out[[3]], 
+                       function(x) as.data.frame(cbind(x[[1]], x[[2]])))
+        for(i in 1:length(tree_dfs)) {
+            tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
+        }       
+        trees_df <- do.call(rbind, tree_dfs)
+        
+        # Replace int node ids with node_names 
+        trees_df$child <- do.call(c, cascades$cascade_nodes)
+        trees_df <- na.omit(trees_df)
+        trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
+        trees_df <- trees_df[trees_df[, 1] >= 0, ]
+        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+    
+        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
+        return(list('network' = network, 'trees' = trees_df))
+    }
+    return(network) 
 }
 
 
