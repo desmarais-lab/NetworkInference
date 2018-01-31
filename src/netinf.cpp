@@ -255,7 +255,6 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
         Rcpp::IntegerVector this_cascade_nodes = cascade_nodes[c];
         Rcpp::NumericVector this_cascade_times = cascade_times[c];
         int csize = this_cascade_nodes.size();
-        //Rcpp::Rcout << "Cascade: " << c << ". Size: " << csize << "\n";
         
         // Use the fact that the cascade data is ordered (see cascade.R)
         for(int i = 0; i < csize; i++) {
@@ -349,9 +348,8 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
             improvement += replacement_score - current_score; 
             replacements[c] = this_cascade;
             new_scores[c] = replacement_score;
-            tree_scores_after[this_cascade] += improvement;
+            tree_scores_after[this_cascade] += (replacement_score - current_score);
         }
-
     }
    
     Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores,
@@ -426,9 +424,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
-        
-        Rcpp::NumericVector tree_scores_before(cascade_nodes.size());
-        Rcpp::NumericVector tree_scores_after(cascade_nodes.size());
     
         for (auto const& x : possible_edges) {
     
@@ -481,7 +476,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Get u and v of best edge
         int u = best_edge[0];
         int v = best_edge[1];
-        
 
         // Update the parent data 
         for(int i = 0; i < replacement_data.size(); i++) {
@@ -535,8 +529,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             }           
         }
     }
-    Rcpp::IntegerVector origin(n_edges);
-    Rcpp::IntegerVector destination(n_edges);
     Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
 }
