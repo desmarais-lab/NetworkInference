@@ -514,22 +514,19 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             if (e == 0) {
                 auto t2 = Clock::now();
                 std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-                float estimate = fp_ms.count() * n_edges;
+                float estimate = fp_ms.count()  * n_edges;
                 std::string unit = "milliseconds";
                 if (estimate > 1000) {
                     estimate /= 1000;  
                     unit = "seconds";
-                } 
-                if (estimate > 60) {
-                    estimate /= 60;
+                } else if (estimate > 60000) {
+                    estimate /= 60000;
                     unit = "minutes";
-                }
-                if (estimate > 60) {
-                    estimate /= 60;
+                } else if (estimate > 3600000) {
+                    estimate /= 3600000;
                     unit = "hours";
-                } 
-                if (estimate > 24) {
-                    estimate /= 24;
+                } else if (estimate > 86400000) {
+                    estimate /= 86400000;
                     unit = "days";
                 }
                 float out = roundf(estimate * 100) / 100;
