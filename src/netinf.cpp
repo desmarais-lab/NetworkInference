@@ -36,12 +36,12 @@ double normal_cdf(double x) {
 double vuong_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2, 
                   bool bic=false) {
     //x1: old (k edges), x2: new (k+1 edges)
-    x2 =- 1/x2.size();
+    //x2 = x2 - (log(float(x2.size())) / (2 * float(x2.size())));
+    x2 = x2 - (1 / float(x2.size()));
     Rcpp::NumericVector liks = x2 - x1;
     double sd = Rcpp::sd(liks);
     double stat = Rcpp::sum(liks) / (sd * sqrt(float(x2.size())));
     double pval = 1 - normal_cdf(stat);
-    
     return pval;
 }
     
@@ -295,6 +295,12 @@ double sum_vector(Rcpp::NumericVector x) {
     return out;
 }
 
+Rcpp::NumericVector copy_vector(Rcpp::NumericVector x) {
+    Rcpp::NumericVector out(x.size());
+    for(int i = 0; i < x.size(); i++) out[i] = x[i];
+    return out;
+}
+
 // Find potential replacements for edge u->v
 Rcpp::List tree_replacement_(int &n_cascades, int u, int v, 
                              std::map <std::array<int, 2>, std::vector<int> > 
@@ -302,7 +308,8 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
                              Rcpp::List &cascade_times, 
                              Rcpp::List &cascade_nodes,
                              Rcpp::List &parent_data, double &lambda, 
-                             double &beta, double &epsilon, int &model) {
+                             double &beta, double &epsilon, int &model, 
+                             Rcpp::NumericVector tree_scores) {
 
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{u, v}};
@@ -314,8 +321,8 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         replacements[i] = -1;
     }
     Rcpp::NumericVector new_scores(n_possible_cascades);
-    Rcpp::NumericVector tree_scores_before(n_possible_cascades);
-    Rcpp::NumericVector tree_scores_after(n_possible_cascades);
+    
+    Rcpp::NumericVector tree_scores_after = copy_vector(tree_scores);
 
     for(int c = 0; c < cascades.size(); c++) {
        
@@ -332,13 +339,7 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         Rcpp::List this_parent_data = parent_data[this_cascade];
         Rcpp::NumericVector scores = this_parent_data[1];
 
-        //tree_scores_before[c] = Rcpp::sum(scores);
-        tree_scores_before[c] = sum_vector(scores);
-        //tree_scores_after[c] = Rcpp::sum(scores);
-        tree_scores_after[c] = sum_vector(scores);
-
         double current_score = scores[idx_v];
-        
        
         // what would the score be with the propspective parent
         double replacement_score = edge_weight_(timing_u, timing_v, lambda, 
@@ -348,13 +349,13 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
             improvement += replacement_score - current_score; 
             replacements[c] = this_cascade;
             new_scores[c] = replacement_score;
-            tree_scores_after[c] += improvement;
+            tree_scores_after[this_cascade] += improvement;
         }
 
     }
    
     Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores,
-                                        tree_scores_before, tree_scores_after);
+                                        tree_scores_after);
     return out;
 }
 
@@ -386,6 +387,13 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     Rcpp::List parent_data = initialize_parents_(cascade_nodes, cascade_times,
                                                  lambda, beta, epsilon, model,
                                                  n_cascades);
+    // Get the log likelihood of each of the initialized trees
+    Rcpp::NumericVector tree_scores(n_cascades);
+    for(int c = 0; c < n_cascades; c++) {
+       Rcpp::List this_tree = parent_data[c];
+       Rcpp::NumericVector this_scores = this_tree[1];
+       tree_scores[c] = sum_vector(this_scores);
+    }
 
     std::map <std::array<int, 2>, std::vector<int> > 
         possible_edges = find_possible_edges_(node_ids, cascade_nodes, 
@@ -438,7 +446,8 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                                                           cascade_times, 
                                                           cascade_nodes,
                                                           parent_data, lambda,
-                                                          beta, epsilon, model);
+                                                          beta, epsilon, model,
+                                                          tree_scores);
            
             // if there is at least one improvement, keep track of edge
             
@@ -460,10 +469,10 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         scores[e] = max_improvement;
         
         // Test if the edge improves fit
-        Rcpp::NumericVector old = replacement[3];
-        Rcpp::NumericVector new_ = replacement[4];
+        Rcpp::NumericVector new_ = replacement[3];
          
-        p_values[e] = vuong_test(old, new_);
+        p_values[e] = vuong_test(tree_scores, new_);
+        tree_scores = new_;
 
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
