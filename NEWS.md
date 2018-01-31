@@ -4,6 +4,8 @@ Development version
 
 ## New Features
 
+* `netinf()` offers an estimate of how long the inference procedure will take to finish
+
 ## Bug Fixes
 
 * Inference of very uninformative edges could lead for the software to break.
