@@ -10,11 +10,7 @@
 #include <math.h>
 #include <numeric>
 
-
-bool comparator(double i, double j) { 
-    return abs(i) < abs(j); 
-};
-
+// Normal CDF from: https://www.johndcook.com/blog/cpp_phi/
 double normal_cdf(double x) {
     // constants
     double a1 =  0.254829592;
@@ -37,71 +33,18 @@ double normal_cdf(double x) {
     return 0.5*(1.0 + sign*y);
 }
 
-// Adapted from: https://github.com/stenver/wilcoxon-test/
-Rcpp::NumericVector rank_vector(Rcpp::NumericVector values) {
-    Rcpp::NumericVector ranks(values.size());
-    int i = 0;
-    while (i < values.size()) {
-        int j = i + 1;
-        while (j < values.size()) {
-            if(values[i] != values[j]) break;
-            j++;
-        }
-        for(int k = i; k <= j-1; k++) {   
-            ranks[k] = 1 + (double)(i + j-1)/(double)2;
-        }
-            i = j;
-    }
-    return ranks;
+double vuong_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2, 
+                  bool bic=false) {
+    //x1: old (k edges), x2: new (k+1 edges)
+    x2 =- 1/x2.size();
+    Rcpp::NumericVector liks = x2 - x1;
+    double sd = Rcpp::sd(liks);
+    double stat = Rcpp::sum(liks) / (sd * sqrt(float(x2.size())));
+    double pval = 1 - normal_cdf(stat);
+    
+    return pval;
 }
-
-// one sided wilcoxon test (normal approximation)
-double wilcoxon_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2) {
-
-    // Get vector of differences
-    Rcpp::NumericVector diff = x2 - x1;
     
-    // Remove equal pairs
-    Rcpp::NumericVector nz_diff; 
-    for(int i = 0; i < diff.size(); i ++) {
-        if(diff[i] != 0) nz_diff.push_back(diff[i]);
-    }
-    
-    if(nz_diff.size() == 0) {
-        return 1;
-    }
-    
-    // Sort by absolute value
-    std::sort(nz_diff.begin(), nz_diff.end(), comparator);
-
-    // Get the signs of the differences
-    Rcpp::IntegerVector signs(nz_diff.size());
-    for(int i = 0; i < signs.size(); i++) {
-        if(nz_diff[i] > 0) signs[i] = 1;
-        if(nz_diff[i] < 0) signs[i] = -1;
-    }
-    
-    // Rank the absolute values of the differences
-    Rcpp::NumericVector nz_abs_diff = Rcpp::abs(nz_diff);
-    Rcpp::NumericVector ranks = rank_vector(Rcpp::abs(nz_diff));
-
-    // Calculate the test statistic
-    double W = 0;
-    for(int i = 0; i < ranks.size(); i++) {
-        W += (ranks[i] * signs[i]);
-    }
-
-    // Calculate the z-score for normal approximation
-    double n_r = ranks.size();
-    double sigma_w = sqrt((n_r * (n_r + 1) * (2 * n_r + 1) / 6));
-    double z = W / sigma_w;
-
-    // Calculate P(Z > z) (p-value)
-    float p = 1 - normal_cdf(z);
-    return p;
-}
-
-
 // Exponential density
 double dexp_(float x, float lambda) {
     return lambda * std::exp(-1 * lambda * x);
@@ -520,8 +463,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         Rcpp::NumericVector old = replacement[3];
         Rcpp::NumericVector new_ = replacement[4];
          
-        p_values[e] = wilcoxon_test(old, new_);
-        //Rcpp::Rcout << "p-value for this edge: " << std::to_string(p) << "\n";
+        p_values[e] = vuong_test(old, new_);
 
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
@@ -591,5 +533,74 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     Rcpp::IntegerVector destination(n_edges);
     Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
+}
+
+bool comparator(double i, double j) { 
+    return abs(i) < abs(j); 
+};
+
+
+// Adapted from: https://github.com/stenver/wilcoxon-test/
+Rcpp::NumericVector rank_vector(Rcpp::NumericVector values) {
+    Rcpp::NumericVector ranks(values.size());
+    int i = 0;
+    while (i < values.size()) {
+        int j = i + 1;
+        while (j < values.size()) {
+            if(values[i] != values[j]) break;
+            j++;
+        }
+        for(int k = i; k <= j-1; k++) {   
+            ranks[k] = 1 + (double)(i + j-1)/(double)2;
+        }
+            i = j;
+    }
+    return ranks;
+}
+
+// one sided wilcoxon test (normal approximation)
+double wilcoxon_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2) {
+
+    // Get vector of differences
+    Rcpp::NumericVector diff = x2 - x1;
+    
+    // Remove equal pairs
+    Rcpp::NumericVector nz_diff; 
+    for(int i = 0; i < diff.size(); i ++) {
+        if(diff[i] != 0) nz_diff.push_back(diff[i]);
+    }
+    
+    if(nz_diff.size() == 0) {
+        return 1;
+    }
+    
+    // Sort by absolute value
+    std::sort(nz_diff.begin(), nz_diff.end(), comparator);
+
+    // Get the signs of the differences
+    Rcpp::IntegerVector signs(nz_diff.size());
+    for(int i = 0; i < signs.size(); i++) {
+        if(nz_diff[i] > 0) signs[i] = 1;
+        if(nz_diff[i] < 0) signs[i] = -1;
+    }
+    
+    // Rank the absolute values of the differences
+    Rcpp::NumericVector nz_abs_diff = Rcpp::abs(nz_diff);
+    Rcpp::NumericVector ranks = rank_vector(Rcpp::abs(nz_diff));
+
+    // Calculate the test statistic
+    double W = 0;
+    for(int i = 0; i < ranks.size(); i++) {
+        W += (ranks[i] * signs[i]);
+    }
+
+    // Calculate the z-score for normal approximation
+    double n_r = ranks.size();
+    double sigma_w = sqrt((n_r * (n_r + 1) * (2 * n_r + 1) / 6));
+    double z = W / sigma_w;
+
+    // Calculate P(Z > z) (p-value)
+    float p = 1 - normal_cdf(z);
+    return p;
 }
 
