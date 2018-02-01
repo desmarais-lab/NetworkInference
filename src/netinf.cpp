@@ -288,8 +288,9 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
 // Sum up rcpp vector excluding first element
 double sum_vector(Rcpp::NumericVector x) {
     double out = 0;
-    for(int i = 1; i < x.size(); i++)  {
-       out += x[i];
+    for(int i = 0; i < x.size(); i++)  {
+        if(std::isnan(x[i])) continue;
+        out += x[i];
     }
     return out;
 }
