@@ -5,7 +5,7 @@ count_possible_edges_ <- function(cascade_nodes, cascade_times) {
     .Call(`_NetworkInference_count_possible_edges_`, cascade_nodes, cascade_times)
 }
 
-netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda, quiet) {
-    .Call(`_NetworkInference_netinf_`, node_ids, cascade_nodes, cascade_times, n_edges, model, lambda, quiet)
+netinf_ <- function(node_ids, cascade_nodes, cascade_times, n_edges, model, lambda, quiet, auto_edges, cutoff) {
+    .Call(`_NetworkInference_netinf_`, node_ids, cascade_nodes, cascade_times, n_edges, model, lambda, quiet, auto_edges, cutoff)
 }
 

@@ -20,7 +20,9 @@
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.
-#' @param n_edges integer, number of edges to infer.
+#' @param n_edges integer or numeric, If integer number of edges to infer, if a 
+#'     numeric value between 0 and 1 edges are inferred until the Vuong test for 
+#'     edge addition reaches a p-value of \code{n_edges}.
 #' @param quiet logical, Should output on progress by suppressed.
 #' @param trees logical, Should the tree for each cascade be returned. This is 
 #'     experimental option that will change the output of the function. Use with
@@ -54,10 +56,22 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
-    #qassert(cascades, "L3")
     qassert(trans_mod, "S1")
     qassert(lambda, "R1[0,)")
-    qassert(n_edges, "X1[1,)")
+    # If no number of edges is specified edge selection is automated via Vuong
+    # Test
+    if(qtest(n_edges, "X1")) {
+        qassert(n_edges, "X1[1,)")
+        auto_edges <- FALSE 
+        cutoff <- 0 # Not used
+    } else if(qtest(n_edges, "R1")) {
+        qassert(n_edges, "R1(0,1]")
+        auto_edges <- TRUE
+        cutoff <- n_edges
+        n_edges <- 0 # Not used since n_edges inferred form cutoff
+    } else stop(paste("n_edges has to be either an integer > 1 or a p-value",
+                      "cutoff (0, 1]"))
+    
     model_char <- match.arg(trans_mod, c("exponential", "rayleigh"))
     if(model_char == "exponential") {
         model <- 1
@@ -78,7 +92,12 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     # Run netinf
     netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
-                          lambda = lambda, n_edges = n_edges, quiet = quiet)
+                          lambda = lambda, n_edges = n_edges, quiet = quiet,
+                          auto_edges = auto_edges, cutoff = cutoff)
+    # Remove empty space for not inferred edges
+    netinf_out[[1]] <- na.omit(netinf_out[[1]])
+    netinf_out[[2]] <- na.omit(netinf_out[[2]])
+    netinf_out[[4]] <- na.omit(netinf_out[[4]])
     
     # Reformat output 
     network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 

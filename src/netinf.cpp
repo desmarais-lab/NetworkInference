@@ -375,7 +375,7 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
 // [[Rcpp::export]]
 Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes, 
                    Rcpp::List &cascade_times, int &n_edges, int &model, 
-                   double &lambda, bool quiet) {
+                   double &lambda, bool quiet, bool auto_edges, double cutoff) {
     if(!quiet)
         Rcpp::Rcout << "Initializing...\n";
     int n_cascades = cascade_nodes.size();
@@ -394,11 +394,11 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
 
    
     // Output containers
+    int n_p_edges = possible_edges.size();
+    if(auto_edges) n_edges = n_p_edges;
     Rcpp::List edges(n_edges); 
     Rcpp::NumericVector scores(n_edges);
     Rcpp::NumericVector p_values(n_edges);
-    
-    int n_p_edges = possible_edges.size();
     
     if(n_edges > n_p_edges) {
         std::string msg = "Argument `n_edges` exceeds the maximal number of possible edges (which is " +
@@ -452,7 +452,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 best_edge = this_id;
             }
             if(e > 0)
-                p.increment();
+                if(!auto_edges) p.increment();
         }
        
         // Store the best results
@@ -462,8 +462,10 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         // Test if the edge improves fit
         Rcpp::NumericVector old = replacement[3];
         Rcpp::NumericVector new_ = replacement[4];
-         
-        p_values[e] = vuong_test(old, new_);
+       
+        double p_value = vuong_test(old, new_);
+        p_values[e] = p_value;
+        Rcpp::Rcout << (e+1) << " edges inferred. P-value: " << p_value << "\n";
 
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
@@ -523,14 +525,24 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                     estimate /= 24;
                     unit = "days";
                 }
-                float out = roundf(estimate * 100) / 100;
-                Rcpp::Rcout << "Estimated completion time: " << 
-                    out << " " << unit << ".\n";
+                float out;
+                std::string message;
+                if(auto_edges) {
+                    out = roundf(float(fp_ms.count()) * 100) / 100;
+                    message = "Estimated time per edge: ";
+                } else {
+                    out = roundf(estimate * 100) / 100;
+                    message = "Estimated completion time: ";
+                }
+                Rcpp::Rcout << message << out << " " << unit << ".\n";
             }           
         }
+        
+        if(auto_edges & (p_value >= cutoff)) {
+                Rcpp::Rcout << "Reached p-value cutoff. Stopping.\n";
+                break;
+        }
     }
-    Rcpp::IntegerVector origin(n_edges);
-    Rcpp::IntegerVector destination(n_edges);
     Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
 }

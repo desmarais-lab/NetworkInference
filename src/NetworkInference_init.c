@@ -5,11 +5,12 @@
 
 /* .Call calls */
 extern SEXP _NetworkInference_count_possible_edges_(SEXP, SEXP);
-extern SEXP _NetworkInference_netinf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP _NetworkInference_netinf_(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP,
+                                      SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_NetworkInference_count_possible_edges_", (DL_FUNC) &_NetworkInference_count_possible_edges_, 2},
-    {"_NetworkInference_netinf_",               (DL_FUNC) &_NetworkInference_netinf_,               7},
+    {"_NetworkInference_netinf_",               (DL_FUNC) &_NetworkInference_netinf_,               9},
     {NULL, NULL, 0}
 };
 
