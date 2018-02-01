@@ -21,8 +21,9 @@
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.
 #' @param n_edges integer or numeric, If integer number of edges to infer, if a 
-#'     numeric value between 0 and 1 edges are inferred until the Vuong test for 
-#'     edge addition reaches a p-value of \code{n_edges}.
+#'     numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
+#'     inferred until the Vuong test for edge addition reaches the p-value 
+#'     of \code{n_edges} or when the maximum number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
 #' @param trees logical, Should the tree for each cascade be returned. This is 
 #'     experimental option that will change the output of the function. Use with
@@ -94,10 +95,6 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
                           cascade_times = cascades$cascade_times, model = model, 
                           lambda = lambda, n_edges = n_edges, quiet = quiet,
                           auto_edges = auto_edges, cutoff = cutoff)
-    # Remove empty space for not inferred edges
-    netinf_out[[1]] <- na.omit(netinf_out[[1]])
-    netinf_out[[2]] <- na.omit(netinf_out[[2]])
-    netinf_out[[4]] <- na.omit(netinf_out[[4]])
     
     # Reformat output 
     network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 

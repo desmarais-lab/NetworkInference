@@ -16,8 +16,9 @@ information. See \code{\link{as_cascade_long}} and
 \code{"exponential"} or \code{"rayleigh"}.}
 
 \item{n_edges}{integer or numeric, If integer number of edges to infer, if a 
-numeric value between 0 and 1 edges are inferred until the Vuong test for 
-edge addition reaches a p-value of \code{n_edges}.}
+numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
+inferred until the Vuong test for edge addition reaches the p-value 
+of \code{n_edges} or when the maximum number of edges is reached.}
 
 \item{lambda}{numeric, alpha for transmission model.}
 

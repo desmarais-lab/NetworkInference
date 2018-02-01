@@ -402,25 +402,31 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     // Output containers
     int n_p_edges = possible_edges.size();
     if(auto_edges) n_edges = n_p_edges;
-    Rcpp::List edges(n_edges); 
-    Rcpp::NumericVector scores(n_edges);
-    Rcpp::NumericVector p_values(n_edges);
+    Rcpp::List edges; 
+    Rcpp::NumericVector scores;
+    Rcpp::NumericVector p_values;
     
     if(n_edges > n_p_edges) {
         std::string msg = "Argument `n_edges` exceeds the maximal number of possible edges (which is " +
             std::to_string(n_p_edges) + ").\n";
         throw std::invalid_argument(msg);
     }
-    
-    if(!quiet) 
-        Rcpp::Rcout << "Inferring Edges...\n";
+   
+    if(!quiet) {
+        if(auto_edges) Rcpp::Rcout << "Inferring edges using p-value cutoff...\n";
+        else Rcpp::Rcout << "Inferring edges...\n";
+    }
     
     // Set up for timing first iteration
     typedef std::chrono::high_resolution_clock Clock;
     auto t1 = Clock::now();
-    Progress p((n_edges - 1) * possible_edges.size(), !quiet);
+    bool show_progress = true;
+    if(quiet) show_progress = false;
+    if(auto_edges) show_progress = false;
+    Progress p((n_edges - 1) * possible_edges.size(), show_progress);
     
-    for(int e = 0; e < n_edges; e++) {
+    int e;
+    for(e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         Rcpp::List replacement;
@@ -460,16 +466,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         }
        
         // Store the best results
-        edges[e] = best_edge;
-        scores[e] = max_improvement;
+        edges.push_back(best_edge);
+        scores.push_back(max_improvement);
         
         // Test if the edge improves fit
         Rcpp::NumericVector new_ = replacement[3];
 
         double p_value = vuong_test(tree_scores, new_);
-        p_values[e] = p_value;
+        p_values.push_back(p_value);
         tree_scores = new_;
-        Rcpp::Rcout << (e+1) << " edges inferred. P-value: " << p_value << "\n";        
 
         // Get data to update parent information for new edge
         Rcpp::IntegerVector replacement_data = replacement[1];
@@ -510,7 +515,15 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             if (e == 0) {
                 auto t2 = Clock::now();
                 std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-                float estimate = fp_ms.count()  * n_edges;
+                float estimate;
+                std::string message;
+                if(auto_edges) {
+                    estimate = fp_ms.count();
+                    message = "Estimated time per edge: ";
+                } else {
+                    estimate = fp_ms.count() * n_edges;
+                    message = "Estimated completion time: ";
+                }
                 std::string unit = "milliseconds";
                 if (estimate > 1000) {
                     estimate /= 1000;  
@@ -525,30 +538,30 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                     estimate /= 86400000;
                     unit = "days";
                 }
-                float out;
-                std::string message;
-                if(auto_edges) {
-                    out = roundf(float(fp_ms.count()) * 100) / 100;
-                    message = "Estimated time per edge: ";
-                } else {
-                    out = roundf(estimate * 100) / 100;
-                    message = "Estimated completion time: ";
-                }
+                float out = roundf(estimate * 100) / 100;
                 Rcpp::Rcout << message << out << " " << unit << ".\n";
             }           
         }
-        
+        if(!quiet & auto_edges){
+            Rcpp::Rcout << (e+1) << " edges inferred. P-value: " << 
+                p_value << "\n";         
+        } 
         if(auto_edges & (p_value >= cutoff)) {
-                Rcpp::Rcout << "Reached p-value cutoff. Stopping.\n";
-                break;
+            if(!quiet) Rcpp::Rcout << "Reached p-value cutoff. Stopping.\n";
+            break;
         }
+    }
+    // Write out message if maximum number of edges has been reach below cutoff
+    if(auto_edges & (e == n_edges)) {
+        if(!quiet) Rcpp::Rcout << "Reached maximum number of possible edges" <<
+            " before p-value cutoff.\n";
     }
     Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
 }
 
 bool comparator(double i, double j) { 
-    return abs(i) < abs(j); 
+    return fabs(i) < fabs(j); 
 };
 
 
