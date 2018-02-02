@@ -285,7 +285,8 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
     return possible_edges.size();
 }
 
-// Sum up rcpp vector excluding first element
+// Sum up rcpp vector excluding nan values (roots of the trees, i.e. nodes 
+// w/o parents)
 double sum_vector(Rcpp::NumericVector x) {
     double out = 0;
     for(int i = 0; i < x.size(); i++)  {
@@ -473,7 +474,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             int c = updated_cascades[i];
             tree_scores_after[c] = replacement_scores[i];
         }
-
+        Rcpp::Rcout << tree_scores << "\n";
+        Rcpp::Rcout << "--------------------\n";
+        Rcpp::Rcout << tree_scores_after << "\n";
         double p_value = vuong_test(tree_scores, tree_scores_after);
         p_values.push_back(p_value);
         tree_scores = tree_scores_after;
