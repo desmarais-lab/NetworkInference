@@ -120,7 +120,7 @@ Rcpp::List optimal_spanning_tree_(Rcpp::IntegerVector &this_cascade_ids,
             double score;
             for (int k = 0; k < n_parents; k++) {
                 score = edge_weight_(parent_times[k], this_cascade_times[i],
-                                            lambda, beta, epsilon, false, model);
+                                     lambda, beta, epsilon, false, model);
                 if (score > max_parent_score) {
                     max_parent_score = score;
                     parent = possible_parents[k];
@@ -288,8 +288,9 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
 // Sum up rcpp vector excluding first element
 double sum_vector(Rcpp::NumericVector x) {
     double out = 0;
-    for(int i = 1; i < x.size(); i++)  {
-       out += x[i];
+    for(int i = 0; i < x.size(); i++)  {
+        if(std::isnan(x[i])) continue;
+        out += x[i];
     }
     return out;
 }
