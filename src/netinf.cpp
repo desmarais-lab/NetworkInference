@@ -307,8 +307,7 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
                              Rcpp::List &cascade_times, 
                              Rcpp::List &cascade_nodes,
                              Rcpp::List &parent_data, double &lambda, 
-                             double &beta, double &epsilon, int &model, 
-                             Rcpp::NumericVector tree_scores) {
+                             double &beta, double &epsilon, int &model) {
 
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{u, v}};
@@ -320,8 +319,6 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
         replacements[i] = -1;
     }
     Rcpp::NumericVector new_scores(n_possible_cascades);
-    
-    Rcpp::NumericVector tree_scores_after = copy_vector(tree_scores);
 
     for(int c = 0; c < cascades.size(); c++) {
        
@@ -348,12 +345,10 @@ Rcpp::List tree_replacement_(int &n_cascades, int u, int v,
             improvement += replacement_score - current_score; 
             replacements[c] = this_cascade;
             new_scores[c] = replacement_score;
-            tree_scores_after[this_cascade] += (replacement_score - current_score);
         }
     }
    
-    Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores,
-                                        tree_scores_after);
+    Rcpp::List out = Rcpp::List::create(improvement, replacements, new_scores);
     return out;
 }
 
@@ -447,8 +442,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                                                           cascade_times, 
                                                           cascade_nodes,
                                                           parent_data, lambda,
-                                                          beta, epsilon, model,
-                                                          tree_scores);
+                                                          beta, epsilon, model);
            
             // if there is at least one improvement, keep track of edge
             
@@ -470,23 +464,28 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         scores.push_back(max_improvement);
         
         // Test if the edge improves fit
-        Rcpp::NumericVector new_ = replacement[3];
+        //   Get the tree likelihood scores with the updated edge
+        Rcpp::NumericVector tree_scores_after = copy_vector(tree_scores);
+        Rcpp::IntegerVector updated_cascades = replacement[1];
+        Rcpp::NumericVector replacement_scores = replacement[2];
+        for(int i = 0; i < updated_cascades.size(); i++) {
+            int c = updated_cascades[i];
+            tree_scores_after[c] = replacement_scores[i];
+        }
 
-        double p_value = vuong_test(tree_scores, new_);
+        double p_value = vuong_test(tree_scores, tree_scores_after);
         p_values.push_back(p_value);
-        tree_scores = new_;
+        tree_scores = tree_scores_after;
 
         // Get data to update parent information for new edge
-        Rcpp::IntegerVector replacement_data = replacement[1];
-        Rcpp::NumericVector replacement_score = replacement[2];
        
         // Get u and v of best edge
         int u = best_edge[0];
         int v = best_edge[1];
 
         // Update the parent data 
-        for(int i = 0; i < replacement_data.size(); i++) {
-            int this_cascade = replacement_data[i];
+        for(int i = 0; i < updated_cascades.size(); i++) {
+            int this_cascade = updated_cascades[i];
             if(this_cascade < 0) {
                 continue;
             }
@@ -500,7 +499,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             //update parent id for v
             this_parents[idx_v] = u;
             // update branch score
-            this_scores[idx_v] = replacement_score[i];
+            this_scores[idx_v] = replacement_scores[i];
             
             Rcpp::List updated_tree = Rcpp::List::create(this_parents,
                                                          this_scores);
