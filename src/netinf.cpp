@@ -461,7 +461,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                 // store best edge id
                 best_edge = this_id;
             }
-            if(e > 0)
+            if((e > 0) & !quiet)
                 if(!auto_edges) p.increment();
         }
        
