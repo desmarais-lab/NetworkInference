@@ -6,60 +6,10 @@
 #include "vuong_test.h"
 #include "possible_edges.h"
 #include "spanning_tree.h"
+#include "netinf.h"
 
 using namespace Rcpp;
 
-List tree_replacement(int u, int v, edge_map &possible_edges,
-                      List &cascade_times, List &cascade_nodes,
-                      List &trees, double &lambda, double &beta, 
-                      double &epsilon, int &model) {
-    
-    // Get the cascades the edge is possible in:
-    std::array<int, 2> pair_id = {{u, v}};
-    std::vector<int> cascades = possible_edges.find(pair_id)->second;
-    int n_possible_cascades = cascades.size();
-    
-    // Initialize output containers
-    IntegerVector cascades_with_replacement(n_possible_cascades, -1);
-    NumericVector replacement_scores(n_possible_cascades, NA_REAL);
-    
-    // Total improvement achieved by this edge across all trees
-    double improvement = 0;
-    for(int c = 0; c < cascades.size(); c++) {
-        
-        // Get pointers to the data of current cascade
-        int this_cascade = cascades[c];
-        IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
-        NumericVector this_cascade_times = cascade_times[this_cascade];
-        
-        // Get the event time for u and v in current cascade 
-        int idx_u = get_index(this_cascade_nodes, u);
-        int idx_v = get_index(this_cascade_nodes, v);
-        double timing_u = this_cascade_times[idx_u];
-        double timing_v = this_cascade_times[idx_v];
-        
-        // extract score associated with the current parent of v
-        List this_tree = trees[this_cascade];
-        NumericVector scores = this_tree[1];
-        double current_score = scores[idx_v];
-       
-        // what would the score be with the propspective parent (u)
-        double replacement_score = edge_score(timing_u, timing_v, lambda, 
-                                               beta, epsilon, true, model);
-        
-        // If the edge has a higher score add it to overall improvement and 
-        // store the cascade the improvement occured in (and the new score)
-        if(replacement_score > current_score) {
-            improvement += replacement_score - current_score; 
-            cascades_with_replacement[c] = this_cascade;
-            replacement_scores[c] = replacement_score;
-        }
-    }
-   
-    List out = List::create(improvement, cascades_with_replacement, 
-                            replacement_scores);
-    return out;
-}
 
 // [[Rcpp::export]]
 List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  double &lambda, 
@@ -67,22 +17,15 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     
     if(!quiet)
         Rcout << "Initializing...\n";
-    int n_cascades = cascade_nodes.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
-    List trees = initialize_trees(cascade_nodes, cascade_times, lambda, beta, 
-                                  epsilon, model);
-    
-    // Get the log likelihood of each of the initialized trees
-    NumericVector tree_scores(n_cascades, NA_REAL);
-    for(int c = 0; c < n_cascades; c++) {
-       List this_tree = trees[c];
-       NumericVector this_scores = this_tree[1];
-       tree_scores[c] = sum_vector(this_scores);
-    }
+    List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, beta, 
+                                       epsilon, model);
+    List trees = trees_data[0];
+    NumericVector tree_scores = trees_data[1];
     
     // Get edges that are possible given the cascade data
     edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times);
@@ -152,46 +95,15 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         edges.push_back(best_edge);
         scores.push_back(max_improvement);
         
+        // Update the trees with the new edge
+        NumericVector old_tree_scores = copy_vector(tree_scores);
+        update_trees(trees, tree_scores, best_edge_replacement_data, 
+                     cascade_nodes, best_edge);
+       
         // Test if the edge improves fit
-        //   Get the tree likelihood scores with the updated edge
-        NumericVector tree_scores_after = copy_vector(tree_scores);
-        IntegerVector updated_cascades = best_edge_replacement_data[1];
-        NumericVector replacement_scores = best_edge_replacement_data[2];
-        for(int i = 0; i < updated_cascades.size(); i++) {
-            int c = updated_cascades[i];
-            if(c < 0) continue;
-            tree_scores_after[c] = replacement_scores[i];
-        }
-        double p_value = vuong_test(tree_scores, tree_scores_after);
+        double p_value = vuong_test(old_tree_scores, tree_scores);
         p_values.push_back(p_value);
-        tree_scores = tree_scores_after;
 
-        // Get data to update parent information for new edge
-       
-        // Get u and v of best edge
-        int u = best_edge[0];
-        int v = best_edge[1];
-
-        // Update the trees 
-        for(int i = 0; i < updated_cascades.size(); i++) {
-            int this_cascade = updated_cascades[i];
-            if(this_cascade < 0) continue;
-            IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
-            int idx_v = get_index(this_cascade_nodes, v);
-            List casc_tree = trees[this_cascade];
-
-            IntegerVector this_parents = casc_tree[0];
-            NumericVector this_scores = casc_tree[1];
-            
-            //update parent id for v
-            this_parents[idx_v] = u;
-            // update branch score
-            this_scores[idx_v] = replacement_scores[i];
-            
-            List updated_tree = List::create(this_parents, this_scores);
-            trees[this_cascade] = updated_tree;
-        }
-       
         // Remove best edge from possible edges
         possible_edges.erase(best_edge);       
         
@@ -221,4 +133,87 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     }
     List out = List::create(edges, scores, trees, p_values);
     return out;
+}
+
+List tree_replacement(int u, int v, edge_map &possible_edges,
+                      List &cascade_times, List &cascade_nodes,
+                      List &trees, double &lambda, double &beta, 
+                      double &epsilon, int &model) {
+    
+    // Get the cascades the edge is possible in:
+    std::array<int, 2> pair_id = {{u, v}};
+    std::vector<int> cascades = possible_edges.find(pair_id)->second;
+    int n_possible_cascades = cascades.size();
+    
+    // Initialize output containers
+    IntegerVector cascades_with_replacement(n_possible_cascades, -1);
+    NumericVector replacement_scores(n_possible_cascades, NA_REAL);
+    
+    // Total improvement achieved by this edge across all trees
+    double improvement = 0;
+    for(int c = 0; c < cascades.size(); c++) {
+        
+        // Get pointers to the data of current cascade
+        int this_cascade = cascades[c];
+        IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
+        NumericVector this_cascade_times = cascade_times[this_cascade];
+        
+        // Get the event time for u and v in current cascade 
+        int idx_u = get_index(this_cascade_nodes, u);
+        int idx_v = get_index(this_cascade_nodes, v);
+        double timing_u = this_cascade_times[idx_u];
+        double timing_v = this_cascade_times[idx_v];
+        
+        // extract score associated with the current parent of v
+        List this_tree = trees[this_cascade];
+        NumericVector scores = this_tree[1];
+        double current_score = scores[idx_v];
+       
+        // what would the score be with the propspective parent (u)
+        double replacement_score = edge_score(timing_u, timing_v, lambda, 
+                                              beta, epsilon, true, model);
+        
+        // If the edge has a higher score add it to overall improvement and 
+        // store the cascade the improvement occured in (and the new score)
+        if(replacement_score > current_score) {
+            improvement += replacement_score - current_score; 
+            cascades_with_replacement[c] = this_cascade;
+            replacement_scores[c] = replacement_score;
+        }
+    }
+   
+    List out = List::create(improvement, cascades_with_replacement, 
+                            replacement_scores);
+    return out;
+}
+
+void update_trees(List &trees, NumericVector &tree_scores, 
+                  List &replacement_data, List &cascade_nodes, 
+                  std::array<int, 2> best_edge) {
+    
+    IntegerVector updated_cascades = replacement_data[1];
+
+    NumericVector replacement_scores = replacement_data[2];       
+    NumericVector old_tree_scores = copy_vector(tree_scores);
+    
+    // Get u and v of best edge
+    int u = best_edge[0];
+    int v = best_edge[1];
+
+    for(int i = 0; i < updated_cascades.size(); i++) {
+        int this_cascade = updated_cascades[i];
+        if(this_cascade < 0) continue;
+        IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
+        int idx_v = get_index(this_cascade_nodes, v);
+        List casc_tree = trees[this_cascade];
+
+        IntegerVector this_parents = casc_tree[0];
+        NumericVector this_scores = casc_tree[1];
+        
+        //update parent id for v
+        this_parents[idx_v] = u;
+        // update branch score
+        this_scores[idx_v] = replacement_scores[i];
+        tree_scores[this_cascade] = sum_vector(this_scores);
+    }
 }

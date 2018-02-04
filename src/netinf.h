@@ -38,3 +38,18 @@ List tree_replacement(int u, int v, edge_map &possible_edges,
 List netinf_(List &cascade_nodes, List &cascade_times, 
              int &n_edges, int &model, double &lambda, bool quiet, 
              bool auto_edges, double cutoff);
+
+/**
+ * Update the trees for each cascade using the new edge
+ * 
+ * @param trees List of trees for each cascade (see spanning_tree.h for 
+ *     documentation of the data structure)
+ * @param tree_scores Numeric Vector of aggregate likelihood scores for each tree
+ * @param cascade_nodes A list of integer vectors containing the node ids of
+ *     the cascade in order of infection.
+ * @param best_edge node ids of the edge that's updated
+ * @param
+ */
+void update_trees(List &trees, NumericVector &tree_scores, 
+                  List &replacement_data, List &cascade_nodes, 
+                  std::array<int, 2> best_edge);

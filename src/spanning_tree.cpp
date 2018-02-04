@@ -36,6 +36,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
     
     // For each node involved in this cascade find the parent and the weight for
     // the respective edge 
+    double tree_score = 0;
     for(int i = 0; i < cascade_size; i++) {
         // Only nodes that have an earlier event time can be parents for current
         // node
@@ -64,8 +65,13 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
                 }
             }
             // Select the parent with the max score and store the score
+            if(max_parent_score == -INFINITY) {
+                std::string msg = "Observed time with zero likelihood. Consider adjusting lambda.\n";
+                throw std::invalid_argument(msg);
+            }
             parent_ids[i] = parent;
             parent_scores[i] = max_parent_score;
+            tree_score += max_parent_score;
             
         // If node can't have parent (fist node in cascade or tied first nodes) 
         // set parent id and score to NA
@@ -74,7 +80,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
             parent_scores[i] = NA_REAL;
         }
     }
-    List out = List::create(parent_ids, parent_scores); 
+    List out = List::create(parent_ids, parent_scores, tree_score); 
     return out; 
 }
 
@@ -85,6 +91,7 @@ List initialize_trees(List &cascade_nodes, List &cascade_times,
     // Output container
     int n_cascades = cascade_nodes.size();
     List out(n_cascades);
+    NumericVector tree_scores(n_cascades, NA_REAL);
     
     // Calculate optimal spanning tree for each cascade
     for(int i = 0; i < n_cascades; i++) {
@@ -94,7 +101,8 @@ List initialize_trees(List &cascade_nodes, List &cascade_times,
         List tree_result = optimal_spanning_tree(this_cascade_ids, 
                                                  this_cascade_times, lambda, 
                                                  beta, epsilon, model);
+        tree_scores[i] = tree_result[2];
         out[i] = tree_result;
     }
-    return out;
+    return List::create(out, tree_scores);
 }
