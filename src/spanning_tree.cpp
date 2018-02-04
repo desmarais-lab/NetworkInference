@@ -3,10 +3,12 @@
 
 using namespace Rcpp;
 
-double edge_score(double &event_time_i, double &event_time_j, double &lambda, 
-                   double &beta, double &epsilon, bool tied, int &model) {
-    double y, out;
+double edge_score(double &event_time_i, double &event_time_j, 
+                  double &lambda, double &beta, 
+                  double &epsilon, bool tied, int &model) {
     double x = event_time_j - event_time_i;
+    double y;
+    double out;
     if (model == 1) {
         y = dexp_(x, lambda);
     } else if (model == 2) {
@@ -24,9 +26,8 @@ double edge_score(double &event_time_i, double &event_time_j, double &lambda,
 }
 
 List optimal_spanning_tree(IntegerVector &cascade_nodes, 
-                                 NumericVector &cascade_times,
-                                 double &lambda, double &beta, double &epsilon,
-                                 int &model) {
+                           NumericVector &cascade_times, double &lambda, 
+                           double &beta, double &epsilon, int &model) {
  
     // Init containers for the results
     int cascade_size = cascade_nodes.size();
@@ -55,8 +56,8 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
             int parent;
             double score;
             for (int k = 0; k < n_parents; k++) {
-                score = edge_score(parent_times[k], cascade_times[i],
-                                     lambda, beta, epsilon, false, model);
+                score = edge_score(parent_times[k], cascade_times[i], lambda, 
+                                   beta, epsilon, false, model);
                 if (score > max_parent_score) {
                     max_parent_score = score;
                     parent = possible_parents[k];
@@ -78,10 +79,11 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
 }
 
 List initialize_trees(List &cascade_nodes, List &cascade_times, 
-                         double &lambda, double &beta, double &epsilon,
-                         int &model, int &n_cascades) {
+                      double &lambda, double &beta, 
+                      double &epsilon, int &model) {
     
     // Output container
+    int n_cascades = cascade_nodes.size();
     List out(n_cascades);
     
     // Calculate optimal spanning tree for each cascade
@@ -90,9 +92,8 @@ List initialize_trees(List &cascade_nodes, List &cascade_times,
         IntegerVector this_cascade_ids = cascade_nodes[i];
         NumericVector this_cascade_times = cascade_times[i];
         List tree_result = optimal_spanning_tree(this_cascade_ids, 
-                                                        this_cascade_times, 
-                                                        lambda, beta, epsilon,
-                                                        model);
+                                                 this_cascade_times, lambda, 
+                                                 beta, epsilon, model);
         out[i] = tree_result;
     }
     return out;

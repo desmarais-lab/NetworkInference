@@ -58,7 +58,5 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
  * @returns A list containing the optimal spanning tree for each cascade (see
  *     optimal spanning tree for the data format of each tree)
  */
-List initialize_trees(List &cascade_nodes, List &cascade_times, 
-                         double &lambda, double &beta, double &epsilon,
-                         int &model, int &n_cascades);
- 
+List initialize_trees(List &cascade_nodes, List &cascade_times, double &lambda, 
+                      double &beta, double &epsilon, int &model);
