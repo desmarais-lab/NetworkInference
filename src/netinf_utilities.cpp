@@ -5,6 +5,8 @@
 #include <numeric>
 #include "netinf_utilities.h"
 
+using namespace Rcpp;
+
 double dexp_(float x, float lambda) {
     return lambda * std::exp(-1 * lambda * x);
 }
@@ -38,7 +40,7 @@ double normal_cdf(double x) {
 }
 
 // Get index of value (first one that matches) in Rcpp Integer Vector
-int which_int_(int value, Rcpp::IntegerVector x) {
+int which_int_(int value, IntegerVector x) {
     int n = x.size();
     for(int i = 0; i < n; i++) {
         if(x[i] == value) {
@@ -49,8 +51,7 @@ int which_int_(int value, Rcpp::IntegerVector x) {
 }
 
 // Union of two integer vectors with unique elements
-void update_children_(Rcpp::IntegerVector &children, 
-                      Rcpp::IntegerVector &candidates) {
+void update_children_(IntegerVector &children, IntegerVector &candidates) {
     int nc = candidates.size();
     for(int i = 0; i < nc; i++) {
         int k = which_int_(candidates[i], children);
@@ -67,7 +68,7 @@ std::string make_pair_id_(int &u, int &v) {
 
 // Sum up rcpp vector excluding nan values (roots of the trees, i.e. nodes 
 // w/o parents)
-double sum_vector(Rcpp::NumericVector x) {
+double sum_vector(NumericVector x) {
     double out = 0;
     for(int i = 0; i < x.size(); i++)  {
         if(std::isnan(x[i])) continue;
@@ -76,8 +77,8 @@ double sum_vector(Rcpp::NumericVector x) {
     return out;
 }
 
-Rcpp::NumericVector copy_vector(Rcpp::NumericVector x) {
-    Rcpp::NumericVector out(x.size());
+NumericVector copy_vector(NumericVector x) {
+    NumericVector out(x.size());
     for(int i = 0; i < x.size(); i++) out[i] = x[i];
     return out;
 }
@@ -108,6 +109,26 @@ void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
         unit = "days";
     }
     float out = roundf(estimate * 100) / 100;
-    Rcpp::Rcout << message << out << " " << unit << ".\n";
+    Rcout << message << out << " " << unit << ".\n";
+}
 
+// Calculate the edge weight between two nodes
+double edge_weight_(double &event_time_i, double &event_time_j, double &lambda, 
+                   double &beta, double &epsilon, bool tied, int &model) {
+    double y, out;
+    double x = event_time_j - event_time_i;
+    if (model == 1) {
+        y = dexp_(x, lambda);
+    } else if (model == 2) {
+        y = drayleigh_(x, lambda);
+        out = 0; 
+    } else {
+        throw std::invalid_argument("Not implemented. Use exponential or rayleigh model\n");
+    }
+    if (tied) {
+        out = log(beta * y);
+    } else {
+        out = log(epsilon * y);
+    }
+    return out;
 }
