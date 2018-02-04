@@ -20,7 +20,7 @@ List tree_replacement(int u, int v, edge_map &possible_edges,
     int n_possible_cascades = cascades.size();
     
     // Initialize output containers
-    IntegerVector cascades_with_replacement(n_possible_cascades, NA_INTEGER);
+    IntegerVector cascades_with_replacement(n_possible_cascades, -1);
     NumericVector replacement_scores(n_possible_cascades, NA_REAL);
     
     // Total improvement achieved by this edge across all trees
@@ -175,9 +175,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         // Update the trees 
         for(int i = 0; i < updated_cascades.size(); i++) {
             int this_cascade = updated_cascades[i];
-            if(this_cascade < 0) {
-                continue;
-            }
+            if(this_cascade < 0) continue;
             IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
             int idx_v = get_index(this_cascade_nodes, v);
             List casc_tree = trees[this_cascade];

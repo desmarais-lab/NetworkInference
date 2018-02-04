@@ -70,7 +70,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
         // If node can't have parent (fist node in cascade or tied first nodes) 
         // set parent id and score to NA
         } else {
-            parent_ids[i] = NA_INTEGER;
+            parent_ids[i] = -1;
             parent_scores[i] = NA_REAL;
         }
     }
