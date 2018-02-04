@@ -9,29 +9,8 @@
 #include <memory>
 #include <math.h>
 #include <numeric>
+#include "netinf_utilities.h"
 
-// Normal CDF from: https://www.johndcook.com/blog/cpp_phi/
-double normal_cdf(double x) {
-    // constants
-    double a1 =  0.254829592;
-    double a2 = -0.284496736;
-    double a3 =  1.421413741;
-    double a4 = -1.453152027;
-    double a5 =  1.061405429;
-    double p  =  0.3275911;
-    
-    // Save the sign of x
-    int sign = 1;
-    if (x < 0)
-    sign = -1;
-    x = fabs(x)/sqrt(2.0);
-    
-    // A&S formula 7.1.26
-    double t = 1.0/(1.0 + p*x);
-    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
-    
-    return 0.5*(1.0 + sign*y);
-}
 
 double vuong_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2, 
                   bool bic=false) {
@@ -45,15 +24,6 @@ double vuong_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2,
     return pval;
 }
     
-// Exponential density
-double dexp_(float x, float lambda) {
-    return lambda * std::exp(-1 * lambda * x);
-}
-
-// Rayleigh density
-double drayleigh_(float x, float lambda) {
-    return (x / pow(lambda, 2)) * std::exp(-pow(x, 2) / (2 * pow(lambda, 2)));
-}
 
 // Calculate the edge weight between two nodes
 double edge_weight_(double &event_time_i, double &event_time_j, double &lambda, 
@@ -169,35 +139,6 @@ Rcpp::List initialize_parents_(Rcpp::List &cascade_nodes,
     return out;
 }
 
-// Get index of value (first one that matches) in Rcpp Integer Vector
-int which_int_(int value, Rcpp::IntegerVector x) {
-    int n = x.size();
-    for(int i = 0; i < n; i++) {
-        if(x[i] == value) {
-            return i;
-        }
-    }
-    return -1; 
-}
-
-// Union of two integer vectors with unique elements
-void update_children_(Rcpp::IntegerVector &children, 
-                      Rcpp::IntegerVector &candidates) {
-    int nc = candidates.size();
-    for(int i = 0; i < nc; i++) {
-        int k = which_int_(candidates[i], children);
-        if(k == -1) {
-            children.push_back(candidates[i]);
-        }
-    }
-}
-
-// Creates a string pair id from two integer node ids
-std::string make_pair_id_(int &u, int &v) {
-    return std::to_string(u) + "_" + std::to_string(v);
-}
-
-
 // Find possible edges for each cascade
 //
 // Returns:
@@ -285,22 +226,6 @@ int count_possible_edges_(Rcpp::List &cascade_nodes, Rcpp::List &cascade_times) 
     return possible_edges.size();
 }
 
-// Sum up rcpp vector excluding nan values (roots of the trees, i.e. nodes 
-// w/o parents)
-double sum_vector(Rcpp::NumericVector x) {
-    double out = 0;
-    for(int i = 0; i < x.size(); i++)  {
-        if(std::isnan(x[i])) continue;
-        out += x[i];
-    }
-    return out;
-}
-
-Rcpp::NumericVector copy_vector(Rcpp::NumericVector x) {
-    Rcpp::NumericVector out(x.size());
-    for(int i = 0; i < x.size(); i++) out[i] = x[i];
-    return out;
-}
 
 // Find potential replacements for edge u->v
 Rcpp::List tree_replacement_(int &n_cascades, int u, int v, 
@@ -385,8 +310,10 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     // Get the log likelihood of each of the initialized trees
     Rcpp::NumericVector tree_scores(n_cascades);
     for(int c = 0; c < n_cascades; c++) {
+        
        Rcpp::List this_tree = parent_data[c];
        Rcpp::NumericVector this_scores = this_tree[1];
+       Rcpp::NumericVector this_parents = this_tree[0];
        tree_scores[c] = sum_vector(this_scores);
     }
 
@@ -447,7 +374,6 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
                                                           beta, epsilon, model);
            
             // if there is at least one improvement, keep track of edge
-            
             double improvement = Rcpp::as<double>(e_replacements[0]);
             if(improvement >= max_improvement) { 
                 // store improvement
@@ -472,11 +398,9 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
         Rcpp::NumericVector replacement_scores = replacement[2];
         for(int i = 0; i < updated_cascades.size(); i++) {
             int c = updated_cascades[i];
+            if(c < 0) continue;
             tree_scores_after[c] = replacement_scores[i];
         }
-        Rcpp::Rcout << tree_scores << "\n";
-        Rcpp::Rcout << "--------------------\n";
-        Rcpp::Rcout << tree_scores_after << "\n";
         double p_value = vuong_test(tree_scores, tree_scores_after);
         p_values.push_back(p_value);
         tree_scores = tree_scores_after;
@@ -512,37 +436,14 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
        
         // Remove best edge from possible edges
         possible_edges.erase(best_edge);       
+        
         // In the first iteration give an estimate for how long estimation will
         // take
         if (!quiet) {
             if (e == 0) {
                 auto t2 = Clock::now();
                 std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-                float estimate;
-                std::string message;
-                if(auto_edges) {
-                    estimate = fp_ms.count();
-                    message = "Estimated time per edge: ";
-                } else {
-                    estimate = fp_ms.count() * n_edges;
-                    message = "Estimated completion time: ";
-                }
-                std::string unit = "milliseconds";
-                if (estimate > 1000) {
-                    estimate /= 1000;  
-                    unit = "seconds";
-                } else if (estimate > 60000) {
-                    estimate /= 60000;
-                    unit = "minutes";
-                } else if (estimate > 3600000) {
-                    estimate /= 3600000;
-                    unit = "hours";
-                } else if (estimate > 86400000) {
-                    estimate /= 86400000;
-                    unit = "days";
-                }
-                float out = roundf(estimate * 100) / 100;
-                Rcpp::Rcout << message << out << " " << unit << ".\n";
+                print_time_estimate(fp_ms, auto_edges, n_edges);
             }           
         }
         if(!quiet & auto_edges){
@@ -554,6 +455,7 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
             break;
         }
     }
+    
     // Write out message if maximum number of edges has been reach below cutoff
     if(auto_edges & (e == n_edges)) {
         if(!quiet) Rcpp::Rcout << "Reached maximum number of possible edges" <<
@@ -562,73 +464,3 @@ Rcpp::List netinf_(Rcpp::IntegerVector &node_ids, Rcpp::List &cascade_nodes,
     Rcpp::List out = Rcpp::List::create(edges, scores, parent_data, p_values);
     return out;
 }
-
-bool comparator(double i, double j) { 
-    return fabs(i) < fabs(j); 
-};
-
-
-// Adapted from: https://github.com/stenver/wilcoxon-test/
-Rcpp::NumericVector rank_vector(Rcpp::NumericVector values) {
-    Rcpp::NumericVector ranks(values.size());
-    int i = 0;
-    while (i < values.size()) {
-        int j = i + 1;
-        while (j < values.size()) {
-            if(values[i] != values[j]) break;
-            j++;
-        }
-        for(int k = i; k <= j-1; k++) {   
-            ranks[k] = 1 + (double)(i + j-1)/(double)2;
-        }
-            i = j;
-    }
-    return ranks;
-}
-
-// one sided wilcoxon test (normal approximation)
-double wilcoxon_test(Rcpp::NumericVector x1, Rcpp::NumericVector x2) {
-
-    // Get vector of differences
-    Rcpp::NumericVector diff = x2 - x1;
-    
-    // Remove equal pairs
-    Rcpp::NumericVector nz_diff; 
-    for(int i = 0; i < diff.size(); i ++) {
-        if(diff[i] != 0) nz_diff.push_back(diff[i]);
-    }
-    
-    if(nz_diff.size() == 0) {
-        return 1;
-    }
-    
-    // Sort by absolute value
-    std::sort(nz_diff.begin(), nz_diff.end(), comparator);
-
-    // Get the signs of the differences
-    Rcpp::IntegerVector signs(nz_diff.size());
-    for(int i = 0; i < signs.size(); i++) {
-        if(nz_diff[i] > 0) signs[i] = 1;
-        if(nz_diff[i] < 0) signs[i] = -1;
-    }
-    
-    // Rank the absolute values of the differences
-    Rcpp::NumericVector nz_abs_diff = Rcpp::abs(nz_diff);
-    Rcpp::NumericVector ranks = rank_vector(Rcpp::abs(nz_diff));
-
-    // Calculate the test statistic
-    double W = 0;
-    for(int i = 0; i < ranks.size(); i++) {
-        W += (ranks[i] * signs[i]);
-    }
-
-    // Calculate the z-score for normal approximation
-    double n_r = ranks.size();
-    double sigma_w = sqrt((n_r * (n_r + 1) * (2 * n_r + 1) / 6));
-    double z = W / sigma_w;
-
-    // Calculate P(Z > z) (p-value)
-    float p = 1 - normal_cdf(z);
-    return p;
-}
-
