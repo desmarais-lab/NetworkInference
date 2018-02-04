@@ -112,23 +112,3 @@ void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
     Rcout << message << out << " " << unit << ".\n";
 }
 
-// Calculate the edge weight between two nodes
-double edge_weight_(double &event_time_i, double &event_time_j, double &lambda, 
-                   double &beta, double &epsilon, bool tied, int &model) {
-    double y, out;
-    double x = event_time_j - event_time_i;
-    if (model == 1) {
-        y = dexp_(x, lambda);
-    } else if (model == 2) {
-        y = drayleigh_(x, lambda);
-        out = 0; 
-    } else {
-        throw std::invalid_argument("Not implemented. Use exponential or rayleigh model\n");
-    }
-    if (tied) {
-        out = log(beta * y);
-    } else {
-        out = log(epsilon * y);
-    }
-    return out;
-}

@@ -11,5 +11,3 @@ double sum_vector(NumericVector x);
 NumericVector copy_vector(NumericVector x);
 void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
                          bool auto_edges, int n_edges);
-double edge_weight_(double &event_time_i, double &event_time_j, double &lambda, 
-                   double &beta, double &epsilon, bool tied, int &model);

@@ -2,124 +2,18 @@
 #include <progress.hpp>
 #include <progress_bar.hpp>
 #include <Rcpp.h>
-#include <cmath>
-#include <string>
-#include <array>
-#include <chrono>
-#include <memory>
-#include <math.h>
-#include <numeric>
 #include "netinf_utilities.h"
 #include "vuong_test.h"
 #include "possible_edges.h"
+#include "spanning_tree.h"
 
 using namespace Rcpp;
 
-// Calculate the optimal spanning tree for a cascade
-// 
-// @param cascade_nodes
-// @param cascade_times
-// @param lambda
-// @param beta
-// @param epsilon
-// @param model
-// Output:
-//     List (size 2): 
-//         [0] Vector of parent ids, each element indicates the parent of the 
-//             node at the same position in the original cascade
-//         [1] Vector of scores, each element is the score of the node at this 
-//             position in the original data and the node in [0]
-List optimal_spanning_tree_(IntegerVector &cascade_nodes, 
-                                 NumericVector &cascade_times,
-                                 double &lambda, double &beta, double &epsilon,
-                                 int &model) {
- 
-    // Init containers for the results
-    int cascade_size = cascade_nodes.size();
-    NumericVector parent_scores(cascade_size);
-    IntegerVector parent_ids(cascade_size);
+List tree_replacement(int u, int v, edge_map &possible_edges,
+                      List &cascade_times, List &cascade_nodes,
+                      List &trees, double &lambda, double &beta, 
+                      double &epsilon, int &model) {
     
-    // For each node involved in this cascade find the parent and the weight for
-    // the respective edge 
-    for(int i = 0; i < cascade_size; i++) {
-        // Only nodes that have an earlier event time can be parents for current
-        // node
-        NumericVector possible_parents;
-        NumericVector parent_times;
-        for(int j = 0; j < cascade_size; j++) {
-            if (cascade_times[j] < cascade_times[i]) {
-                possible_parents.push_back(cascade_nodes[j]);
-                parent_times.push_back(cascade_times[j]);
-            } 
-        }
-        // Find the parent with the highest score if there are possible parents
-        int n_parents = possible_parents.size();
-        // If there are multiple potential parents find the one that gives the e
-        // edge the maximum weight
-        if (n_parents > 0) {
-            double max_parent_score = -INFINITY;
-            int parent;
-            double score;
-            for (int k = 0; k < n_parents; k++) {
-                score = edge_weight_(parent_times[k], cascade_times[i],
-                                     lambda, beta, epsilon, false, model);
-                if (score > max_parent_score) {
-                    max_parent_score = score;
-                    parent = possible_parents[k];
-                }
-            }
-            // Select the parent with the max score and store the score
-            parent_ids[i] = parent;
-            parent_scores[i] = max_parent_score;
-            
-        // If node can't have parent (fist node in cascade or tied first nodes) 
-        // set parent id and score to NA
-        } else {
-            parent_ids[i] = NA_INTEGER;
-            parent_scores[i] = NA_REAL;
-        }
-    }
-    List out = List::create(parent_ids, parent_scores); 
-    return out; 
-}
-
-// Initialize parents
-// Output: 
-//     List (size n_cascades):
-//         Lists (size 2)
-//             [0] parents: vector(size: size of the cascade)
-//             [1] scores: vector(size: size of the cascade)
-List initialize_parents_(List &cascade_nodes, 
-                               List &cascade_times, double &lambda, 
-                               double &beta, double &epsilon, int &model,
-                               int &n_cascades) {
-    
-    // Output container
-    List out(n_cascades);
-    
-    // Calculate optimal spanning tree for each cascade
-    for(int i = 0; i < n_cascades; i++) {
-        checkUserInterrupt();
-        IntegerVector this_cascade_ids = cascade_nodes[i];
-        NumericVector this_cascade_times = cascade_times[i];
-        List tree_result = optimal_spanning_tree_(this_cascade_ids, 
-                                                        this_cascade_times, 
-                                                        lambda, beta, epsilon,
-                                                        model);
-        out[i] = tree_result;
-    }
-    return out;
-}
-
-// Find potential replacements for edge u->v
-List tree_replacement_(int &n_cascades, int u, int v, 
-                             std::map <std::array<int, 2>, std::vector<int> > 
-                                 &possible_edges,
-                             List &cascade_times, 
-                             List &cascade_nodes,
-                             List &parent_data, double &lambda, 
-                             double &beta, double &epsilon, int &model) {
-
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{u, v}};
     std::vector<int> cascades = possible_edges.find(pair_id)->second;
@@ -143,14 +37,14 @@ List tree_replacement_(int &n_cascades, int u, int v,
         double timing_v = this_cascade_times[idx_v];
         
         // extract score associated with the current parent
-        List this_parent_data = parent_data[this_cascade];
-        NumericVector scores = this_parent_data[1];
+        List this_tree = trees[this_cascade];
+        NumericVector scores = this_tree[1];
 
         double current_score = scores[idx_v];
        
         // what would the score be with the propspective parent
-        double replacement_score = edge_weight_(timing_u, timing_v, lambda, 
-                                                beta, epsilon, true, model);
+        double replacement_score = edge_score(timing_u, timing_v, lambda, 
+                                               beta, epsilon, true, model);
         
         if(replacement_score > current_score) {
             improvement += replacement_score - current_score; 
@@ -163,20 +57,6 @@ List tree_replacement_(int &n_cascades, int u, int v,
     return out;
 }
 
-// Run the netinf algorithm on a set of nodes and cascades
-// 
-// @param node_ids An integer vector of integer node ids.
-// @param cascade_nodes A list of integer vectors containing the node ids of
-//     the cascade in order of infection.
-// @param  cascade_times A list of numeric vectors each containing infection 
-//     times for the corresponding nodes in \code{cascade_ids}.
-// @param model integer indicating the choice of model: 1: exponential, 
-//     2: power law, 3: rayleigh (only exponential implemented).
-// @param lambda Numeric, rate parameter for exponential transmission model.
-// @param n_edges Integer, number of edges to infer.
-// @param quiet, Boolean, Should output on progress by suppressed.
-// 
-// @return List containing one vector per edge.
 // [[Rcpp::export]]
 List netinf_(IntegerVector &node_ids, List &cascade_nodes, 
                    List &cascade_times, int &n_edges, int &model, 
@@ -186,15 +66,16 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
     int n_cascades = cascade_nodes.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
-   
-    List parent_data = initialize_parents_(cascade_nodes, cascade_times,
-                                                 lambda, beta, epsilon, model,
-                                                 n_cascades);
+    
+    // Prepare the trees of each cascade (find the optimal spanning tree and 
+    // store parents for each node and respective scores)
+    List trees = initialize_trees(cascade_nodes, cascade_times, lambda, beta, 
+                                     epsilon, model, n_cascades);
+    
     // Get the log likelihood of each of the initialized trees
     NumericVector tree_scores(n_cascades);
     for(int c = 0; c < n_cascades; c++) {
-        
-       List this_tree = parent_data[c];
+       List this_tree = trees[c];
        NumericVector this_scores = this_tree[1];
        NumericVector this_parents = this_tree[0];
        tree_scores[c] = sum_vector(this_scores);
@@ -246,12 +127,11 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
             std::array<int, 2> this_id = {{u, v}};
             
             //find replacements for u->v edge
-            List e_replacements = tree_replacement_(n_cascades, u, v,
-                                                          possible_edges, 
-                                                          cascade_times, 
-                                                          cascade_nodes,
-                                                          parent_data, lambda,
-                                                          beta, epsilon, model);
+            List e_replacements = tree_replacement(u, v, possible_edges, 
+                                                    cascade_times, 
+                                                    cascade_nodes,
+                                                    trees, lambda, beta, 
+                                                    epsilon, model);
            
             // if there is at least one improvement, keep track of edge
             double improvement = as<double>(e_replacements[0]);
@@ -291,7 +171,7 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
         int u = best_edge[0];
         int v = best_edge[1];
 
-        // Update the parent data 
+        // Update the trees 
         for(int i = 0; i < updated_cascades.size(); i++) {
             int this_cascade = updated_cascades[i];
             if(this_cascade < 0) {
@@ -299,7 +179,7 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
             }
             IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
             int idx_v = which_int_(v, this_cascade_nodes);
-            List casc_tree = parent_data[this_cascade];
+            List casc_tree = trees[this_cascade];
 
             IntegerVector this_parents = casc_tree[0];
             NumericVector this_scores = casc_tree[1];
@@ -309,9 +189,8 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
             // update branch score
             this_scores[idx_v] = replacement_scores[i];
             
-            List updated_tree = List::create(this_parents,
-                                                         this_scores);
-            parent_data[this_cascade] = updated_tree;
+            List updated_tree = List::create(this_parents, this_scores);
+            trees[this_cascade] = updated_tree;
         }
        
         // Remove best edge from possible edges
@@ -341,6 +220,6 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
         if(!quiet) Rcout << "Reached maximum number of possible edges" <<
             " before p-value cutoff.\n";
     }
-    List out = List::create(edges, scores, parent_data, p_values);
+    List out = List::create(edges, scores, trees, p_values);
     return out;
 }
