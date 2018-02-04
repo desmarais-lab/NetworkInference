@@ -23,7 +23,6 @@ List tree_replacement(int u, int v, edge_map &possible_edges,
 /**
  * Run the netinf algorithm on a set of nodes and cascades
  * 
- * @param node_ids An integer vector of integer node ids.
  * @param cascade_nodes A list of integer vectors containing the node ids of
  *     the cascade in order of infection.
  * @param  cascade_times A list of numeric vectors each containing infection 
@@ -36,6 +35,6 @@ List tree_replacement(int u, int v, edge_map &possible_edges,
  * 
  * @return List containing one vector per edge.
 */
-List netinf_(IntegerVector &node_ids, List &cascade_nodes, List &cascade_times, 
+List netinf_(List &cascade_nodes, List &cascade_times, 
              int &n_edges, int &model, double &lambda, bool quiet, 
              bool auto_edges, double cutoff);

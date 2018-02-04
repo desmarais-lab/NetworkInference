@@ -91,7 +91,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     cascade_nodes <- lapply(cascades$cascade_nodes, function(x) node_ids[x]) 
     
     # Run netinf
-    netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
+    netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
                           lambda = lambda, n_edges = n_edges, quiet = quiet,
                           auto_edges = auto_edges, cutoff = cutoff)
