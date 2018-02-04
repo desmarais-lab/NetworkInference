@@ -117,7 +117,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     for(e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
-        List replacement;
+        List best_edge_replacement_data;
         for (auto const& x : possible_edges) {
             checkUserInterrupt();
             //potential parent
@@ -128,19 +128,19 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             std::array<int, 2> this_id = {{u, v}};
             
             //find replacements for u->v edge
-            List e_replacements = tree_replacement(u, v, possible_edges, 
-                                                    cascade_times, 
-                                                    cascade_nodes,
-                                                    trees, lambda, beta, 
-                                                    epsilon, model);
+            List edge_replacements = tree_replacement(u, v, possible_edges, 
+                                                      cascade_times, 
+                                                      cascade_nodes,
+                                                      trees, lambda, beta, 
+                                                      epsilon, model);
            
             // if there is at least one improvement, keep track of edge
-            double improvement = as<double>(e_replacements[0]);
+            double improvement = as<double>(edge_replacements[0]);
             if(improvement >= max_improvement) { 
                 // store improvement
                 max_improvement = improvement;
                 // store all replacement information
-                replacement = e_replacements;
+                best_edge_replacement_data = edge_replacements;
                 // store best edge id
                 best_edge = this_id;
             }
@@ -155,8 +155,8 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         // Test if the edge improves fit
         //   Get the tree likelihood scores with the updated edge
         NumericVector tree_scores_after = copy_vector(tree_scores);
-        IntegerVector updated_cascades = replacement[1];
-        NumericVector replacement_scores = replacement[2];
+        IntegerVector updated_cascades = best_edge_replacement_data[1];
+        NumericVector replacement_scores = best_edge_replacement_data[2];
         for(int i = 0; i < updated_cascades.size(); i++) {
             int c = updated_cascades[i];
             if(c < 0) continue;
