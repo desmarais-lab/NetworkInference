@@ -1,13 +1,62 @@
 using namespace Rcpp;
 
+/**
+ * Exponential density
+ * 
+ * @param x Value to evaluate.
+ * @param lambda Rate paramter of the distribution.
+ * 
+ * @return Density value
+ */
 double dexp_(float x, float lambda);
+/**
+ * Rayleigh density
+ * 
+ * @param x Value to evaluate.
+ * @param lambda shape paramter of the distribution.
+ * 
+ * @return Density value
+ */
 double drayleigh_(float x, float lambda);
+
+/**
+ * Cumulative distribution function of the standard normal distribution
+ * 
+ * @param x Value to evaluate.
+ * 
+ * @return Probability of X > x.
+ */
 double normal_cdf(double x);
-void update_children_(IntegerVector &children, 
-                      IntegerVector &candidates);
-std::string make_pair_id_(int &u, int &v);
-int which_int_(int value, IntegerVector x);
+
+/**
+ * Find the position of an (first) integer in a vector
+ * 
+ * @param x Vector to search in.
+ * @param val Value to search for.
+ * 
+ * @return Integer index of location of val in x or -1 if val not in x.
+ */
+int get_index(IntegerVector x, int val);
+
+/**
+ * Sum all elements of a vector, skipping na values
+ * 
+ * @param x Vector to sum over
+ */
 double sum_vector(NumericVector x);
+
+/**
+ * Copy a numeric vector
+ */
 NumericVector copy_vector(NumericVector x);
+
+/**
+ * Print the estimated estimation time in legible units
+ * 
+ * @param fp_ms duration of inference of a single edge in milliseconds.
+ * @param auto_edges Does the algorithm run in auto mode (no fixed number of 
+ *     edges).
+ * @param n_edges Number of edges to infer (only relevant if auto_edges=false).
+ */
 void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
                          bool auto_edges, int n_edges);

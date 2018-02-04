@@ -11,12 +11,11 @@ double dexp_(float x, float lambda) {
     return lambda * std::exp(-1 * lambda * x);
 }
 
-// Rayleigh density
 double drayleigh_(float x, float lambda) {
     return (x / pow(lambda, 2)) * std::exp(-pow(x, 2) / (2 * pow(lambda, 2)));
 }
 
-// Normal CDF from: https://www.johndcook.com/blog/cpp_phi/
+// https://www.johndcook.com/blog/cpp_phi/
 double normal_cdf(double x) {
     // constants
     double a1 =  0.254829592;
@@ -39,35 +38,14 @@ double normal_cdf(double x) {
     return 0.5*(1.0 + sign*y);
 }
 
-// Get index of value (first one that matches) in Rcpp Integer Vector
-int which_int_(int value, IntegerVector x) {
-    int n = x.size();
-    for(int i = 0; i < n; i++) {
-        if(x[i] == value) {
-            return i;
-        }
+int get_index(IntegerVector x, int val) {
+    for(int i = 0; i < x.size(); i++) {
+        if(x[i] == val) return i;
     }
-    return -1; 
+    return -1;
 }
 
-// Union of two integer vectors with unique elements
-void update_children_(IntegerVector &children, IntegerVector &candidates) {
-    int nc = candidates.size();
-    for(int i = 0; i < nc; i++) {
-        int k = which_int_(candidates[i], children);
-        if(k == -1) {
-            children.push_back(candidates[i]);
-        }
-    }
-}
 
-// Creates a string pair id from two integer node ids
-std::string make_pair_id_(int &u, int &v) {
-    return std::to_string(u) + "_" + std::to_string(v);
-}
-
-// Sum up rcpp vector excluding nan values (roots of the trees, i.e. nodes 
-// w/o parents)
 double sum_vector(NumericVector x) {
     double out = 0;
     for(int i = 0; i < x.size(); i++)  {
@@ -111,4 +89,3 @@ void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
     float out = roundf(estimate * 100) / 100;
     Rcout << message << out << " " << unit << ".\n";
 }
-
