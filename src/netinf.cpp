@@ -10,7 +10,6 @@
 
 using namespace Rcpp;
 
-
 // [[Rcpp::export]]
 List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  double &lambda, 
              bool quiet, bool &auto_edges, double &cutoff) {
@@ -49,20 +48,23 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     }
     
     // Set up for timing first iteration and progress bar (if not auto edges)
-    typedef std::chrono::high_resolution_clock Clock;
-    auto t1 = Clock::now();
     bool show_progress = true;
     if(quiet) show_progress = false;
     if(auto_edges) show_progress = false;
     Progress p((n_edges - 1) * possible_edges.size(), show_progress);
     
+    typedef std::chrono::high_resolution_clock Clock;
+    auto t1 = Clock::now();
     int e;
+    int check_interval = floor(n_p_edges / 10);
     for(e = 0; e < n_edges; e++) {
         double max_improvement = 0;
         std::array<int, 2> best_edge;
         List best_edge_replacement_data;
+        
+        int i = 0;
         for (auto const& x : possible_edges) {
-            checkUserInterrupt();
+            
             //potential parent
             int u = x.first[0];
             // infected node
@@ -78,7 +80,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                                                       epsilon, model);
            
             // if there is at least one improvement, keep track of edge
-            double improvement = as<double>(edge_replacements[0]);
+            double improvement = edge_replacements[0];
             if(improvement >= max_improvement) { 
                 // store improvement
                 max_improvement = improvement;
@@ -87,8 +89,11 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                 // store best edge id
                 best_edge = this_id;
             }
-            if((e > 0) & !quiet)
+            if((i % check_interval == 0) & (e > 0) & !quiet) {
+                checkUserInterrupt();
                 if(!auto_edges) p.increment();
+            }
+            i += 1;
         }
        
         // Store the best results
