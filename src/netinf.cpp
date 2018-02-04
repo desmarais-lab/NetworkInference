@@ -11,6 +11,7 @@
 #include <numeric>
 #include "netinf_utilities.h"
 #include "vuong_test.h"
+#include "possible_edges.h"
 
 using namespace Rcpp;
 
@@ -110,94 +111,6 @@ List initialize_parents_(List &cascade_nodes,
     return out;
 }
 
-// Find possible edges for each cascade
-//
-// Returns:
-//     A hashmap with pairs as keys ('u_v') and a list as value. The list contains
-//     the edge nodes as integers as well as an IntegerVector conatining all 
-//     cascades that the edge is possible in
-std::map<std::array<int, 2>, std::vector<int> > find_possible_edges_(
-        IntegerVector &node_ids, List &cascade_nodes, 
-        List &cascade_times, int &n_nodes, int &n_cascades) {
-    
-    std::map<std::array<int, 2>, std::vector<int> > possible_edges;
-    for(int c = 0; c < n_cascades; c++) {
-        checkUserInterrupt();
-        IntegerVector this_cascade_nodes = cascade_nodes[c];
-        NumericVector this_cascade_times = cascade_times[c];
-        int csize = this_cascade_nodes.size();
-        
-        // Use the fact that the cascade data is ordered (see cascade.R)
-        for(int i = 0; i < csize; i++) {
-            int u = this_cascade_nodes[i];
-            double tu = this_cascade_times[i];
-            for(int j = i + 1; j < csize; j++) {
-                int v = this_cascade_nodes[j];
-                double tv = this_cascade_times[j];
-                
-                // If times are tied skip this combination
-                if(tu >= tv) {
-                    continue;
-                }
-                
-                // Check if pair is in pair collection. If not include
-                std::array<int, 2> pair_id = {{u, v}};
-                
-                auto it = possible_edges.find(pair_id);
-                if(it == possible_edges.end()) {
-                    std::vector<int> value;
-                    value.push_back(c);
-                    possible_edges.insert(make_pair(pair_id, value));
-                } else {
-                    it->second.push_back(c);
-                }
-            }
-        }
-    }
-    return possible_edges;
-}
-
-
-// [[Rcpp::export]]
-int count_possible_edges_(List &cascade_nodes, List &cascade_times) {
-   
-    int n_cascades = cascade_nodes.size();
-    std::map<std::string, int> possible_edges;
-    for(int c = 0; c < n_cascades; c++) {
-        IntegerVector this_cascade_nodes = cascade_nodes[c];
-        NumericVector this_cascade_times = cascade_times[c];
-        int csize = this_cascade_nodes.size();
-        
-        // Use the fact that the cascade data is ordered (see cascade.R)
-        for(int i = 0; i < csize; i++) {
-            checkUserInterrupt();
-            int u = this_cascade_nodes[i];
-            double tu = this_cascade_times[i];
-            for(int j = i + 1; j < csize; j++) {
-                int v = this_cascade_nodes[j];
-                double tv = this_cascade_times[j];
-                
-                // If times are tied skip this combination
-                if(tu >= tv) {
-                    continue;
-                }
-                
-                // Check if pair is in pair collection. If not include
-                std::string pair_id = make_pair_id_(u, v);
-                std::map<std::string,int>::iterator it;
-                it = possible_edges.find(pair_id);
-                if(it == possible_edges.end()) {
-                    possible_edges.insert(std::pair<std::string, int>(pair_id, 1));
-                } else {
-                    it->second += 1;
-                }
-            }
-        }
-    }
-    return possible_edges.size();
-}
-
-
 // Find potential replacements for edge u->v
 List tree_replacement_(int &n_cascades, int u, int v, 
                              std::map <std::array<int, 2>, std::vector<int> > 
@@ -271,7 +184,6 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
     if(!quiet)
         Rcout << "Initializing...\n";
     int n_cascades = cascade_nodes.size();
-    int n_nodes = node_ids.size();
     double beta = 0.5;
     double epsilon = 0.000000001;
    
@@ -287,12 +199,9 @@ List netinf_(IntegerVector &node_ids, List &cascade_nodes,
        NumericVector this_parents = this_tree[0];
        tree_scores[c] = sum_vector(this_scores);
     }
-
-    std::map <std::array<int, 2>, std::vector<int> > 
-        possible_edges = find_possible_edges_(node_ids, cascade_nodes, 
-                                               cascade_times, n_nodes, 
-                                               n_cascades);
-
+    
+    // Get edges that are possible given the cascade data
+    edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times);
    
     // Output containers
     int n_p_edges = possible_edges.size();
