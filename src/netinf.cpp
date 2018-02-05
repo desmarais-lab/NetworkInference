@@ -21,8 +21,9 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
-    List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, beta, 
-                                       epsilon, model);
+    time_point s = Clock::now(); 
+    List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, 
+                                       beta, epsilon, model);
     List trees = trees_data[0];
     NumericVector tree_scores = trees_data[1];
     
@@ -53,8 +54,8 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     if(auto_edges) show_progress = false;
     Progress p((n_edges - 1) * possible_edges.size(), show_progress);
     
-    typedef std::chrono::high_resolution_clock Clock;
-    auto t1 = Clock::now();
+   
+    time_point t1 = Clock::now(); 
     int e;
     int check_interval = floor(n_p_edges / 10);
     for(e = 0; e < n_edges; e++) {
@@ -69,8 +70,6 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             int u = x.first[0];
             // infected node
             int v = x.first[1];
-            
-            std::array<int, 2> this_id = {{u, v}};
             
             //find replacements for u->v edge
             List edge_replacements = tree_replacement(u, v, possible_edges, 
@@ -87,11 +86,11 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                 // store all replacement information
                 best_edge_replacement_data = edge_replacements;
                 // store best edge id
-                best_edge = this_id;
+                best_edge = {{u, v}};
             }
-            if((i % check_interval == 0) & (e > 0) & !quiet) {
+            if(i % check_interval == 0) {
                 checkUserInterrupt();
-                if(!auto_edges) p.increment();
+                if(!auto_edges & !quiet & (e > 0)) p.increment();
             }
             i += 1;
         }
@@ -117,7 +116,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         if (!quiet) {
             if (e == 0) {
                 auto t2 = Clock::now();
-                std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
+                time_duration fp_ms = t2 - t1;
                 print_time_estimate(fp_ms, auto_edges, n_edges);
             }           
         }
@@ -127,6 +126,10 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         } 
         if(auto_edges & (p_value >= cutoff)) {
             if(!quiet) Rcout << "Reached p-value cutoff. Stopping.\n";
+            break;
+        }
+        if(max_improvement == 0) {
+            if(!quiet) Rcout << "Additional edges don't improve fit. Stopping.\n";
             break;
         }
     }
@@ -140,7 +143,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     return out;
 }
 
-List tree_replacement(int u, int v, edge_map &possible_edges,
+List tree_replacement(int &u, int &v, edge_map &possible_edges,
                       List &cascade_times, List &cascade_nodes,
                       List &trees, double &lambda, double &beta, 
                       double &epsilon, int &model) {

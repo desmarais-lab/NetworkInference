@@ -15,7 +15,7 @@ using namespace Rcpp;
  *     times for the corresponding nodes in \code{cascade_ids}.
  * 
  */
-List tree_replacement(int u, int v, edge_map &possible_edges,
+List tree_replacement(int &u, int &v, edge_map &possible_edges,
                        List &cascade_times, List &cascade_nodes,
                        List &trees, double &lambda, double &beta, 
                        double &epsilon, int &model);
