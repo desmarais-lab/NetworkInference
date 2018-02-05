@@ -3,6 +3,7 @@
 #include <string>
 #include <math.h>
 #include <numeric>
+#include <chrono>
 #include "netinf_utilities.h"
 
 using namespace Rcpp;
@@ -44,7 +45,6 @@ int get_index(IntegerVector x, int val) {
     }
     return -1;
 }
-
 
 double sum_vector(NumericVector x) {
     double out = 0;
@@ -88,4 +88,11 @@ void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
     }
     float out = roundf(estimate * 100) / 100;
     Rcout << message << out << " " << unit << ".\n";
+}
+
+time_point print_timing(time_point start_time, std::string step) {
+    time_point t2 = Clock::now();
+    time_duration fp_ms = t2 - start_time;
+    Rcout << step << "took: " << fp_ms.count() << "ms\n";
+    return t2;
 }

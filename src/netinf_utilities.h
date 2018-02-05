@@ -1,5 +1,9 @@
 using namespace Rcpp;
 
+typedef std::chrono::system_clock Clock;
+typedef std::chrono::system_clock::time_point time_point;
+typedef std::chrono::duration<double, std::milli> time_duration;
+
 /**
  * Exponential density
  * 
@@ -60,3 +64,6 @@ NumericVector copy_vector(NumericVector x);
  */
 void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
                          bool auto_edges, int n_edges);
+
+
+time_point print_timing(time_point start_time, std::string step);
