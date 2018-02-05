@@ -40,7 +40,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
     for(int i = 0; i < cascade_size; i++) {
         // Only nodes that have an earlier event time can be parents for current
         // node
-        NumericVector possible_parents;
+        IntegerVector possible_parents;
         NumericVector parent_times;
         for(int j = 0; j < cascade_size; j++) {
             if (cascade_times[j] < cascade_times[i]) {
