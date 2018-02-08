@@ -1,3 +1,4 @@
+#include <chrono>
 using namespace Rcpp;
 
 /**
