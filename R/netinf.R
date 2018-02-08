@@ -13,6 +13,7 @@
 #' 
 #' @import checkmate
 #' @import assertthat
+#' @import stats
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as_cascade_long}} and 
@@ -121,7 +122,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
         
         # Replace int node ids with node_names 
         trees_df$child <- do.call(c, cascades$cascade_nodes)
-        trees_df <- na.omit(trees_df)
+        trees_df <- stats::na.omit(trees_df)
         trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
         trees_df <- trees_df[trees_df[, 1] >= 0, ]
         trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
