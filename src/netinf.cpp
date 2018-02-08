@@ -21,13 +21,14 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
-    time_point s = Clock::now(); 
+    //time_point s = Clock::now(); 
     List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, 
                                        beta, epsilon, model);
     List trees = trees_data[0];
     NumericVector tree_scores = trees_data[1];
     
     // Get edges that are possible given the cascade data
+    //edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times);
     edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times);
    
     // Output containers
@@ -52,49 +53,68 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     bool show_progress = true;
     if(quiet) show_progress = false;
     if(auto_edges) show_progress = false;
-    Progress p((n_edges - 1) * possible_edges.size(), show_progress);
+    Progress p((n_edges - 1), show_progress);
     
    
-    time_point t1 = Clock::now(); 
     int e;
-    int check_interval = floor(n_p_edges / 10);
+    // In the first iteration all edges are "dependent" so we can calculate 
+    // improvement for each one
+    std::vector<id_array> dependent_edges;
+    for (auto const& x : possible_edges) {
+        dependent_edges.push_back(x.first);
+    }
+    
+    IntegerVector estimation_times;
     for(e = 0; e < n_edges; e++) {
-        double max_improvement = 0;
-        std::array<int, 2> best_edge;
-        List best_edge_replacement_data;
+        id_array best_edge;
         
-        int i = 0;
-        for (auto const& x : possible_edges) {
-            
+        // Calculate the improvement for all edges that need updating
+        int check_interval = ceil(dependent_edges.size() / 5);
+        for(int k = 0; k < dependent_edges.size(); k++) {
+            if(k % (check_interval + 1) == 0) checkUserInterrupt();
+            id_array this_edge = dependent_edges[k];
+            auto it = possible_edges.find(this_edge);
+            if(it == possible_edges.end()) continue;
             //potential parent
-            int u = x.first[0];
+            int u = this_edge[0];
             // infected node
-            int v = x.first[1];
+            int v = this_edge[1];
             
-            //find replacements for u->v edge
+            // Calculate improvement  
             List edge_replacements = tree_replacement(u, v, possible_edges, 
                                                       cascade_times, 
                                                       cascade_nodes,
                                                       trees, lambda, beta, 
                                                       epsilon, model);
-           
-            // if there is at least one improvement, keep track of edge
-            double improvement = edge_replacements[0];
-            if(improvement >= max_improvement) { 
-                // store improvement
-                max_improvement = improvement;
-                // store all replacement information
-                best_edge_replacement_data = edge_replacements;
-                // store best edge id
-                best_edge = {{u, v}};
-            }
-            if(i % check_interval == 0) {
-                checkUserInterrupt();
-                if(!auto_edges & !quiet & (e > 0)) p.increment();
-            }
-            i += 1;
+            
+            // Update the improvement value in the edge_map
+            double& this_edge_improvement = std::get<2>(it->second);
+            this_edge_improvement = edge_replacements[0];
         }
-       
+        
+        // Find the edge with the maximum improvement and re-calculate replace
+        // ment data
+        double max_improvement = 0;
+        check_interval = ceil(n_p_edges / 5);
+        int i = 0;
+        for (auto const& x : possible_edges) {
+            i += 1;
+            if(i % (check_interval+1) == 0) checkUserInterrupt();
+            
+            double improvement = std::get<2>(x.second);
+            if(improvement >= max_improvement) { 
+                max_improvement = improvement;
+                best_edge = x.first;
+            }
+        }
+        List best_edge_replacement_data = tree_replacement(
+            best_edge[0], best_edge[1], possible_edges, cascade_times, 
+            cascade_nodes, trees, lambda, beta, epsilon, model);
+        
+        // Select edges to update in next iteration
+        auto it = possible_edges.find(best_edge);
+        dependent_edges = std::get<1>(it->second);
+        
         // Store the best results
         edges.push_back(best_edge);
         scores.push_back(max_improvement);
@@ -111,32 +131,26 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         // Remove best edge from possible edges
         possible_edges.erase(best_edge);       
         
-        // In the first iteration give an estimate for how long estimation will
-        // take
-        if (!quiet) {
-            if (e == 0) {
-                auto t2 = Clock::now();
-                time_duration fp_ms = t2 - t1;
-                print_time_estimate(fp_ms, auto_edges, n_edges);
-            }           
-        }
+        // Update the progress bar
+        if(!auto_edges & !quiet & (e >= 1)) p.increment();
+ 
         if(!quiet & auto_edges){
-            Rcout << (e+1) << " edges inferred. P-value: " << 
-                p_value << "\n";         
+            Rcout << "\r" << (e+1) << " edges inferred. P-value: " << 
+                p_value << std::flush;         
         } 
         if(auto_edges & (p_value >= cutoff)) {
-            if(!quiet) Rcout << "Reached p-value cutoff. Stopping.\n";
+            if(!quiet) Rcout << "\nReached p-value cutoff. Stopping.\n";
             break;
         }
         if(max_improvement == 0) {
-            if(!quiet) Rcout << "Additional edges don't improve fit. Stopping.\n";
+            if(!quiet) Rcout << "\nAdditional edges don't improve fit. Stopping.\n";
             break;
         }
     }
     
     // Write out message if maximum number of edges has been reach below cutoff
     if(auto_edges & (e == n_edges)) {
-        if(!quiet) Rcout << "Reached maximum number of possible edges" <<
+        if(!quiet) Rcout << "\nReached maximum number of possible edges" <<
             " before p-value cutoff.\n";
     }
     List out = List::create(edges, scores, trees, p_values);
@@ -150,8 +164,11 @@ List tree_replacement(int &u, int &v, edge_map &possible_edges,
     
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{u, v}};
-    std::vector<int> cascades = possible_edges.find(pair_id)->second;
+    //std::vector<int> cascades = possible_edges.find(pair_id)->second;
+    edge_map_value value = possible_edges.find(pair_id)->second;
+    std::vector<int> cascades = std::get<0>(value);
     int n_possible_cascades = cascades.size();
+    //Rcout << n_possible_cascades << "\n";
     
     // Initialize output containers
     IntegerVector cascades_with_replacement(n_possible_cascades, -1);

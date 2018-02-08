@@ -1,5 +1,8 @@
 using namespace Rcpp;
 
+/**
+ * Type definitions
+ */
 typedef std::chrono::system_clock Clock;
 typedef std::chrono::system_clock::time_point time_point;
 typedef std::chrono::duration<double, std::milli> time_duration;

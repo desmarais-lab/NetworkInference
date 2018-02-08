@@ -1,8 +1,9 @@
 #include <array>
 using namespace Rcpp;
 
-    
-typedef std::map<std::array<int, 2>, std::vector<int> > edge_map;
+typedef std::array<int, 2> id_array;
+typedef std::tuple<std::vector<int>, std::vector<id_array>, double> edge_map_value;
+typedef std::map<id_array,  edge_map_value> edge_map;
 
 /**
  * Finds all possible edges from a set of cascades
