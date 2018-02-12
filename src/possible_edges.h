@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 typedef std::array<int, 2> id_array;
-typedef std::tuple<std::vector<int>, std::vector<id_array>, double> edge_map_value;
+typedef std::tuple<std::vector<int>, std::set<id_array>, double> edge_map_value;
 typedef std::map<id_array,  edge_map_value> edge_map;
 
 /**

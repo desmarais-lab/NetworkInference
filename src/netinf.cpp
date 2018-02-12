@@ -34,7 +34,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     // Output containers
     int n_p_edges = possible_edges.size();
     if(auto_edges) n_edges = n_p_edges;
-    List edges; 
+    std::set<id_array> edges;
     NumericVector scores;
     NumericVector p_values;
     
@@ -70,6 +70,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         
         // Calculate the improvement for all edges that need updating
         int check_interval = ceil(dependent_edges.size() / 5);
+        
         for(int k = 0; k < dependent_edges.size(); k++) {
             if(k % (check_interval + 1) == 0) checkUserInterrupt();
             id_array this_edge = dependent_edges[k];
@@ -113,10 +114,15 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         
         // Select edges to update in next iteration
         auto it = possible_edges.find(best_edge);
-        dependent_edges = std::get<1>(it->second);
+        std::set<id_array> de_set = std::get<1>(it->second);
+        std::vector<id_array> dependent_edges;
+        for(auto const& x : de_set) {
+            auto it = edges.find(x);
+            if(it == edges.end()) dependent_edges.push_back(x);
+        }
         
         // Store the best results
-        edges.push_back(best_edge);
+        edges.insert(best_edge);
         scores.push_back(max_improvement);
         
         // Update the trees with the new edge

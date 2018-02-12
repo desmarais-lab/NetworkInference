@@ -10,6 +10,7 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
     
     int n_cascades = cascade_nodes.size();
     for(int c = 0; c < n_cascades; c++) {
+        //Rcout << "\tChecking cascade: " << c << std::flush;
         checkUserInterrupt();
         IntegerVector this_cascade_nodes = cascade_nodes[c];
         NumericVector this_cascade_times = cascade_times[c];
@@ -39,7 +40,7 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
                 if(it == possible_edges.end()) {
                     std::vector<int> possible_cascades;
                     possible_cascades.push_back(c);
-                    std::vector<id_array> dependent_edges;
+                    std::set<id_array> dependent_edges;
                     double improvement = -1;
                     edge_map_value value = make_tuple(possible_cascades,
                                                       dependent_edges,
@@ -52,16 +53,21 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
                     pc.push_back(c);
                 }
             }
+            
             // Update the dependent edge data
             for(int k = 0; k < edges_child.size(); k++) {
                 id_array this_edge = edges_child[k];
                 auto it = possible_edges.find(this_edge);
-                for(int j = 0; j < edges_child.size(); j ++) {
+                
+                for(int j = 0; j < edges_child.size(); j++) {
                     if(j == k) continue;
-                    std::vector<id_array>& x = std::get<1>(it->second);
-                    x.push_back(edges_child[j]);
-                    //it->second.second.push_back(edges_child[j]);
+                    std::set<id_array>& x = std::get<1>(it->second);
+                    auto at = x.find(edges_child[j]);
+                    if(at == x.end()) {
+                        x.insert(edges_child[j]);  
+                    }
                 }
+
             }
         }
     }
