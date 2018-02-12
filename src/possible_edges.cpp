@@ -62,10 +62,7 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
                 for(int j = 0; j < edges_child.size(); j++) {
                     if(j == k) continue;
                     std::set<id_array>& x = std::get<1>(it->second);
-                    auto at = x.find(edges_child[j]);
-                    if(at == x.end()) {
-                        x.insert(edges_child[j]);  
-                    }
+                    x.insert(edges_child[j]);  
                 }
 
             }
