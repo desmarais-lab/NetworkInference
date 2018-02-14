@@ -21,7 +21,6 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
-    time_point s = Clock::now(); 
     List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, 
                                        beta, epsilon, model);
     List trees = trees_data[0];
@@ -67,12 +66,13 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         for (auto const& x : possible_edges) {
             
             //potential parent
-            int u = x.first[0];
+            int parent = x.first[1];
             // infected node
-            int v = x.first[1];
+            int child = x.first[0];
             
             //find replacements for u->v edge
-            List edge_replacements = tree_replacement(u, v, possible_edges, 
+            List edge_replacements = tree_replacement(parent, child, 
+                                                      possible_edges, 
                                                       cascade_times, 
                                                       cascade_nodes,
                                                       trees, lambda, beta, 
@@ -85,8 +85,9 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                 max_improvement = improvement;
                 // store all replacement information
                 best_edge_replacement_data = edge_replacements;
-                // store best edge id
-                best_edge = {{u, v}};
+                // store best edge id (note that the order is reversed compared
+                // to the edge_map)
+                best_edge = {{parent, child}};
             }
             if(i % check_interval == 0) {
                 checkUserInterrupt();
@@ -143,13 +144,13 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     return out;
 }
 
-List tree_replacement(int &u, int &v, edge_map &possible_edges,
+List tree_replacement(int &parent, int &child, edge_map &possible_edges,
                       List &cascade_times, List &cascade_nodes,
                       List &trees, double &lambda, double &beta, 
                       double &epsilon, int &model) {
     
     // Get the cascades the edge is possible in:
-    std::array<int, 2> pair_id = {{u, v}};
+    std::array<int, 2> pair_id = {{child, parent}};
     std::vector<int> cascades = possible_edges.find(pair_id)->second;
     int n_possible_cascades = cascades.size();
     
@@ -167,19 +168,20 @@ List tree_replacement(int &u, int &v, edge_map &possible_edges,
         NumericVector this_cascade_times = cascade_times[this_cascade];
         
         // Get the event time for u and v in current cascade 
-        int idx_u = get_index(this_cascade_nodes, u);
-        int idx_v = get_index(this_cascade_nodes, v);
-        double timing_u = this_cascade_times[idx_u];
-        double timing_v = this_cascade_times[idx_v];
+        int idx_parent = get_index(this_cascade_nodes, parent);
+        int idx_child = get_index(this_cascade_nodes, child);
+        double timing_parent = this_cascade_times[idx_parent];
+        double timing_child = this_cascade_times[idx_child];
         
-        // extract score associated with the current parent of v
+        // extract score associated with the current parent of child
         List this_tree = trees[this_cascade];
         NumericVector scores = this_tree[1];
-        double current_score = scores[idx_v];
+        double current_score = scores[idx_child];
        
         // what would the score be with the propspective parent (u)
-        double replacement_score = edge_score(timing_u, timing_v, lambda, 
-                                              beta, epsilon, true, model);
+        double replacement_score = edge_score(timing_parent, timing_child, 
+                                              lambda, beta, epsilon, true, 
+                                              model);
         
         // If the edge has a higher score add it to overall improvement and 
         // store the cascade the improvement occured in (and the new score)

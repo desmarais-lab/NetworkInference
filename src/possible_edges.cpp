@@ -16,19 +16,19 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
         
         // Use the fact that the cascade data is ordered (see cascade.R)
         for(int i = 0; i < csize; i++) {
-            int u = this_cascade_nodes[i];
-            double tu = this_cascade_times[i];
+            int parent = this_cascade_nodes[i];
+            double t_parent = this_cascade_times[i];
             for(int j = i + 1; j < csize; j++) {
-                int v = this_cascade_nodes[j];
-                double tv = this_cascade_times[j];
+                int child = this_cascade_nodes[j];
+                double t_child = this_cascade_times[j];
                 
                 // If times are tied skip this combination
-                if(tu >= tv) {
+                if(t_parent >= t_child) {
                     continue;
                 }
                 
                 // Check if pair is in pair collection. If not include
-                std::array<int, 2> pair_id = {{u, v}};
+                std::array<int, 2> pair_id = {{child, parent}};
                 
                 auto it = possible_edges.find(pair_id);
                 if(it == possible_edges.end()) {
