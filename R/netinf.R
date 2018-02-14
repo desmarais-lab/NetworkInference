@@ -13,6 +13,7 @@
 #' 
 #' @import checkmate
 #' @import assertthat
+#' @importFrom stats na.omit
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as_cascade_long}} and 
@@ -106,6 +107,11 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     ### In the edgelist
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
+    # Backwards compatibility: Flip edges around (comes out of netinf as child, 
+    # parent )
+    #temp <- network[, 1]
+    #network[, 1] <- network[, 2]
+    #network[, 2] <- temp
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
     class(network) <- c("diffnet", "data.frame")
@@ -125,6 +131,8 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
         trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
         trees_df <- trees_df[trees_df[, 1] >= 0, ]
         trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+        # Same thing for the cascade ids
+        trees_df[, 3] <- names(cascades$cascade_nodes)[(trees_df[, 3] + 1)]
     
         colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
         return(list('network' = network, 'trees' = trees_df))
