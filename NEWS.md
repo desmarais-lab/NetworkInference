@@ -4,11 +4,17 @@ Development version
 
 ## New Features
 
-* `netinf()` offers an estimate of how long the inference procedure will take to finish
+
+* `netinf()` got another speed up. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
+* `netinf()` has a new argument (`trees`). If set to `TRUE` the inferred tree for each cascade is returned
 
 ## Bug Fixes
 
-* Inference of very uninformative edges could lead for the software to break.
+* Inference of very uninformative edges could lead for the software to break. Fixed now 
+
+## Other changes
+
+* C++ code is now modularized and headers are properly documented
 
 # NetworkInference 1.1.2
 
@@ -24,14 +30,12 @@ Development version
 * `as_cascade_long()` and `as_cascade_wide()` handle date input correctly now.
 * `as_cascade_wide()` couldn't handle data input of class `data.table`. 
 
-
 # NetworkInference 1.1.1
 
 ## Bug Fixes
 
 * Use of igraph now conditional compliant with Writing R Extensions [1.1.3.1](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Suggested-packages)
 * Fixed version number displayed in startup message
-
 
 # NetworkInference 1.1.0
 

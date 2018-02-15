@@ -13,6 +13,7 @@
 #' 
 #' @import checkmate
 #' @import assertthat
+#' @importFrom stats na.omit
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as_cascade_long}} and 
@@ -20,8 +21,14 @@
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
 #' @param lambda numeric, alpha for transmission model.
-#' @param n_edges integer, number of edges to infer.
+#' @param n_edges integer or numeric, If integer number of edges to infer, if a 
+#'     numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
+#'     inferred until the Vuong test for edge addition reaches the p-value 
+#'     of \code{n_edges} or when the maximum number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
+#' @param trees logical, Should the tree for each cascade be returned. This is 
+#'     experimental option that will change the output of the function. Use with
+#'     caution.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -47,14 +54,26 @@
 #' 
 #' @export
 netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
-                   quiet = FALSE) {
+                   quiet = FALSE, trees = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
-    #qassert(cascades, "L3")
     qassert(trans_mod, "S1")
     qassert(lambda, "R1[0,)")
-    qassert(n_edges, "X1[1,)")
+    # If no number of edges is specified edge selection is automated via Vuong
+    # Test
+    if(qtest(n_edges, "X1")) {
+        qassert(n_edges, "X1[1,)")
+        auto_edges <- FALSE 
+        cutoff <- 0 # Not used
+    } else if(qtest(n_edges, "R1")) {
+        qassert(n_edges, "R1(0,1]")
+        auto_edges <- TRUE
+        cutoff <- n_edges
+        n_edges <- 0 # Not used since n_edges inferred form cutoff
+    } else stop(paste("n_edges has to be either an integer > 1 or a p-value",
+                      "cutoff (0, 1]"))
+    
     model_char <- match.arg(trans_mod, c("exponential", "rayleigh"))
     if(model_char == "exponential") {
         model <- 1
@@ -73,21 +92,52 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     cascade_nodes <- lapply(cascades$cascade_nodes, function(x) node_ids[x]) 
     
     # Run netinf
-    netinf_out <- netinf_(node_ids = node_ids, cascade_nodes = cascade_nodes, 
+    netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
-                          lambda = lambda, n_edges = n_edges, quiet = quiet)
+                          lambda = lambda, n_edges = n_edges, quiet = quiet,
+                          auto_edges = auto_edges, cutoff = cutoff)
     
     # Reformat output 
-    out <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), netinf_out[[2]]),
+    network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
+                                   netinf_out[[2]]),
                          stringsAsFactors = FALSE)
-     
-    # Replace integer node_ids with node_names
-    out[, 1] <- cascades$node_names[(out[, 1] + 1)] # node ids are 0-indexed
-    out[, 2] <- cascades$node_names[(out[, 2] + 1)]
     
-    colnames(out) <- c("origin_node", "destination_node", "improvement")
-    class(out) <- c("diffnet", "data.frame")
-    return(out)
+   
+    ## Replace integer node_ids with node_names
+    ### In the edgelist
+    network[, 1] <- cascades$node_names[(network[, 1] + 1)]
+    network[, 2] <- cascades$node_names[(network[, 2] + 1)]
+    # Backwards compatibility: Flip edges around (comes out of netinf as child, 
+    # parent )
+    #temp <- network[, 1]
+    #network[, 1] <- network[, 2]
+    #network[, 2] <- temp
+    colnames(network) <- c("origin_node", "destination_node", "improvement")
+    network$p_value <- netinf_out[[4]]
+    class(network) <- c("diffnet", "data.frame")
+    
+    if(trees) {
+        # Extract the trees
+        tree_dfs <- lapply(netinf_out[[3]], 
+                       function(x) as.data.frame(cbind(x[[1]], x[[2]])))
+        for(i in 1:length(tree_dfs)) {
+            tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
+        }       
+        trees_df <- do.call(rbind, tree_dfs)
+        
+        # Replace int node ids with node_names 
+        trees_df$child <- do.call(c, cascades$cascade_nodes)
+        trees_df <- stats::na.omit(trees_df)
+        trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
+        trees_df <- trees_df[trees_df[, 1] >= 0, ]
+        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+        casc_names <- names(cascades$cascade_nodes)
+        trees_df[, 3] <- casc_names[trees_df[, 3]]
+    
+        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
+        return(list('network' = network, 'trees' = trees_df))
+    }
+    return(network) 
 }
 
 

@@ -4,7 +4,8 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges, lambda, quiet = FALSE)
+netinf(cascades, trans_mod = "exponential", n_edges, lambda, quiet = FALSE,
+  trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -14,11 +15,18 @@ information. See \code{\link{as_cascade_long}} and
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"} or \code{"rayleigh"}.}
 
-\item{n_edges}{integer, number of edges to infer.}
+\item{n_edges}{integer or numeric, If integer number of edges to infer, if a 
+numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
+inferred until the Vuong test for edge addition reaches the p-value 
+of \code{n_edges} or when the maximum number of edges is reached.}
 
 \item{lambda}{numeric, alpha for transmission model.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
+
+\item{trees}{logical, Should the tree for each cascade be returned. This is 
+experimental option that will change the output of the function. Use with
+caution.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 
