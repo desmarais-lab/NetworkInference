@@ -7,5 +7,8 @@ cascades <- as_cascade_long(df, node_names = unique(df$node_name))
 mean(sapply(cascades$cascade_nodes, length))
 
 #load('../donation_diffusion/analysis/test_cascades.RData')
-microbenchmark(netinf(cascades, trans_mod = "exponential", n_edges = 1, 
+out = netinf(cascades, trans_mod = "exponential", n_edges = 10, 
+                      lambda = 0.1, quiet = F)
+
+microbenchmark(netinf(cascades, trans_mod = "exponential", n_edges = 10, 
                       lambda = 0.1, quiet = F), times = 10)
