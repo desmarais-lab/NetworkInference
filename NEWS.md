@@ -4,11 +4,16 @@ Development version
 
 ## New Features
 
-* `netinf()` gives an estimate for the completion time if option `quiet=FALSE` (default).
+* `netinf()` got another speed up. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
+* `netinf()` has a new argument (`trees`). If set to `TRUE` the inferred tree for each cascade is returned
 
 ## Bug Fixes
 
-* Inference of very uninformative edges could lead for the software to break.
+* Inference of very uninformative edges could lead for the software to break. Fixed now 
+
+## Other changes
+
+* C++ code is now modularized and headers are properly documented
 
 
 # NetworkInference 1.1.2
