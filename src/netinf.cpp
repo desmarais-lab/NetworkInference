@@ -10,6 +10,9 @@
 
 using namespace Rcpp;
 
+typedef edge_map::iterator m_iter;
+typedef edge_map::reverse_iterator rm_iter;
+
 // [[Rcpp::export]]
 List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  double &lambda, 
              bool quiet, bool &auto_edges, double &cutoff) {
@@ -51,24 +54,58 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     bool show_progress = true;
     if(quiet) show_progress = false;
     if(auto_edges) show_progress = false;
-    Progress p((n_edges - 1) * possible_edges.size(), show_progress);
+    Progress p(n_edges, show_progress);
     
-   
-    time_point t1 = Clock::now(); 
     int e;
-    int check_interval = floor(n_p_edges / 10);
+    int check_interval = ceil(n_p_edges / 10);
+    id_array previous_best_edge;
+    NumericVector improvements(n_p_edges);
+    
     for(e = 0; e < n_edges; e++) {
-        double max_improvement = 0;
-        std::array<int, 2> best_edge;
-        List best_edge_replacement_data;
+        
+        m_iter start_iter; 
+        id_array end_id;
+        int n = -1;
+        int m = -1;
+        if(e > 0) {
+            // Find the first edge in possible_edges that has the same child as 
+            // previous_best_edge by iterating back from previous_best_edge
+            m_iter it_best = possible_edges.find(previous_best_edge);
+            int current_child = previous_best_edge[0];
+            id_array last_key;
+            n = 0;
+            for(m_iter rit = it_best; rit->first[0] == current_child; rit--) {
+                last_key = rit->first;
+                n++;
+            }
+            // And store the iterator as start point for edge inference 
+            start_iter = possible_edges.find(last_key);
+            
+            // Find the last edge in possible_edges with the same child as 
+            // previous_best_edges
+            m = 0;
+            for(m_iter rit = it_best; rit->first[0] == current_child; rit++) {
+                last_key = rit->first;
+                m++;
+            }
+            // And store the iterator as start point for edge inference 
+            end_id = possible_edges.find(last_key)->first;
+        } else {
+            // In the first iteration we have to check every edge
+            start_iter = possible_edges.begin();
+            end_id = possible_edges.rbegin()->first;
+        }
         
         int i = 0;
-        for (auto const& x : possible_edges) {
+        for (m_iter x=start_iter; x!=possible_edges.end(); x++) {
             
+            // Skip edge inferred in last iteration 
+            if(x->first == previous_best_edge) continue;
+           
             //potential parent
-            int parent = x.first[1];
+            int parent = x->first[1];
             // infected node
-            int child = x.first[0];
+            int child = x->first[0];
             
             //find replacements for u->v edge
             List edge_replacements = tree_replacement(parent, child, 
@@ -77,27 +114,44 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                                                       cascade_nodes,
                                                       trees, lambda, beta, 
                                                       epsilon, model);
-           
-            // if there is at least one improvement, keep track of edge
-            double improvement = edge_replacements[0];
-            if(improvement >= max_improvement) { 
-                // store improvement
-                max_improvement = improvement;
-                // store all replacement information
-                best_edge_replacement_data = edge_replacements;
-                // store best edge id (note that the order is reversed compared
-                // to the edge_map)
-                best_edge = {{parent, child}};
-            }
-            if(i % check_interval == 0) {
+            // Store the updated potential improvement value for this edge
+            x->second.second = edge_replacements[0];
+            
+            // Check for user interrupt and update progress bar
+            if(i % (check_interval+1) == 0) {
                 checkUserInterrupt();
-                if(!auto_edges & !quiet & (e > 0)) p.increment();
             }
             i += 1;
+            
+            // Stop when last edge to check is reached 
+            if(x->first == end_id) break;
         }
-       
+        
+        // Erase the previous best edge from possible edges
+        possible_edges.erase(previous_best_edge);
+        
+        // Check all improvements to find the best edge
+        double max_improvement = 0;
+        id_array best_edge;
+        for(m_iter x = possible_edges.begin(); x != possible_edges.end(); x++) {
+            if(x->second.second > max_improvement) {
+                max_improvement = x->second.second;
+                best_edge = x->first;
+            }
+        }
+        // Re calculate the replacement data for the best edge
+        List best_edge_replacement_data = tree_replacement(best_edge[1], 
+                                                           best_edge[0], 
+                                                           possible_edges, 
+                                                           cascade_times, 
+                                                           cascade_nodes,
+                                                           trees, lambda, beta, 
+                                                           epsilon, model);
+        
         // Store the best results
-        edges.push_back(best_edge);
+        // Put edge in order parent->child for backwards compatibility
+        id_array best_edge_out = {{best_edge[1], best_edge[0]}};
+        edges.push_back(best_edge_out);
         scores.push_back(max_improvement);
         
         // Update the trees with the new edge
@@ -109,28 +163,18 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         double p_value = vuong_test(old_tree_scores, tree_scores);
         p_values.push_back(p_value);
 
-        // Remove best edge from possible edges
-        possible_edges.erase(best_edge);       
+        // Store the best edge for this iteration to inform what to iterate over
+        // for the next edge
+        previous_best_edge = best_edge;
+       
+        if(!auto_edges & !quiet) p.increment();
         
-        // In the first iteration give an estimate for how long estimation will
-        // take
-        if (!quiet) {
-            if (e == 0) {
-                auto t2 = Clock::now();
-                time_duration fp_ms = t2 - t1;
-                print_time_estimate(fp_ms, auto_edges, n_edges);
-            }           
-        }
         if(!quiet & auto_edges){
             Rcout << (e+1) << " edges inferred. P-value: " << 
                 p_value << "\n";         
         } 
         if(auto_edges & (p_value >= cutoff)) {
             if(!quiet) Rcout << "Reached p-value cutoff. Stopping.\n";
-            break;
-        }
-        if(max_improvement == 0) {
-            if(!quiet) Rcout << "Additional edges don't improve fit. Stopping.\n";
             break;
         }
     }
@@ -151,7 +195,7 @@ List tree_replacement(int &parent, int &child, edge_map &possible_edges,
     
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{child, parent}};
-    std::vector<int> cascades = possible_edges.find(pair_id)->second;
+    std::vector<int> cascades = possible_edges.find(pair_id)->second.first;
     int n_possible_cascades = cascades.size();
     
     // Initialize output containers
@@ -192,6 +236,7 @@ List tree_replacement(int &parent, int &child, edge_map &possible_edges,
         }
     }
    
+
     List out = List::create(improvement, cascades_with_replacement, 
                             replacement_scores);
     return out;
@@ -199,31 +244,29 @@ List tree_replacement(int &parent, int &child, edge_map &possible_edges,
 
 void update_trees(List &trees, NumericVector &tree_scores, 
                   List &replacement_data, List &cascade_nodes, 
-                  std::array<int, 2> best_edge) {
-    
+                  id_array best_edge) {
+   
     IntegerVector updated_cascades = replacement_data[1];
-
     NumericVector replacement_scores = replacement_data[2];       
     NumericVector old_tree_scores = copy_vector(tree_scores);
     
     // Get u and v of best edge
-    int u = best_edge[0];
-    int v = best_edge[1];
-
+    int parent = best_edge[1];
+    int child = best_edge[0];
     for(int i = 0; i < updated_cascades.size(); i++) {
         int this_cascade = updated_cascades[i];
         if(this_cascade < 0) continue;
         IntegerVector this_cascade_nodes = cascade_nodes[this_cascade];
-        int idx_v = get_index(this_cascade_nodes, v);
+        int idx_child = get_index(this_cascade_nodes, child);
         List casc_tree = trees[this_cascade];
 
         IntegerVector this_parents = casc_tree[0];
         NumericVector this_scores = casc_tree[1];
         
         //update parent id for v
-        this_parents[idx_v] = u;
+        this_parents[idx_child] = parent;
         // update branch score
-        this_scores[idx_v] = replacement_scores[i];
+        this_scores[idx_child] = replacement_scores[i];
         tree_scores[this_cascade] = sum_vector(this_scores);
     }
 }

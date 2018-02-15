@@ -32,11 +32,14 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
                 
                 auto it = possible_edges.find(pair_id);
                 if(it == possible_edges.end()) {
-                    std::vector<int> value;
-                    value.push_back(c);
+                    std::vector<int> possible_cascades;
+                    possible_cascades.push_back(c);
+                    double improvement = -1;
+                    edge_value value = make_pair(possible_cascades, 
+                                                 improvement);
                     possible_edges.insert(make_pair(pair_id, value));
                 } else {
-                    it->second.push_back(c);
+                    it->second.first.push_back(c);
                 }
             }
         }
