@@ -14,6 +14,10 @@ using namespace Rcpp;
  * @param  cascade_times A list of numeric vectors each containing infection 
  *     times for the corresponding nodes in \code{cascade_ids}.
  * 
+ * @return An Rcpp List containing:
+ *     [0]: Aggregate improvement from this edge over all trees
+ *     [1]: An integer vector of cascades where the edge caused improvement
+ *     [2]: The scores of the edge in each of the cascades in [1]
  */
 List tree_replacement(int &u, int &v, edge_map &possible_edges,
                        List &cascade_times, List &cascade_nodes,
@@ -45,6 +49,7 @@ List netinf_(List &cascade_nodes, List &cascade_times,
  * @param trees List of trees for each cascade (see spanning_tree.h for 
  *     documentation of the data structure)
  * @param tree_scores Numeric Vector of aggregate likelihood scores for each tree
+ * @param replacement_data Return object from tree_replacement.
  * @param cascade_nodes A list of integer vectors containing the node ids of
  *     the cascade in order of infection.
  * @param best_edge node ids of the edge that's updated
