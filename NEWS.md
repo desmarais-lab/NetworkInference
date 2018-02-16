@@ -4,9 +4,11 @@ Development version
 
 ## New Features
 
-
 * `netinf()` got another speed up. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
-* `netinf()` has a new argument (`trees`). If set to `TRUE` the inferred tree for each cascade is returned
+* Number of edges can now be chosen using a Vuong style test.
+* This lead to the netinf output having a fourth column now, containing the 
+p-value for each edge. The p-value is also available if a fixed number of edges
+is chosen.
 
 ## Bug Fixes
 
