@@ -26,7 +26,7 @@
 #'     inferred until the Vuong test for edge addition reaches the p-value 
 #'     of \code{n_edges} or when the maximum number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
-#' @param trees logical, Should the tree for each cascade be returned. This is 
+#' @param trees logical, Should the tree for each cascade be returned. This is an 
 #'     experimental option that will change the output of the function. Use with
 #'     caution.
 #' 
