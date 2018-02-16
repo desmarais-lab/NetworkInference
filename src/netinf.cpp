@@ -170,11 +170,11 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
         if(!auto_edges & !quiet) p.increment();
         
         if(!quiet & auto_edges){
-            Rcout << (e+1) << " edges inferred. P-value: " << 
-                p_value << "\n";         
+            Rcout << "\r" << (e+1) << " edges inferred. P-value: " << 
+                p_value << std::flush;         
         } 
         if(auto_edges & (p_value >= cutoff)) {
-            if(!quiet) Rcout << "Reached p-value cutoff. Stopping.\n";
+            if(!quiet) Rcout << "\nReached p-value cutoff. Stopping.\n";
             break;
         }
     }

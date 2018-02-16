@@ -24,7 +24,7 @@ of \code{n_edges} or when the maximum number of edges is reached.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
 
-\item{trees}{logical, Should the tree for each cascade be returned. This is 
+\item{trees}{logical, Should the tree for each cascade be returned. This is an 
 experimental option that will change the output of the function. Use with
 caution.}
 }
