@@ -17,20 +17,20 @@ typedef edge_map::reverse_iterator rm_iter;
 List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  double &lambda, 
              bool quiet, bool &auto_edges, double &cutoff) {
     
-    if(!quiet)
-        Rcout << "Initializing...\n";
     double beta = 0.5;
     double epsilon = 0.000000001;
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
+    if(!quiet) Rcout << "Initializing trees...\n";
     List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, 
                                        beta, epsilon, model);
     List trees = trees_data[0];
     NumericVector tree_scores = trees_data[1];
     
     // Get edges that are possible given the cascade data
-    edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times);
+    edge_map possible_edges = get_possible_edges_(cascade_nodes, cascade_times,
+                                                  quiet);
    
     // Output containers
     int n_p_edges = possible_edges.size();
@@ -47,7 +47,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
    
     if(!quiet) {
         if(auto_edges) Rcout << "Inferring edges using p-value cutoff...\n";
-        else Rcout << "Inferring edges...\n";
+        else Rcout << "Inferring " << n_edges << " edges...\n";
     }
     
     // Set up for timing first iteration and progress bar (if not auto edges)
@@ -63,8 +63,8 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
     
     for(e = 0; e < n_edges; e++) {
         
-        m_iter start_iter; 
-        id_array end_id;
+        m_iter start_iter = possible_edges.begin();
+        id_array end_id = possible_edges.rbegin()->first;
         int n = -1;
         int m = -1;
         if(e > 0) {
@@ -72,12 +72,13 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             // previous_best_edge by iterating back from previous_best_edge
             m_iter it_best = possible_edges.find(previous_best_edge);
             int current_child = previous_best_edge[0];
-            id_array last_key;
+            id_array last_key = it_best->first;
             n = 0;
             for(m_iter rit = it_best; rit->first[0] == current_child; rit--) {
                 last_key = rit->first;
                 n++;
             }
+            
             // And store the iterator as start point for edge inference 
             start_iter = possible_edges.find(last_key);
             
@@ -92,8 +93,6 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             end_id = possible_edges.find(last_key)->first;
         } else {
             // In the first iteration we have to check every edge
-            start_iter = possible_edges.begin();
-            end_id = possible_edges.rbegin()->first;
         }
         
         int i = 0;
@@ -173,6 +172,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             Rcout << "\r" << (e+1) << " edges inferred. P-value: " << 
                 p_value << std::flush;         
         } 
+        
         if(auto_edges & (p_value >= cutoff)) {
             if(!quiet) Rcout << "\nReached p-value cutoff. Stopping.\n";
             break;

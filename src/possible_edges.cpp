@@ -1,13 +1,18 @@
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
 #include <Rcpp.h>
 #include <array>
 #include "possible_edges.h"
 
 using namespace Rcpp;
 
-edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
-    
+edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times, 
+                             bool& quiet) {
     edge_map possible_edges;
     int n_cascades = cascade_nodes.size();
+    if(!quiet) Rcout << "Getting possible edges...\n";
+    Progress p(n_cascades, !quiet);
     for(int c = 0; c < n_cascades; c++) {
         checkUserInterrupt();
         IntegerVector this_cascade_nodes = cascade_nodes[c];
@@ -43,12 +48,14 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times) {
                 }
             }
         }
+        p.increment();
     }
     return possible_edges;
 }
 
 //[[Rcpp::export]]
-int count_possible_edges_(List &cascade_nodes, List &cascade_times) {
-    edge_map edges = get_possible_edges_(cascade_nodes, cascade_times);
+int count_possible_edges_(List &cascade_nodes, List &cascade_times, 
+                          bool quiet=true) {
+    edge_map edges = get_possible_edges_(cascade_nodes, cascade_times, quiet);
     return edges.size();
 }

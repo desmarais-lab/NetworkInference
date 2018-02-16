@@ -24,14 +24,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // count_possible_edges_
-int count_possible_edges_(List& cascade_nodes, List& cascade_times);
-RcppExport SEXP _NetworkInference_count_possible_edges_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP) {
+int count_possible_edges_(List& cascade_nodes, List& cascade_times, bool quiet);
+RcppExport SEXP _NetworkInference_count_possible_edges_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List& >::type cascade_nodes(cascade_nodesSEXP);
     Rcpp::traits::input_parameter< List& >::type cascade_times(cascade_timesSEXP);
-    rcpp_result_gen = Rcpp::wrap(count_possible_edges_(cascade_nodes, cascade_times));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(count_possible_edges_(cascade_nodes, cascade_times, quiet));
     return rcpp_result_gen;
 END_RCPP
 }

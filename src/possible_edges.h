@@ -12,10 +12,12 @@ typedef std::map<id_array, edge_value> edge_map;
  *     in each cascade in order of infection
  * @param cascade_times A list of numeric vectors containing the infection times
  *     of each node in the corresponding vector in cascade_nodes
+ * @param quiet Should progress be reported
  * 
  * @return edge_map with all possible edges
  */
-edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times);
+edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times,
+                             bool &quiet);
 
 /**
  * Wrapper to count possible edges (for rcpp export)
@@ -23,7 +25,9 @@ edge_map get_possible_edges_(List &cascade_nodes, List &cascade_times);
  *     in each cascade in order of infection
  * @param cascade_times A list of numeric vectors containing the infection times
  *     of each node in the corresponding vector in cascade_nodes
+ * @param quiet Should progress be reported
  *     
  * @return integer number of possible edges
  */
-int count_possible_edges_(List &cascade_nodes, List &cascade_times);
+int count_possible_edges_(List &cascade_nodes, List &cascade_times, 
+                          bool &quiet);
