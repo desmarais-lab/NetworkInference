@@ -20,6 +20,6 @@ methods.
 \examples{
 
 data(cascades)
-result <- netinf(cascades, n_edges = 6, lambda = 1)
+result <- netinf(cascades, n_edges = 6, params = 1)
 is.diffnet(result)
 }

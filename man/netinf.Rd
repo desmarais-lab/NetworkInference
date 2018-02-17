@@ -4,8 +4,8 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges, lambda, quiet = FALSE,
-  trees = FALSE)
+netinf(cascades, trans_mod = "exponential", n_edges = 0.1, params = NULL,
+  quiet = FALSE, trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -20,7 +20,10 @@ numeric value in the interval (0, 1) (excluding 0 and 1) edges are
 inferred until the Vuong test for edge addition reaches the p-value 
 of \code{n_edges} or when the maximum number of edges is reached.}
 
-\item{lambda}{numeric, alpha for transmission model.}
+\item{params}{numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
+optimal parameters are inferred using profile maximum likelihood. If
+parameters should be fixed see details for how to specify parameters for
+the different distributions.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
 
@@ -44,6 +47,18 @@ The algorithm is describe in detail in Gomez-Rodriguez et al. (2010).
 Additional information can be found on the 
 netinf website (\url{http://snap.stanford.edu/netinf/}).
 
+\itemize{
+    \item Exponential distribution: \code{trans_mod = "exponential"},
+    \code{params = c(lambda)}. 
+    Parametrization: \eqn{\lambda e^{-\lambda x}}.
+    \item Rayleigh distribution: \code{trans_mod = "rayleigh"},
+    \code{params = c(alpha)}. 
+    Parametrization: \eqn{\frac{x}{\alpha^2} \frac{e^{-x^2}}{2\alpha^2}}.
+    \item Log-normal distribution: \code{trans_mod = "log-normal"},
+    \code{params = c(mu, sigma)}. 
+    Parametrization: \eqn{\frac{1}{x\sigma\sqrt{2\pi}}e^{-\frac{(ln x - \mu)^2}{2\sigma^2}}}.
+}
+
 If higher performance is required and for very large data sets, a faster pure C++ 
 implementation is available in the Stanford Network Analysis Project (SNAP). 
 The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
@@ -52,12 +67,12 @@ The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
 
 # Data already in cascades format:
 data(cascades)
-out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
+out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, params = 1)
 
 # Starting with a dataframe
 df <- simulate_rnd_cascades(10, n_nodes = 20)
 cascades2 <- as_cascade_long(df, node_names = unique(df$node_name))
-out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, lambda = 1)
+out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, params = 1)
 
 }
 \references{

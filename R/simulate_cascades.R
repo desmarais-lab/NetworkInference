@@ -68,7 +68,7 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #' @examples
 #' 
 #' data(cascades) 
-#' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
+#' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, params = 1)
 #' simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1, 
 #'                                         beta = 0.5, epsilon = 10^-9, 
 #'                                         model = "exponential")

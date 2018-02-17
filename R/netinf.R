@@ -7,6 +7,20 @@
 #' Additional information can be found on the 
 #' netinf website (\url{http://snap.stanford.edu/netinf/}).
 #' 
+#' \itemize{
+#'     \item Exponential distribution: \code{trans_mod = "exponential"},
+#'     \code{params = c(lambda)}. 
+#'     Parametrization: \eqn{\lambda e^{-\lambda x}}.
+#'     \item Rayleigh distribution: \code{trans_mod = "rayleigh"},
+#'     \code{params = c(alpha)}. 
+#'     Parametrization: \eqn{\frac{x}{\alpha^2} \frac{e^{-x^2}}{2\alpha^2}}.
+#'     \item Log-normal distribution: \code{trans_mod = "log-normal"},
+#'     \code{params = c(mu, sigma)}. 
+#'     Parametrization: \eqn{\frac{1}{x\sigma\sqrt{2\pi}}e^{-\frac{(ln x - \mu)^2}{2\sigma^2}}}.
+#
+# 
+#' }
+#' 
 #' If higher performance is required and for very large data sets, a faster pure C++ 
 #' implementation is available in the Stanford Network Analysis Project (SNAP). 
 #' The software can be downloaded at \url{http://snap.stanford.edu/netinf/}.
@@ -20,7 +34,10 @@
 #'     \code{\link{as_cascade_wide}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"} or \code{"rayleigh"}.
-#' @param lambda numeric, alpha for transmission model.
+#' @param params numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
+#'     optimal parameters are inferred using profile maximum likelihood. If
+#'     parameters should be fixed see details for how to specify parameters for
+#'     the different distributions.
 #' @param n_edges integer or numeric, If integer number of edges to infer, if a 
 #'     numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
 #'     inferred until the Vuong test for edge addition reaches the p-value 
@@ -45,21 +62,20 @@
 #' 
 #' # Data already in cascades format:
 #' data(cascades)
-#' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, lambda = 1)
+#' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, params = 1)
 #' 
 #' # Starting with a dataframe
 #' df <- simulate_rnd_cascades(10, n_nodes = 20)
 #' cascades2 <- as_cascade_long(df, node_names = unique(df$node_name))
-#' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, lambda = 1)
+#' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, params = 1)
 #' 
 #' @export
-netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
+netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL,
                    quiet = FALSE, trees = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
     qassert(trans_mod, "S1")
-    qassert(lambda, "R1[0,)")
     # If no number of edges is specified edge selection is automated via Vuong
     # Test
     if(qtest(n_edges, "X1")) {
@@ -82,6 +98,14 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     } else {
         model <- 3
     }
+    if(!is.null(params)) {
+        if(model == 1 | model == 2) {
+            qassert(params, "N1")
+        } else if(model == 3) {
+            qassert(params[0], "N1")
+            qassert(params[1], "N1(0,)")
+        }
+    }
     
     # Assign integer node ids
     # Note that the ids start at 0 (c++ is 0 indexed)
@@ -94,7 +118,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
     # Run netinf
     netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
-                          lambda = lambda, n_edges = n_edges, quiet = quiet,
+                          params = params, n_edges = n_edges, quiet = quiet,
                           auto_edges = auto_edges, cutoff = cutoff)
     
     # Reformat output 
@@ -154,7 +178,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges, lambda,
 #' @examples
 #' 
 #' data(cascades)
-#' result <- netinf(cascades, n_edges = 6, lambda = 1)
+#' result <- netinf(cascades, n_edges = 6, params = 1)
 #' is.diffnet(result)
 #' @export
 is.diffnet <- function(object) {

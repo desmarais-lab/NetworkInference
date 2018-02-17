@@ -45,16 +45,16 @@ node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
 ## From long format
-cascades <- as_cascade_long(df, node_names = node_names)
+cascades <- as_cascade_long(df)
 
 ## From wide format
 df_matrix <- as.matrix(cascades) ### Create example matrix
-cascades <- as_cascade_wide(df_matrix, node_names = node_names)
+cascades <- as_cascade_wide(df_matrix)
 ```
 
 Then fit the model:
 ```{r}
-result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
+result <- netinf(cascades, trans_mod = "exponential", params = 1, n_edges = 5)
 ```
 
 ```{r, eval=FALSE}
@@ -170,9 +170,9 @@ This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for e
 
 The `netinf` algorithm is implemented in the `netinf()` function. Besides the data, the function takes three parameters. 
 
-`trans_mod` specifies the transition model, or the parametric model according to which the times between diffusion events are distributed. Currently two distributions are available, the exponential and the Rayleigh distribution. For this example we choose the exponential density. 
+`trans_mod` specifies the transition model, or the parametric model according to which the times between diffusion events are distributed. See the `netinf` documentation (`?netinf`) for the available distributions. For this example we choose the exponential density. 
 
-`lambda` is the scale parameter for the respective distribution. 
+`params` fixes the paramters of the distribution specified in `trans_mod`. In this case it's the rate parameter of the exponential density.
 
 `n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of  edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter. The number of inferred edges has to be lower than the maximum number of possible edges. An edge `u->v` is only possible if in at least one cascade `u` experiences an event *before* `v`. This means, that the maximum number of edges depends on the data. The function `count_possible_edges()` allows us to compute the maximum number of edges in advance:
  
@@ -185,7 +185,7 @@ npe
 Let's run the algorithm with a larger number of edges to see where the improvement drops off significantly:
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
-                  lambda = 0.5)
+                  params = 0.5)
 ```
 
 Let's take a look at the output of the algorithm. The output is a dataframe containing the inferred latent network in the form of an edgelist:
@@ -207,7 +207,7 @@ After inspecting the improvements, the model can be re-run with the desired numb
 
 ```{r}
 diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
-                            n_edges = 25, lambda = 0.5)
+                            n_edges = 25, params = 0.5)
 ```
 
 In order to produce a quick visualization of the resulting diffusion network we can use the plot method again, this time with `type = "network"`. Note that in order to use this functionality the igraph package has to be installed.

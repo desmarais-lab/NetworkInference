@@ -32,7 +32,7 @@ any other ggplot. See the ggplot documentation and the examples in
 
 \dontrun{
  data(cascades)
- res <- netinf(cascades, n_edges = 6, lambda = 1)
+ res <- netinf(cascades, n_edges = 6, params = 1)
  plot(res, type = "network")
  plot(res, type = "improvement")
 }

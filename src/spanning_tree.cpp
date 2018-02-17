@@ -3,16 +3,17 @@
 
 using namespace Rcpp;
 
-double edge_score(double &event_time_i, double &event_time_j, 
-                  double &lambda, double &beta, 
-                  double &epsilon, bool tied, int &model) {
+double edge_score(double &event_time_i, double &event_time_j, int &model,
+                  NumericVector &params, bool tied) {
     double x = event_time_j - event_time_i;
     double y;
     double out;
+    const double beta = 0.5;
+    const double epsilon = 0.000000001;
     if (model == 1) {
-        y = dexp_(x, lambda);
+        y = dexp_(x, params[0]);
     } else if (model == 2) {
-        y = drayleigh_(x, lambda);
+        y = drayleigh_(x, params[0]);
         out = 0; 
     } else {
         throw std::invalid_argument("Not implemented. Use exponential or rayleigh model\n");
@@ -26,8 +27,8 @@ double edge_score(double &event_time_i, double &event_time_j,
 }
 
 List optimal_spanning_tree(IntegerVector &cascade_nodes, 
-                           NumericVector &cascade_times, double &lambda, 
-                           double &beta, double &epsilon, int &model) {
+                           NumericVector &cascade_times, int &model,
+                           NumericVector &params) {
  
     // Init containers for the results
     int cascade_size = cascade_nodes.size();
@@ -57,8 +58,8 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
             int parent;
             double score;
             for (int k = 0; k < n_parents; k++) {
-                score = edge_score(parent_times[k], cascade_times[i], lambda, 
-                                   beta, epsilon, false, model);
+                score = edge_score(parent_times[k], cascade_times[i], model,
+                                   params, false);
                 if (score > max_parent_score) {
                     max_parent_score = score;
                     parent = possible_parents[k];
@@ -85,8 +86,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
 }
 
 List initialize_trees(List &cascade_nodes, List &cascade_times, 
-                      double &lambda, double &beta, 
-                      double &epsilon, int &model) {
+                      NumericVector &params, int &model) {
     
     // Output container
     int n_cascades = cascade_nodes.size();
@@ -99,8 +99,8 @@ List initialize_trees(List &cascade_nodes, List &cascade_times,
         IntegerVector this_cascade_ids = cascade_nodes[i];
         NumericVector this_cascade_times = cascade_times[i];
         List tree_result = optimal_spanning_tree(this_cascade_ids, 
-                                                 this_cascade_times, lambda, 
-                                                 beta, epsilon, model);
+                                                 this_cascade_times, model, 
+                                                 params);
         tree_scores[i] = tree_result[2];
         out[i] = tree_result;
     }

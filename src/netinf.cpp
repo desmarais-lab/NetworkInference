@@ -14,17 +14,15 @@ typedef edge_map::iterator m_iter;
 typedef edge_map::reverse_iterator rm_iter;
 
 // [[Rcpp::export]]
-List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  double &lambda, 
-             bool quiet, bool &auto_edges, double &cutoff) {
-    
-    double beta = 0.5;
-    double epsilon = 0.000000001;
+List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,  
+             NumericVector &params, bool quiet, bool &auto_edges, 
+             double &cutoff) {
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)
     if(!quiet) Rcout << "Initializing trees...\n";
-    List trees_data = initialize_trees(cascade_nodes, cascade_times, lambda, 
-                                       beta, epsilon, model);
+    List trees_data = initialize_trees(cascade_nodes, cascade_times, params, 
+                                       model);
     List trees = trees_data[0];
     NumericVector tree_scores = trees_data[1];
     
@@ -110,9 +108,8 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
             List edge_replacements = tree_replacement(parent, child, 
                                                       possible_edges, 
                                                       cascade_times, 
-                                                      cascade_nodes,
-                                                      trees, lambda, beta, 
-                                                      epsilon, model);
+                                                      cascade_nodes, trees, 
+                                                      model, params);
             // Store the updated potential improvement value for this edge
             x->second.second = edge_replacements[0];
             
@@ -143,9 +140,8 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
                                                            best_edge[0], 
                                                            possible_edges, 
                                                            cascade_times, 
-                                                           cascade_nodes,
-                                                           trees, lambda, beta, 
-                                                           epsilon, model);
+                                                           cascade_nodes, trees, 
+                                                           model, params);
         
         // Store the best results
         // Put edge in order parent->child for backwards compatibility
@@ -190,8 +186,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, int &model,
 
 List tree_replacement(int &parent, int &child, edge_map &possible_edges,
                       List &cascade_times, List &cascade_nodes,
-                      List &trees, double &lambda, double &beta, 
-                      double &epsilon, int &model) {
+                      List &trees, int &model, NumericVector &params) {
     
     // Get the cascades the edge is possible in:
     std::array<int, 2> pair_id = {{child, parent}};
@@ -224,8 +219,7 @@ List tree_replacement(int &parent, int &child, edge_map &possible_edges,
        
         // what would the score be with the propspective parent (u)
         double replacement_score = edge_score(timing_parent, timing_child, 
-                                              lambda, beta, epsilon, true, 
-                                              model);
+                                              model, params, true);
         
         // If the edge has a higher score add it to overall improvement and 
         // store the cascade the improvement occured in (and the new score)

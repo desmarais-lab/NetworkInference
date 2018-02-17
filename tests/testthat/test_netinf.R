@@ -5,7 +5,7 @@ context("Test if core netinf method works")
 data(cascades)
 data(validation)
 test_that("netinf produces the edges as original netinf executable.", {
-    from_netinf <- netinf(cascades, lambda = 1, trans_mod = "exponential",
+    from_netinf <- netinf(cascades, params = 1, trans_mod = "exponential",
                           n_edges = 5, quiet = TRUE)
     t1 <- from_netinf[order(from_netinf[, 1], from_netinf[, 2]), c(-3, -4)]
     rownames(t1) <- c(1:nrow(t1))
