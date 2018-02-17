@@ -4,9 +4,9 @@ Development version
 
 ## New Features
 
-* `netinf()` got another speed up. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
-* Number of edges can now be chosen using a Vuong style test.
-* This lead to the netinf output having a fourth column now, containing the 
+* `netinf()` got another **speed-up**. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
+* Number of edges can now be chosen using a **Vuong style test**.
+* This lead to the netinf output having a **fourth column** now, containing the 
 p-value for each edge. The p-value is also available if a fixed number of edges
 is chosen.
 * The log normal distribution is now available as a diffusion model. With this comes a **change in the parameters** for `netinf`. Instead of `lambda`, parameters are now specified with a vector (or scalar depending on distribution) `params`. For exponential and rayleigh distributions `params` is just the rate / alpha parameter. For the log-normal distribution `params` specifies mean and variance (in that order). See the `netinf()` documentation for details on specificaiton and parametrization (`?netinf`).

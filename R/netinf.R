@@ -90,12 +90,12 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL
     } else stop(paste("n_edges has to be either an integer > 1 or a p-value",
                       "cutoff (0, 1]"))
     
-    model_char <- match.arg(trans_mod, c("exponential", "rayleigh"))
+    model_char <- match.arg(trans_mod, c("exponential", "rayleigh", 'log-normal'))
     if(model_char == "exponential") {
         model <- 1
     } else if(model_char == "rayleigh") {
         model <- 2
-    } else {
+    } else if(model_char == "log-normal") {
         model <- 3
     }
     if(!is.null(params)) {
