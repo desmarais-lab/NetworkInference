@@ -7,6 +7,7 @@
 #include "possible_edges.h"
 #include "spanning_tree.h"
 #include "netinf.h"
+#include "distributions.h"
 
 using namespace Rcpp;
 

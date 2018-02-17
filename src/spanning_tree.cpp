@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "netinf_utilities.h"
+#include "distributions.h"
 
 using namespace Rcpp;
 
@@ -8,20 +8,18 @@ double edge_score(double &event_time_i, double &event_time_j, int &model,
     double x = event_time_j - event_time_i;
     double y;
     double out;
-    const double beta = 0.5;
-    const double epsilon = 0.000000001;
     if (model == 1) {
         y = dexp_(x, params[0]);
     } else if (model == 2) {
         y = drayleigh_(x, params[0]);
         out = 0; 
-    } else {
-        throw std::invalid_argument("Not implemented. Use exponential or rayleigh model\n");
+    } else if (model == 3) {
+        y = dlognormal_(x, params[0], params[1]);
     }
     if (tied) {
-        out = log(beta * y);
+        out = log(0.5 * y);
     } else {
-        out = log(epsilon * y);
+        out = log(0.0000000001 * y);
     }
     return out;
 }

@@ -8,33 +8,6 @@ typedef std::chrono::system_clock Clock;
 typedef std::chrono::system_clock::time_point time_point;
 typedef std::chrono::duration<double, std::milli> time_duration;
 
-/**
- * Exponential density
- * 
- * @param x Value to evaluate.
- * @param lambda Rate paramter of the distribution.
- * 
- * @return Density value
- */
-double dexp_(float x, float lambda);
-/**
- * Rayleigh density
- * 
- * @param x Value to evaluate.
- * @param lambda shape paramter of the distribution.
- * 
- * @return Density value
- */
-double drayleigh_(float x, float lambda);
-
-/**
- * Cumulative distribution function of the standard normal distribution
- * 
- * @param x Value to evaluate.
- * 
- * @return Probability of X > x.
- */
-double normal_cdf(double x);
 
 /**
  * Find the position of an (first) integer in a vector

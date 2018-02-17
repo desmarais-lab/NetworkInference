@@ -33,7 +33,7 @@
 #'     information. See \code{\link{as_cascade_long}} and 
 #'     \code{\link{as_cascade_wide}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
-#'      \code{"exponential"} or \code{"rayleigh"}.
+#'      \code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.
 #' @param params numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
 #'     optimal parameters are inferred using profile maximum likelihood. If
 #'     parameters should be fixed see details for how to specify parameters for

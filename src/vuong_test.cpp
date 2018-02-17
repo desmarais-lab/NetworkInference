@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "netinf_utilities.h"
+#include "distributions.h"
 
 using namespace Rcpp;
 

@@ -13,7 +13,7 @@ information. See \code{\link{as_cascade_long}} and
 \code{\link{as_cascade_wide}} for details.}
 
 \item{trans_mod}{character, indicating the choice of model: 
-\code{"exponential"} or \code{"rayleigh"}.}
+\code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.}
 
 \item{n_edges}{integer or numeric, If integer number of edges to infer, if a 
 numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
