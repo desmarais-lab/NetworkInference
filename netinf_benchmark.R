@@ -9,7 +9,7 @@ for(i in 1:nrow(params)) {
         df <- simulate_rnd_cascades(params[i, 1], n_nodes = params[i, 2])
         cascades <- as_cascade_long(df, node_names = unique(df$node_name))
         bm = microbenchmark('test' = netinf(cascades, trans_mod = "exponential", 
-                                            n_edges = 10, lambda = 0.1, 
+                                            n_edges = 10, params = 1, 
                                             quiet = T), times = 50)
         t = mean(bm$time) * 1e-6
         params[i, 3] = t

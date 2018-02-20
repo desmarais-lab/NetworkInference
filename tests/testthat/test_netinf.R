@@ -14,6 +14,10 @@ test_that("netinf produces the edges as original netinf executable.", {
     class(t2) <- c("diffnet", "data.frame")
     expect_equal(t1, t2)
 })
+test_that("netinf runs with automatic parameter initialization.", {
+    from_netinf <- netinf(cascades, trans_mod = "log-normal",
+                          n_edges = 5, quiet = TRUE)
+})
 
 #test_that("netinf scales.", {
 #    

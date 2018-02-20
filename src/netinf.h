@@ -21,7 +21,7 @@ using namespace Rcpp;
  */
 List tree_replacement(int &u, int &v, edge_map &possible_edges,
                        List &cascade_times, List &cascade_nodes,
-                       List &trees, int &model, NumericVector &params);
+                       List &trees, std::string &model, NumericVector &params);
 
 /**
  * Run the netinf algorithm on a set of nodes and cascades
@@ -35,12 +35,14 @@ List tree_replacement(int &u, int &v, edge_map &possible_edges,
  * @param params NumericVector, Parameters for transmission model.
  * @param n_edges Integer, number of edges to infer.
  * @param quiet, Boolean, Should output on progress by suppressed.
+ * @param cutoff, p-value cutoff if auto-edges=TRUE
+ * @param mle, should params be optimized with profile mle
  * 
  * @return List containing one vector per edge.
 */
 List netinf_(List &cascade_nodes, List &cascade_times, 
-             int &n_edges, int &model, NumericVector &params, bool quiet, 
-             bool auto_edges, double cutoff);
+             int &n_edges, std::string &model, NumericVector &params, bool quiet, 
+             bool auto_edges, double cutoff, bool mle);
 
 /**
  * Update the trees for each cascade using the new edge

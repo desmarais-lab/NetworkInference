@@ -90,18 +90,12 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL
     } else stop(paste("n_edges has to be either an integer > 1 or a p-value",
                       "cutoff (0, 1]"))
     
-    model_char <- match.arg(trans_mod, c("exponential", "rayleigh", 'log-normal'))
-    if(model_char == "exponential") {
-        model <- 1
-    } else if(model_char == "rayleigh") {
-        model <- 2
-    } else if(model_char == "log-normal") {
-        model <- 3
-    }
+    model <- match.arg(trans_mod, c("exponential", "rayleigh", 'log-normal'))
+    
     if(!is.null(params)) {
-        if(model == 1 | model == 2) {
+        if(model == "exponential" | model == "rayleigh") {
             qassert(params, "N1")
-        } else if(model == 3) {
+        } else if(model == "log-normal") {
             qassert(params[0], "N1")
             qassert(params[1], "N1(0,)")
         }
@@ -115,11 +109,36 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL
     # Transform node ids in cascades to integer ids
     cascade_nodes <- lapply(cascades$cascade_nodes, function(x) node_ids[x]) 
     
+    # Initialize parameters    
+    if(is.null(params)) {
+        max_times <- sapply(cascades$cascade_times, mean)
+        min_times <- sapply(cascades$cascade_times, 
+                            function(x) mean(x[-1] - x[-length(x)]))
+        if(model == "exponential") {
+            lambda_min <- 1 / mean(max_times, na.rm = T)
+            lambda_max <- 1 / mean(min_times, na.rm = T)
+            params <- mean(c(lambda_max, lambda_min))           
+        } else if(model == "rayleigh") {
+            N <- length(max_times)
+            sh_max <- sqrt(sum(max_times^2) / 2 * N)
+            sh_min <- sqrt(sum(min_times^2) / 2 * N)
+            adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
+            params <- mean(c(sh_max * adjustment, sh_min * adjustment))
+        } else if(model == "log-normal") {
+            mean_max <- mean(log(max_times))
+            mean_min <- mean(log(min_times))
+            sigma_max <- var(log(max_times))
+            sigma_min <- var(log(min_times))
+            params <- c(mean(mean_max, mean_min), mean(sigma_max, sigma_min))
+        }
+    if(!quiet) cat('Initialized parameters with: ', params, '\n')
+    }
+    
     # Run netinf
     netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, model = model, 
                           params = params, n_edges = n_edges, quiet = quiet,
-                          auto_edges = auto_edges, cutoff = cutoff)
+                          auto_edges = auto_edges, cutoff = cutoff, mle = F)
     
     # Reformat output 
     network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 

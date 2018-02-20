@@ -13,7 +13,7 @@ using namespace Rcpp;
  *     
  * @return Weighted log-likelihood score of the edge
  */
-double edge_score(double &event_time_i, double &event_time_j, int &model,
+double edge_score(double &event_time_i, double &event_time_j, std::string &model,
                   NumericVector &params, bool tied);
 
 /**
@@ -36,7 +36,7 @@ double edge_score(double &event_time_i, double &event_time_j, int &model,
  *    [2] The total score of the tree (sum of all edge scores)
  */
 List optimal_spanning_tree(IntegerVector &cascade_nodes, 
-                            NumericVector &cascade_times, int &model, 
+                            NumericVector &cascade_times, std::string &model, 
                             NumericVector &params);
 
 /**
@@ -54,4 +54,4 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
  *     optimal spanning tree for the data format of each tree)
  */
 List initialize_trees(List &cascade_nodes, List &cascade_times, 
-                      NumericVector &params, int &model);
+                      NumericVector &params, std::string &model);

@@ -10,6 +10,8 @@ Development version
 p-value for each edge. The p-value is also available if a fixed number of edges
 is chosen.
 * The log normal distribution is now available as a diffusion model. With this comes a **change in the parameters** for `netinf`. Instead of `lambda`, parameters are now specified with a vector (or scalar depending on distribution) `params`. For exponential and rayleigh distributions `params` is just the rate / alpha parameter. For the log-normal distribution `params` specifies mean and variance (in that order). See the `netinf()` documentation for details on specificaiton and parametrization (`?netinf`).
+* If `params=NULL` in `netinf()` the parameters are initialized automatically by choosing the midpoint between the MLE for the minimum possible diffusion times and the MLE of the maximum possible diffusion times.
+* If additionally `optimize=TRUE`, the parameters of the diffusion model are optimized using approximate profile maximum likelihood until the resulting network converges. 
 
 ## Bug Fixes
 

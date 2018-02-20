@@ -9,6 +9,11 @@
 using namespace Rcpp;
 
 
+NumericVector init_parameters(NumericVector &cascade_times, std::string model) {
+    NumericVector out;
+    return out;
+}
+
 
 int get_index(IntegerVector x, int val) {
     for(int i = 0; i < x.size(); i++) {

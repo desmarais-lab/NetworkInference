@@ -3,19 +3,18 @@
 
 using namespace Rcpp;
 
-double edge_score(double &event_time_i, double &event_time_j, int &model,
+double edge_score(double &event_time_i, double &event_time_j, std::string &model,
                   NumericVector &params, bool tied) {
     double x = event_time_j - event_time_i;
     double y;
     double out;
-    if (model == 1) {
+    if (model == "exponential") {
         y = dexp_(x, params[0]);
-    } else if (model == 2) {
+    } else if (model == "rayleigh") {
         y = drayleigh_(x, params[0]);
-        out = 0; 
-    } else if (model == 3) {
+    } else if (model == "log-normal") {
         y = dlognormal_(x, params[0], params[1]);
-    }
+    } 
     if (tied) {
         out = log(0.5 * y);
     } else {
@@ -25,7 +24,7 @@ double edge_score(double &event_time_i, double &event_time_j, int &model,
 }
 
 List optimal_spanning_tree(IntegerVector &cascade_nodes, 
-                           NumericVector &cascade_times, int &model,
+                           NumericVector &cascade_times, std::string &model,
                            NumericVector &params) {
  
     // Init containers for the results
@@ -84,7 +83,7 @@ List optimal_spanning_tree(IntegerVector &cascade_nodes,
 }
 
 List initialize_trees(List &cascade_nodes, List &cascade_times, 
-                      NumericVector &params, int &model) {
+                      NumericVector &params, std::string &model) {
     
     // Output container
     int n_cascades = cascade_nodes.size();
