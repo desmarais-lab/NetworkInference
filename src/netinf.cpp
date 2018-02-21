@@ -17,7 +17,7 @@ typedef edge_map::reverse_iterator rm_iter;
 // [[Rcpp::export]]
 List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges, 
              std::string &model, NumericVector &params, 
-             bool quiet, bool &auto_edges, double &cutoff, bool mle) {
+             bool quiet, bool &auto_edges, double &cutoff) {
     
     // Prepare the trees of each cascade (find the optimal spanning tree and 
     // store parents for each node and respective scores)

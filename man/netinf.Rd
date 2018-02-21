@@ -5,7 +5,7 @@
 \title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges = 0.1, params = NULL,
-  quiet = FALSE, trees = FALSE)
+  quiet = FALSE, max_iter = 5)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -15,10 +15,11 @@ information. See \code{\link{as_cascade_long}} and
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.}
 
-\item{n_edges}{integer or numeric, If integer number of edges to infer, if a 
-numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
-inferred until the Vuong test for edge addition reaches the p-value 
-of \code{n_edges} or when the maximum number of edges is reached.}
+\item{n_edges}{integer or numeric, If integer number of edges to infer per
+iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
+edges are inferred in each iteration until the Vuong test for edge 
+addition reaches the p-value of \code{n_edges} or when the maximum 
+possible number of edges is reached.}
 
 \item{params}{numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
 optimal parameters are inferred using profile maximum likelihood. If
@@ -27,9 +28,12 @@ the different distributions.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
 
-\item{trees}{logical, Should the tree for each cascade be returned. This is an 
-experimental option that will change the output of the function. Use with
-caution.}
+\item{max_iter, }{integer, maximum number of iteration for profile likelihood
+estimation. Only used if \code{optimize=TRUE}.}
+
+\item{optimize}{logical, Should the parameters of the diffusion model be 
+optimized using approximate profile likelihood. Note that if this option
+is used, the network has to be estimated multiple times.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 

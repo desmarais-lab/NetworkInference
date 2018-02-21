@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // netinf_
-List netinf_(List& cascade_nodes, List& cascade_times, int& n_edges, std::string& model, NumericVector& params, bool quiet, bool& auto_edges, double& cutoff, bool mle);
-RcppExport SEXP _NetworkInference_netinf_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP n_edgesSEXP, SEXP modelSEXP, SEXP paramsSEXP, SEXP quietSEXP, SEXP auto_edgesSEXP, SEXP cutoffSEXP, SEXP mleSEXP) {
+List netinf_(List& cascade_nodes, List& cascade_times, int& n_edges, std::string& model, NumericVector& params, bool quiet, bool& auto_edges, double& cutoff);
+RcppExport SEXP _NetworkInference_netinf_(SEXP cascade_nodesSEXP, SEXP cascade_timesSEXP, SEXP n_edgesSEXP, SEXP modelSEXP, SEXP paramsSEXP, SEXP quietSEXP, SEXP auto_edgesSEXP, SEXP cutoffSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,8 +19,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     Rcpp::traits::input_parameter< bool& >::type auto_edges(auto_edgesSEXP);
     Rcpp::traits::input_parameter< double& >::type cutoff(cutoffSEXP);
-    Rcpp::traits::input_parameter< bool >::type mle(mleSEXP);
-    rcpp_result_gen = Rcpp::wrap(netinf_(cascade_nodes, cascade_times, n_edges, model, params, quiet, auto_edges, cutoff, mle));
+    rcpp_result_gen = Rcpp::wrap(netinf_(cascade_nodes, cascade_times, n_edges, model, params, quiet, auto_edges, cutoff));
     return rcpp_result_gen;
 END_RCPP
 }

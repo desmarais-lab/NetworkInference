@@ -36,13 +36,12 @@ List tree_replacement(int &u, int &v, edge_map &possible_edges,
  * @param n_edges Integer, number of edges to infer.
  * @param quiet, Boolean, Should output on progress by suppressed.
  * @param cutoff, p-value cutoff if auto-edges=TRUE
- * @param mle, should params be optimized with profile mle
  * 
  * @return List containing one vector per edge.
 */
 List netinf_(List &cascade_nodes, List &cascade_times, 
              int &n_edges, std::string &model, NumericVector &params, bool quiet, 
-             bool auto_edges, double cutoff, bool mle);
+             bool auto_edges, double cutoff);
 
 /**
  * Update the trees for each cascade using the new edge

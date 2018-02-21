@@ -17,8 +17,6 @@
 #'     \item Log-normal distribution: \code{trans_mod = "log-normal"},
 #'     \code{params = c(mu, sigma)}. 
 #'     Parametrization: \eqn{\frac{1}{x\sigma\sqrt{2\pi}}e^{-\frac{(ln x - \mu)^2}{2\sigma^2}}}.
-#
-# 
 #' }
 #' 
 #' If higher performance is required and for very large data sets, a faster pure C++ 
@@ -27,7 +25,7 @@
 #' 
 #' @import checkmate
 #' @import assertthat
-#' @importFrom stats na.omit
+#' @import data.table
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as_cascade_long}} and 
@@ -38,14 +36,17 @@
 #'     optimal parameters are inferred using profile maximum likelihood. If
 #'     parameters should be fixed see details for how to specify parameters for
 #'     the different distributions.
-#' @param n_edges integer or numeric, If integer number of edges to infer, if a 
-#'     numeric value in the interval (0, 1) (excluding 0 and 1) edges are 
-#'     inferred until the Vuong test for edge addition reaches the p-value 
-#'     of \code{n_edges} or when the maximum number of edges is reached.
+#' @param n_edges integer or numeric, If integer number of edges to infer per
+#'     iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
+#'     edges are inferred in each iteration until the Vuong test for edge 
+#'     addition reaches the p-value of \code{n_edges} or when the maximum 
+#'     possible number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
-#' @param trees logical, Should the tree for each cascade be returned. This is an 
-#'     experimental option that will change the output of the function. Use with
-#'     caution.
+#' @param optimize logical, Should the parameters of the diffusion model be 
+#'     optimized using approximate profile likelihood. Note that if this option
+#'     is used, the network has to be estimated multiple times.
+#' @param max_iter, integer, maximum number of iteration for profile likelihood
+#'     estimation. Only used if \code{optimize=TRUE}.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -70,8 +71,8 @@
 #' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, params = 1)
 #' 
 #' @export
-netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL,
-                   quiet = FALSE, trees = FALSE) {
+netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, 
+                   params=NULL, quiet = FALSE, max_iter=5) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
@@ -127,25 +128,77 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL
         } else if(model == "log-normal") {
             mean_max <- mean(log(max_times))
             mean_min <- mean(log(min_times))
-            sigma_max <- var(log(max_times))
-            sigma_min <- var(log(min_times))
+            sigma_max <- sqrt(var(log(max_times)))
+            sigma_min <- sqrt(var(log(min_times)))
             params <- c(mean(mean_max, mean_min), mean(sigma_max, sigma_min))
         }
-    if(!quiet) cat('Initialized parameters with: ', params, '\n')
+        if(!quiet) cat('Initialized parameters with: ', params, '\n')
     }
     
-    # Run netinf
-    netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
-                          cascade_times = cascades$cascade_times, model = model, 
-                          params = params, n_edges = n_edges, quiet = quiet,
-                          auto_edges = auto_edges, cutoff = cutoff, mle = F)
-    
-    # Reformat output 
-    network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
-                                   netinf_out[[2]]),
-                         stringsAsFactors = FALSE)
-    
-   
+    # Run netinf and optimize paramters if required
+    df_cascades <- data.table(as.data.frame(cascades))
+    setkey(df_cascades, node_name, cascade_id)
+    network <- data.frame(origin_node = "", destination_node = "")
+    convergence <- FALSE
+    i <- 1
+    while((i <= max_iter) & (!convergence)) {
+        if(!quiet) cat("Iteration", i, "\n")
+        netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
+                              cascade_times = cascades$cascade_times, 
+                              model = model, params = params, n_edges = n_edges, 
+                              quiet = quiet, auto_edges = auto_edges, 
+                              cutoff = cutoff)
+        # Extract the trees and cast them into data frame
+        tree_dfs <- lapply(1:length(netinf_out[[3]]), function(i) {
+            x <- netinf_out[[3]][[i]]
+            out <- as.data.frame(cbind(x[[1]], x[[2]], rep(i, length(x[[1]]))))}
+            )
+        trees_df <- do.call(rbind, tree_dfs)
+        
+        # Replace int node ids with node_names 
+        trees_df$child <- do.call(c, cascades$cascade_nodes)
+        trees_df <- trees_df[!is.na(trees_df[, 2]), ]
+        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+        casc_names <- names(cascades$cascade_nodes)
+        trees_df[, 3] <- casc_names[trees_df[, 3]] 
+        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
+        trees_df <- data.table(trees_df) 
+        
+        # Join trees_df with the event times for each node in each cascade
+        # to get diffusion times 
+        setkey(trees_df, parent, cascade_id) 
+        trees <- trees_df[df_cascades, nomatch=0]
+        setnames(trees, "event_time", "parent_time")
+        setkey(trees, child, cascade_id) 
+        trees <- trees[df_cascades, nomatch=0] 
+        setnames(trees, "event_time", "child_time")
+        trees$diffusion_time = trees$child_time - trees$parent_time
+        
+        # Calculate new parameter values based on diffusion times in inferred 
+        # trees 
+        if(model == "exponential") {
+            params = 1 / mean(trees$diffusion_time)
+        } else if(model == "rayleigh") {
+            params = 
+            N <- nrow(trees)
+            sh <- sqrt(sum(trees$diffusion_time^2) / 2 * N)
+            adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
+            params <- sh * adjustment
+        } else if(model == "log-normal") {
+            params <- c(mean(log(trees$diffusion_time)), 
+                        sqrt(var(log(trees$diffusion_time))))
+        }
+        new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
+                                     netinf_out[[2]]),
+                                     stringsAsFactors = FALSE)
+ 
+        if(identical(new_network, network)){
+            convergence = TRUE 
+        } 
+        network <- new_network
+        i = i + 1
+    }
+  
     ## Replace integer node_ids with node_names
     ### In the edgelist
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
@@ -159,27 +212,6 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, params=NULL
     network$p_value <- netinf_out[[4]]
     class(network) <- c("diffnet", "data.frame")
     
-    if(trees) {
-        # Extract the trees
-        tree_dfs <- lapply(netinf_out[[3]], 
-                       function(x) as.data.frame(cbind(x[[1]], x[[2]])))
-        for(i in 1:length(tree_dfs)) {
-            tree_dfs[[i]] = cbind(tree_dfs[[i]], rep(i, nrow(tree_dfs[[i]])))
-        }       
-        trees_df <- do.call(rbind, tree_dfs)
-        
-        # Replace int node ids with node_names 
-        trees_df$child <- do.call(c, cascades$cascade_nodes)
-        trees_df <- stats::na.omit(trees_df)
-        trees_df <- trees_df[trees_df[, 1] <= length(cascades$node_names), ]
-        trees_df <- trees_df[trees_df[, 1] >= 0, ]
-        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
-        casc_names <- names(cascades$cascade_nodes)
-        trees_df[, 3] <- casc_names[trees_df[, 3]]
-    
-        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
-        return(list('network' = network, 'trees' = trees_df))
-    }
     return(network) 
 }
 
