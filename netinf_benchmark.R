@@ -11,6 +11,7 @@ for(i in 1:nrow(params)) {
         bm = microbenchmark('test' = netinf(cascades, trans_mod = "exponential", 
                                             n_edges = 10, params = 1, 
                                             quiet = T), times = 50)
+        netinf(cascades, max_iter = 1, params = 10)
         t = mean(bm$time) * 1e-6
         params[i, 3] = t
 }
