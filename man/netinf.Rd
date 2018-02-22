@@ -4,8 +4,8 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges = 0.1, params = NULL,
-  quiet = FALSE, max_iter = 5)
+netinf(cascades, trans_mod = "exponential", n_edges = 0.05, params = NULL,
+  quiet = FALSE, max_iter = 10)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 

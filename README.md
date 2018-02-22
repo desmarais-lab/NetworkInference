@@ -38,23 +38,23 @@ library(NetworkInference)
 
 # Simulate random cascade data
 set.seed(423399)
-df <- simulate_rnd_cascades(50, n_node = 26) # Simulates random cascade data
+df <- simulate_rnd_cascades(50, n_node = 50) # Simulates random cascade data
 node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
 ## From dataframe
-cascades <- as_cascade_long(df, node_names = node_names)
+cascades <- as_cascade_long(df)
 
 ## From matrix
 df_matrix <- as.matrix(cascades) ### Create example matrix
-cascades <- as_cascade_wide(df_matrix, node_names = node_names)
+cascades <- as_cascade_wide(df_matrix)
 ```
 
 Cascades can be explored using `summary` and `plot`. See the vignette and package documentation for full functionality.
 
 ``` r
 cascade_ids <- names(cascades[[1]])
-selection <- cascade_ids[c(1, 10)]
+selection <- cascade_ids[c(2, 5)]
 plot(cascades, label_nodes = TRUE, selection = selection)
 ```
 
@@ -70,58 +70,71 @@ plot(cascades, label_nodes = FALSE, selection = selection)
 The actual netinf algorithm is used with:
 
 ``` r
-result <- netinf(cascades, trans_mod = "exponential", lambda = 1, n_edges = 5)
+result <- netinf(cascades, quiet = TRUE)
 ```
 
 The resulting network comes in form of an edgelist:
 
 ``` r
-print(result)
+head(result)
 ```
 
-<table style="width:64%;">
+<table style="width:81%;">
 <colgroup>
 <col width="19%" />
 <col width="26%" />
-<col width="18%" />
+<col width="19%" />
+<col width="15%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="center">origin_node</th>
 <th align="center">destination_node</th>
 <th align="center">improvement</th>
+<th align="center">p_value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">z</td>
-<td align="center">h</td>
-<td align="center">213.1</td>
+<td align="center">40</td>
+<td align="center">22</td>
+<td align="center">325.6</td>
+<td align="center">8.937e-07</td>
 </tr>
 <tr class="even">
-<td align="center">m</td>
-<td align="center">b</td>
-<td align="center">207.6</td>
+<td align="center">40</td>
+<td align="center">25</td>
+<td align="center">317.2</td>
+<td align="center">2.611e-06</td>
 </tr>
 <tr class="odd">
-<td align="center">v</td>
-<td align="center">l</td>
-<td align="center">192.8</td>
+<td align="center">6</td>
+<td align="center">20</td>
+<td align="center">316.3</td>
+<td align="center">2.645e-06</td>
 </tr>
 <tr class="even">
-<td align="center">t</td>
-<td align="center">d</td>
-<td align="center">188.8</td>
+<td align="center">44</td>
+<td align="center">1</td>
+<td align="center">315.3</td>
+<td align="center">2.569e-06</td>
 </tr>
 <tr class="odd">
-<td align="center">m</td>
-<td align="center">u</td>
-<td align="center">182.7</td>
+<td align="center">2</td>
+<td align="center">19</td>
+<td align="center">308</td>
+<td align="center">2.66e-06</td>
+</tr>
+<tr class="even">
+<td align="center">5</td>
+<td align="center">13</td>
+<td align="center">296.5</td>
+<td align="center">7.112e-06</td>
 </tr>
 </tbody>
 </table>
 
-The network as well as the improvement in fit by each edge can be visualized:
+The network as well as the improvement in fit and the p-value from the vuong test per edge can be visualized:
 
 ``` r
 plot(result, type = "network")
@@ -134,3 +147,9 @@ plot(result, type = "improvement")
 ```
 
 ![](readme_figures/README-unnamed-chunk-9-2.png)
+
+``` r
+plot(result, type = "p-value")
+```
+
+![](readme_figures/README-unnamed-chunk-9-3.png)
