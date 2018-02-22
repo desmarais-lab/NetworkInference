@@ -71,8 +71,8 @@
 #' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, params = 1)
 #' 
 #' @export
-netinf <- function(cascades, trans_mod = "exponential", n_edges=0.1, 
-                   params=NULL, quiet = FALSE, max_iter=5) {
+netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05, 
+                   params=NULL, quiet = FALSE, max_iter = 10) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
