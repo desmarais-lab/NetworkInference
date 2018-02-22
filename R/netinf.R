@@ -42,9 +42,6 @@
 #'     addition reaches the p-value of \code{n_edges} or when the maximum 
 #'     possible number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
-#' @param optimize logical, Should the parameters of the diffusion model be 
-#'     optimized using approximate profile likelihood. Note that if this option
-#'     is used, the network has to be estimated multiple times.
 #' @param max_iter, integer, maximum number of iteration for profile likelihood
 #'     estimation. Only used if \code{optimize=TRUE}.
 #' 
@@ -128,8 +125,8 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         } else if(model == "log-normal") {
             mean_max <- mean(log(max_times))
             mean_min <- mean(log(min_times))
-            sigma_max <- sqrt(var(log(max_times)))
-            sigma_min <- sqrt(var(log(min_times)))
+            sigma_max <- sqrt(stats::var(log(max_times)))
+            sigma_min <- sqrt(stats::var(log(min_times)))
             params <- c(mean(mean_max, mean_min), mean(sigma_max, sigma_min))
         }
         if(!quiet) cat('Initialized parameters with: ', params, '\n')
@@ -137,7 +134,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     
     # Run netinf and optimize paramters if required
     df_cascades <- data.table(as.data.frame(cascades))
-    setkey(df_cascades, node_name, cascade_id)
+    setkey(df_cascades, "node_name", "cascade_id")
     network <- data.frame(origin_node = "", destination_node = "")
     convergence <- FALSE
     i <- 1
@@ -166,10 +163,10 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         
         # Join trees_df with the event times for each node in each cascade
         # to get diffusion times 
-        setkey(trees_df, parent, cascade_id) 
+        setkey(trees_df, "parent", "cascade_id") 
         trees <- trees_df[df_cascades, nomatch=0]
         setnames(trees, "event_time", "parent_time")
-        setkey(trees, child, cascade_id) 
+        setkey(trees, "child", "cascade_id") 
         trees <- trees[df_cascades, nomatch=0] 
         setnames(trees, "event_time", "child_time")
         trees$diffusion_time = trees$child_time - trees$parent_time
@@ -186,7 +183,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
             params <- sh * adjustment
         } else if(model == "log-normal") {
             params <- c(mean(log(trees$diffusion_time)), 
-                        sqrt(var(log(trees$diffusion_time))))
+                        sqrt(stats::var(log(trees$diffusion_time))))
         }
         new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
                                      netinf_out[[2]]),

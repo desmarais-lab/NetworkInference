@@ -14,6 +14,7 @@ Imports:
     checkmate,
     ggplot2,
     ggrepel,
+    data.table,
     stats
 LinkingTo: 
     Rcpp,

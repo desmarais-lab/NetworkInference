@@ -8,8 +8,8 @@
 \describe{
   \item{origin_node}{Origin of diffusion edge.}
   \item{destination_node}{Destination node of diffusion edge.}
-  \item{improvement}
-  \item{p-value}
+  \item{improvement}{Improvement in score for the edge}
+  \item{p-value}{p-value for vuong test}
 }}
 \source{
 See code below.

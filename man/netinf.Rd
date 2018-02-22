@@ -30,10 +30,6 @@ the different distributions.}
 
 \item{max_iter, }{integer, maximum number of iteration for profile likelihood
 estimation. Only used if \code{optimize=TRUE}.}
-
-\item{optimize}{logical, Should the parameters of the diffusion model be 
-optimized using approximate profile likelihood. Note that if this option
-is used, the network has to be estimated multiple times.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 

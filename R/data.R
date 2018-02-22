@@ -108,17 +108,17 @@
 #' \describe{
 #'   \item{origin_node}{Origin of diffusion edge.}
 #'   \item{destination_node}{Destination node of diffusion edge.}
-#'   \item{improvement}
-#'   \item{p-value}
+#'   \item{improvement}{Improvement in score for the edge}
+#'   \item{p-value}{p-value for vuong test}
 #' }
 #' 
 #' @source See code below.
 "sim_validation"
 
 # # Code to generate validation dataset.
-#set.seed(142857)
-#df <- simulate_rnd_cascades(50, 50)
-#cascades <- as_cascade_long(df)
-#network <- netinf(cascades, n_edges = 0.05)
-#sim_validation <- list("input" = cascades, "output" = network)
-#save(sim_validation, file = 'data/sim_validation.RData')
+# set.seed(142857)
+# df <- simulate_rnd_cascades(50, 50)
+# cascades <- as_cascade_long(df)
+# network <- netinf(cascades, n_edges = 0.05)
+# sim_validation <- list("input" = cascades, "output" = network)
+# save(sim_validation, file = 'data/sim_validation.RData')
