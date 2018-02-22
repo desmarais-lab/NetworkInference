@@ -9,9 +9,10 @@
 \arguments{
 \item{x}{object of class diffnet to be plotted.}
 
-\item{type}{character, one of \code{c("network", "improvement")} indicating if 
-the inferred diffusion network (\code{"network"}) or the improvement for each
-edge should be visualized (\code{"improvement"}).}
+\item{type}{character, one of \code{c("network", "improvement", "p-value")} 
+indicating if the inferred diffusion network, the 
+improvement for each edge or the p-value from the vuong test for each
+edge should be visualized .}
 
 \item{...}{additional arguments.}
 }
@@ -32,9 +33,10 @@ any other ggplot. See the ggplot documentation and the examples in
 
 \dontrun{
  data(cascades)
- res <- netinf(cascades, n_edges = 6, params = 1)
+ res <- netinf(cascades, quiet = TRUE)
  plot(res, type = "network")
  plot(res, type = "improvement")
+ plot(res, type = "p-value")
 }
 
 }

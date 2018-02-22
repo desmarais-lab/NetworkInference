@@ -128,18 +128,20 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
 #' @import ggplot2
 #' 
 #' @param x object of class diffnet to be plotted.
-#' @param type character, one of \code{c("network", "improvement")} indicating if 
-#'     the inferred diffusion network (\code{"network"}) or the improvement for each
-#'     edge should be visualized (\code{"improvement"}).
+#' @param type character, one of \code{c("network", "improvement", "p-value")} 
+#'     indicating if the inferred diffusion network, the 
+#'     improvement for each edge or the p-value from the vuong test for each
+#'     edge should be visualized .
 #' @param ... additional arguments.
 #' 
 #' @examples 
 #'
 #' \dontrun{
 #'  data(cascades)
-#'  res <- netinf(cascades, n_edges = 6, params = 1)
+#'  res <- netinf(cascades, quiet = TRUE)
 #'  plot(res, type = "network")
 #'  plot(res, type = "improvement")
+#'  plot(res, type = "p-value")
 #' }
 #' 
 #' @return A ggplot plot object if \code{type = "improvement"} otherwise an 
@@ -147,7 +149,7 @@ plot.cascade <- function(x, label_nodes = TRUE, selection = NULL, ...) {
 #' @export
 plot.diffnet <- function(x, type = "network", ...) {
     # Check inputs
-    type <- match.arg(type, c("network", "improvement"))
+    type <- match.arg(type, c("network", "improvement", "p-value"))
     
     if(type == "network") {
         if (requireNamespace("igraph", quietly = TRUE)) {
@@ -158,13 +160,21 @@ plot.diffnet <- function(x, type = "network", ...) {
             stop("In order to use this functionality the `igraph` package needs to be installed. Run `install.packages('igraph')` and retry.")
         } 
     }
-    else{
+    else if(type == "improvement") {
         ggplot(x) + 
             geom_line(aes_string(x=c(1:nrow(x)), y = "improvement"), 
                       color = "grey80", size = 0.5) +
             geom_point(aes_string(x=c(1:nrow(x)), y = "improvement"), 
                        size = 0.5) + 
             xlab("Edge Number") + ylab("Improvement") +
+            PLOT_THEME_()
+    } else {
+        ggplot(x) + 
+            geom_line(aes_string(x=c(1:nrow(x)), y = "p_value"), 
+                      color = "grey80", size = 0.5) +
+            geom_point(aes_string(x=c(1:nrow(x)), y = "p_value"), 
+                       size = 0.5) + 
+            xlab("Edge Number") + ylab("P-Value") +
             PLOT_THEME_()
     }
 }
