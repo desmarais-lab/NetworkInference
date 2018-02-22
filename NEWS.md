@@ -9,8 +9,26 @@ Development version
 * This lead to the netinf output having a **fourth column** now, containing the 
 p-value for each edge. The p-value is also available if a fixed number of edges
 is chosen.
+* Parameters of the diffusion model can now be chosen using approximate profile
+    maximum likelihood (See [here](https://www.jstor.org/stable/2240385?seq=1#page_scan_tab_contents) and [here](https://www.jstor.org/stable/2965560?seq=1#page_scan_tab_contents) (paywalled) for more information)
+* The way parameters for the diffusion distribution are chosen changed
+    fundamentally. The standard behavior of `netinf()` is now the following:
+    - If no starting values are provided via the `params` argument parameters
+        are initialized by choosing the midpoint between the maximum possible
+        parameter value and the minimum possible value. These values are derived
+        using the closed form MLE of the respective parameter, derived from
+        either the minimum possible diffusion times (assuming a diffusion
+        'chain', i.e. `a -> b -> c -> ...`) or the maximum possible diffusion
+        times (assuming a diffusion 'fan', i.e. `a -> b, a -> c, a -> d,...`).
+    - Edges are inferred using those parameters until the stopping criterion
+        specified in `n_edges` is satisfied
+    - `n_edges` can now specify either an absolute number of edges, or a p-value
+        cutoff in the interval `(0, 1)` for the Vuong test
+    - New parameters are inferred from the diffusion times that result from the 
+        new trees that use the inferred edges
+    - The procedure is repeated until either the resulting network converges (no
+        change in edges) or `max_iter` iterations are reached
 * The log normal distribution is now available as a diffusion model. With this comes a **change in the parameters** for `netinf`. Instead of `lambda`, parameters are now specified with a vector (or scalar depending on distribution) `params`. For exponential and rayleigh distributions `params` is just the rate / alpha parameter. For the log-normal distribution `params` specifies mean and variance (in that order). See the `netinf()` documentation for details on specificaiton and parametrization (`?netinf`).
-* If `params=NULL` in `netinf()` the parameters are initialized automatically by choosing the midpoint between the MLE for the minimum possible diffusion times and the MLE of the maximum possible diffusion times.
 * If additionally `optimize=TRUE`, the parameters of the diffusion model are optimized using approximate profile maximum likelihood until the resulting network converges. 
 
 ## Bug Fixes
