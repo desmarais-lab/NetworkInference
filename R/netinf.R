@@ -49,7 +49,15 @@
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
 #'     column contains the sender, the second column the receiver node. The 
 #'     third column contains the improvement in fit from adding the edge that is
-#'     represented by the row.
+#'     represented by the row. The output additionally has the following 
+#'     attributes:
+#'     \itemize{
+#'         \item \code{"diffusion_model"} The diffusion model used to infere the 
+#'             diffusion network.
+#'         \item \code{"diffusion_model_parameters"} The parameters for the 
+#'             model that have been infered by the approximate profile MLE 
+#'             procedure.
+#'     }
 #'  
 #' @references 
 #' M. Gomez-Rodriguez, J. Leskovec, A. Krause. Inferring Networks of Diffusion 
@@ -204,8 +212,10 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
-    cat('Final parameter values: ', param, '\n')
     class(network) <- c("diffnet", "data.frame")
+    # Store final parameter values
+    attr(network, "diffusion_model") = model
+    attr(network, "diffusion_model_parameters") = params
     
     return(network) 
 }
