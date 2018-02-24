@@ -176,7 +176,6 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         if(model == "exponential") {
             params = 1 / mean(trees$diffusion_time)
         } else if(model == "rayleigh") {
-            params = 
             N <- nrow(trees)
             sh <- sqrt(sum(trees$diffusion_time^2) / 2 * N)
             adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
@@ -203,13 +202,9 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     ### In the edgelist
     network[, 1] <- cascades$node_names[(network[, 1] + 1)]
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
-    # Backwards compatibility: Flip edges around (comes out of netinf as child, 
-    # parent )
-    #temp <- network[, 1]
-    #network[, 1] <- network[, 2]
-    #network[, 2] <- temp
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
+    cat('Final parameter values: ', param, '\n')
     class(network) <- c("diffnet", "data.frame")
     
     return(network) 
