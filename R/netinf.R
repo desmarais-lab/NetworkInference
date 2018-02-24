@@ -192,6 +192,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
             params <- c(mean(log(trees$diffusion_time)), 
                         sqrt(stats::var(log(trees$diffusion_time))))
         }
+        cat('New parameter values: ', params, '\n')
         new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
                                      netinf_out[[2]]),
                                      stringsAsFactors = FALSE)
