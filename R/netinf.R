@@ -204,7 +204,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     network[, 2] <- cascades$node_names[(network[, 2] + 1)]
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
-    cat('Final parameter values: ', param, '\n')
+    cat('Final parameter values: ', params, '\n')
     class(network) <- c("diffnet", "data.frame")
     
     return(network) 
