@@ -9,7 +9,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-## Introduction
+---
+
+# Introduction
+
+---
 
 This package provides an R implementation of the netinf algorithm 
 created by @gomez2010inferring (see [here](http://snap.stanford.edu/netinf/) 
@@ -17,7 +21,11 @@ for more information and the original C++ implementation). Given a set of events
 that spread between a set of nodes the algorithm infers the most likely stable 
 diffusion network that is underlying the diffusion process.
 
-## Installation
+---
+
+# Installation
+
+---
 
 The package can be installed from [CRAN](https://CRAN.R-project.org/):
 ```{r, eval=FALSE}
@@ -31,7 +39,11 @@ The latest development version can be installed from
 devtools::install_github('desmarais-lab/NetworkInference')
 ```
 
-## Quick start guide
+---
+
+# Quick start guide
+
+---
 
 To get started, get your data into the `cascades` format required by the `netinf` 
 function:
@@ -63,7 +75,11 @@ head(result)
 pander::pandoc.table(head(result))
 ```
 
-## Tutorial
+---
+
+# Tutorial
+
+---
 
 This is a quick tutorial to get started with the package. For more detailed 
 information on the algorithm and functionality of the package see the 
@@ -77,7 +93,7 @@ for policy diffusion based on adoption of 187 policies in the US states. In this
 case a node in the network is a state, a cascade refers to a specific policy and
 an event is the adoption of said policy in a state.  
 
-### Preparing the Data
+## Preparing the Data
 
 The data for @desmarais2015persistent is available in the package:
 
@@ -164,11 +180,13 @@ plot(policy_cascades, label_nodes = FALSE, selection = selection)
 
 This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
 
-### Inferring the Latent Diffusion Network
+
+
+## Inferring the Latent Diffusion Network
 
 The `netinf` algorithm is implemented in the `netinf()` function. The `netinf` inferrs edges based on a diffusion model. That is we assume a parametric model for the diffusion times between edges. Currently three different diffusion models are implemented: The exponential distribution, the rayleigh distribution and the log-normal distribution. The model can be chosen with the `trans_mod` argument (default is the exponential distribution). 
 
-#### Classic Netinf
+### Classic Netinf
 
 In the original implementation the parameters of that distribution are a tuning parameter, i.e. they have to be chosen manually. Furthermore, the number of edges to infer has to be fixed too. If you want to run `netinf` in this classic way you can do so by specifiying the respective parameters (see below for an explanation of the `max_iter` option):
 
@@ -187,11 +205,11 @@ npe
 ```
 
 
-#### Automatic Parameter Selection
+### Automatic Parameter Selection
 
 With version 1.2.0 `netinf` can be run without manually specifying the number of edges or the parameters of the diffusion model. 
 
-##### Selecting the number of edges automatically
+#### Selecting the number of edges automatically
 
 After each iteration of the netinf algorithm, we check if the edge added significant improvement to the network. This is done via a vuong style test. Given the likelihood score for each cascade conditional on the network inferred so far, we penalize the network with one addional edge and test if the increase in likelihood accross all cascades is significant. The user still has to specify a p-value cut-off. If the p-value of an edge is larger than the specified cut-off the algorithm stops inferring more edges. The cut-off is again set via the `n_edges` argument. Setting it to a value in the interval (0,1) let's the funciton use the p-value procedure and uses that cut-off:
 
@@ -203,12 +221,23 @@ nrow(results)
 
 We see that with a fixed lambda of 0.5 and a p-value cut-off of 0.1 the algorithm inferred 471 edges.
 
+#### Selecting the parameters of the diffusion model
 
-Let's run the algorithm with a larger number of edges to see where the improvement drops off significantly:
-```{r}
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
-                  params = 0.5)
+The diffusion model parameters can be selected automatically. Setting the `params` argument to `NULL` (default value) makes the `netinf` function infer parameters iteratively using approximate profile maximum likelihood. The parameters are initialized at the midpoint between the MLE of the minimum diffusion times and the MLE of the maximum diffusion times, across all cascades. Edges are then inferred until either the p-value cut-off or a manually specified number of edges (`n_edges`) is reached. The parameters are then updated using the diffusion times that result when using the inferred edges for the diffusion tree of each cascades. This procedure is repeated until either the network converges (i.e. all inferred edges are the same) or `max_iter` iterations are reached (if we want to just initialize the parameters automatically but not update them we can just set `max_iter = 1` and `params = NULL`). 
+
+```{r, cache=TRUE}
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
+                  max_iter = 10, quiet = TRUE)
 ```
+
+The final parameter values and number of iterations used can be acessed from the results object via the attributes `diffusion_model_parameters` and `n_iterations`:
+
+```{r}
+attr(results, 'diffusion_model_parameters')
+attr(results, 'n_iterations')
+```
+
+### Netinf output
 
 Let's take a look at the output of the algorithm. The output is a dataframe containing the inferred latent network in the form of an edgelist:
 
@@ -219,17 +248,16 @@ head(results)
 pander::pandoc.table(head(results))
 ```
 
-Each row corresponds to a directed edge. The first column indicates the origin node, the second the destination node. The third column displays the gain in model fit from each added edge. Note that the best fitting network would be a fully connected graph, i.e. a diffusion edge between all nodes. However, since we want to infer a sparse network, a model that captures the important diffusion pathways we need to regularize by constraining the number of edges in the network. In order to find a good cutoff, it is good to visualize the gain to check if we can find a sudden drop-off. There is a generic plot method to inspect the results. If more tweaking is required, the results are a dataframe so it should be easy for the more experienced users to make your own plot. With `type = "improvement"` the improvement from each edge can be plotted.
+Each row corresponds to a directed edge. The first column indicates the origin node, the second the destination node. The third column displays the gain in model fit from each added edge. The last column displays the p-value from the Vuong test of each edge. There is a generic plot method to inspect the results. If more tweaking is required, the results are a dataframe so it should be easy for the more experienced users to make your own plot. With `type = "improvement"` the improvement from each edge can be plotted:
 
 ```{r, fig.align='center', fig.width=7, fig.height=4}
 plot(results, type = "improvement")
 ```
 
-After inspecting the improvements, the model can be re-run with the desired number of edges. We choose (arbitrarily) 25 here:
+We can also quickly check the p-value from the Vuong test associated with each edge addition:
 
-```{r}
-diffusion_network <- netinf(policy_cascades, trans_mod = "exponential", 
-                            n_edges = 25, params = 0.5)
+```{r, fig.align='center', fig.width=7, fig.height=4}
+plot(results, type = 'p-value')
 ```
 
 In order to produce a quick visualization of the resulting diffusion network we can use the plot method again, this time with `type = "network"`. Note that in order to use this functionality the igraph package has to be installed.
@@ -239,7 +267,7 @@ In order to produce a quick visualization of the resulting diffusion network we 
 # For this functionality the igraph package has to be installed
 # This code is only executed if the package is found:
 if(requireNamespace("igraph", quietly = TRUE)) {
-    plot(diffusion_network, type = "network")
+    plot(results, type = "network")
 }
 ```
 
@@ -252,5 +280,3 @@ if(requireNamespace("igraph", quietly = TRUE)) {
     plot(g, edge.arrow.size=.3, vertex.color = "grey70")
 }
 ```
-
-## References
