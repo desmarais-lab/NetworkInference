@@ -39,11 +39,12 @@ Returns the inferred diffusion network as an edgelist in an object of
     represented by the row. The output additionally has the following 
     attributes:
     \itemize{
-        \item \code{"diffusion_model"} The diffusion model used to infere the 
+        \item \code{"diffusion_model"}: The diffusion model used to infere the 
             diffusion network.
-        \item \code{"diffusion_model_parameters"} The parameters for the 
+        \item \code{"diffusion_model_parameters"}: The parameters for the 
             model that have been infered by the approximate profile MLE 
             procedure.
+        \item \code{"n_iterations"}: The number of iterations to convergence.
     }
 }
 \description{

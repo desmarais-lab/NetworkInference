@@ -52,11 +52,12 @@
 #'     represented by the row. The output additionally has the following 
 #'     attributes:
 #'     \itemize{
-#'         \item \code{"diffusion_model"} The diffusion model used to infere the 
+#'         \item \code{"diffusion_model"}: The diffusion model used to infere the 
 #'             diffusion network.
-#'         \item \code{"diffusion_model_parameters"} The parameters for the 
+#'         \item \code{"diffusion_model_parameters"}: The parameters for the 
 #'             model that have been infered by the approximate profile MLE 
 #'             procedure.
+#'         \item \code{"n_iterations"}: The number of iterations to convergence.
 #'     }
 #'  
 #' @references 
@@ -192,7 +193,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
             params <- c(mean(log(trees$diffusion_time)), 
                         sqrt(stats::var(log(trees$diffusion_time))))
         }
-        cat('New parameter values: ', params, '\n')
+        if(!quiet) cat('New parameter values: ', params, '\n')
         new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
                                      netinf_out[[2]]),
                                      stringsAsFactors = FALSE)
@@ -217,6 +218,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     # Store final parameter values
     attr(network, "diffusion_model") = model
     attr(network, "diffusion_model_parameters") = params
+    attr(network, "n_iterations") = i
     
     return(network) 
 }
