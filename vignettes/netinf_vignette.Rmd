@@ -41,7 +41,6 @@ library(NetworkInference)
 
 # Simulate random cascade data
 df <- simulate_rnd_cascades(50, n_node = 20)
-node_names <- unique(df$node_name)
 
 # Cast data into `cascades` object
 ## From long format
@@ -54,14 +53,14 @@ cascades <- as_cascade_wide(df_matrix)
 
 Then fit the model:
 ```{r}
-result <- netinf(cascades, trans_mod = "exponential", params = 1, n_edges = 5)
+result <- netinf(cascades, quiet = TRUE)
 ```
 
 ```{r, eval=FALSE}
-print(result)
+head(result)
 ```
 ```{r, results="asis", echo=FALSE}
-pander::pandoc.table(result)
+pander::pandoc.table(head(result))
 ```
 
 ## Tutorial
@@ -86,7 +85,6 @@ The data for @desmarais2015persistent is available in the package:
 library(NetworkInference)
 # Load the `policies` dataset (?policies for details).
 data(policies)
-state_names <- rownames(policies)
 ```
 
 In this case the data is stored in a matrix in wide format. Each row corresponds to a state and each column corresponds to a policy. The cell entries indicate the year a state adopted a policy (or `NA` in case the policy was never adopted). Let's look at the upper left corner of this matrix:
@@ -104,7 +102,7 @@ data format. So before starting with the analysis we have to transform our data
 to such an object.
 
 ```{r}
-policy_cascades <- as_cascade_wide(policies, node_names = state_names)
+policy_cascades <- as_cascade_wide(policies)
 ```
 
 In this case we used the function `as_cascade_wide`. If your data is in long format
@@ -168,19 +166,43 @@ This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for e
 
 ### Inferring the Latent Diffusion Network
 
-The `netinf` algorithm is implemented in the `netinf()` function. Besides the data, the function takes three parameters. 
+The `netinf` algorithm is implemented in the `netinf()` function. The `netinf` inferrs edges based on a diffusion model. That is we assume a parametric model for the diffusion times between edges. Currently three different diffusion models are implemented: The exponential distribution, the rayleigh distribution and the log-normal distribution. The model can be chosen with the `trans_mod` argument (default is the exponential distribution). 
 
-`trans_mod` specifies the transition model, or the parametric model according to which the times between diffusion events are distributed. See the `netinf` documentation (`?netinf`) for the available distributions. For this example we choose the exponential density. 
+#### Classic Netinf
 
-`params` fixes the paramters of the distribution specified in `trans_mod`. In this case it's the rate parameter of the exponential density.
+In the original implementation the parameters of that distribution are a tuning parameter, i.e. they have to be chosen manually. Furthermore, the number of edges to infer has to be fixed too. If you want to run `netinf` in this classic way you can do so by specifiying the respective parameters (see below for an explanation of the `max_iter` option):
 
-`n_edges` specifies how many edges should be inferred. Best practice is to choose a high number of  edges first and then look for a drop-off in gained model fit for each added edge. Then we can rerun the algorithm with a lower number of edges. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter. The number of inferred edges has to be lower than the maximum number of possible edges. An edge `u->v` is only possible if in at least one cascade `u` experiences an event *before* `v`. This means, that the maximum number of edges depends on the data. The function `count_possible_edges()` allows us to compute the maximum number of edges in advance:
+```{r}
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
+                  params = 0.5, max_iter = 1, quiet = TRUE)
+```
+
+The exponential model has only one parameter (lambda or the rate). If there are more parameters the details section in the documentation of the `netinf` function (`?netinf`) has more detail on how to specify parameters and on the specific parametrization used by the implementation. 
+
+`n_edges` specifies how many edges should be inferred. See @gomez2010inferring and @desmarais2015persistent for guidance on choosing this parameter if running netinf in classic mode. If the number of edges is specified manually, it has to be lower than the maximum number of possible edges. An edge `u->v` is only possible if in at least one cascade `u` experiences an event *before* `v`. This means, that the maximum number of edges depends on the data. The function `count_possible_edges()` allows us to compute the maximum number of edges in advance:
  
-
 ```{r}
 npe <- count_possible_edges(cascades)
 npe
 ```
+
+
+#### Automatic Parameter Selection
+
+With version 1.2.0 `netinf` can be run without manually specifying the number of edges or the parameters of the diffusion model. 
+
+##### Selecting the number of edges automatically
+
+After each iteration of the netinf algorithm, we check if the edge added significant improvement to the network. This is done via a vuong style test. Given the likelihood score for each cascade conditional on the network inferred so far, we penalize the network with one addional edge and test if the increase in likelihood accross all cascades is significant. The user still has to specify a p-value cut-off. If the p-value of an edge is larger than the specified cut-off the algorithm stops inferring more edges. The cut-off is again set via the `n_edges` argument. Setting it to a value in the interval (0,1) let's the funciton use the p-value procedure and uses that cut-off:
+
+```{r}
+results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
+                  params = 0.5, max_iter = 1, quiet = TRUE)
+nrow(results)
+```
+
+We see that with a fixed lambda of 0.5 and a p-value cut-off of 0.1 the algorithm inferred 471 edges.
+
 
 Let's run the algorithm with a larger number of edges to see where the improvement drops off significantly:
 ```{r}

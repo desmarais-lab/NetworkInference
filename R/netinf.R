@@ -195,7 +195,7 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         network <- new_network
         i = i + 1
     }
-    if(!convergence) {
+    if(!convergence & (max_iter > 1)) {
         warning("Reach maximum number of iterations without convergence of the network. Consider increasing max_iter in the netinf call.")
     }
   
