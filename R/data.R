@@ -122,3 +122,4 @@
 # network <- netinf(cascades, n_edges = 0.05)
 # sim_validation <- list("input" = cascades, "output" = network)
 # save(sim_validation, file = 'data/sim_validation.RData')
+ 
