@@ -58,6 +58,8 @@
 #'             model that have been infered by the approximate profile MLE 
 #'             procedure.
 #'         \item \code{"n_iterations"}: The number of iterations to convergence.
+#'         \item \code{"converged"}: Logical, did the parameter optimization 
+#'             converge.
 #'     }
 #'  
 #' @references 
@@ -219,6 +221,8 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     attr(network, "diffusion_model") = model
     attr(network, "diffusion_model_parameters") = params
     attr(network, "n_iterations") = i
+    attr(network, "converged") = convergence
+    
     
     return(network) 
 }

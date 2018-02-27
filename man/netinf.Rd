@@ -45,6 +45,8 @@ Returns the inferred diffusion network as an edgelist in an object of
             model that have been infered by the approximate profile MLE 
             procedure.
         \item \code{"n_iterations"}: The number of iterations to convergence.
+        \item \code{"converged"}: Logical, did the parameter optimization 
+            converge.
     }
 }
 \description{
