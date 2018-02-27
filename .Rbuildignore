@@ -8,3 +8,4 @@ README.md
 release_checklist.md
 ^revdep$
 netinf_benchmark.R
+vignettes/*_cache/
