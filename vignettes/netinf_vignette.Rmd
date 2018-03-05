@@ -225,7 +225,7 @@ We see that with a fixed lambda of 0.5 and a p-value cut-off of 0.1 the algorith
 
 The diffusion model parameters can be selected automatically. Setting the `params` argument to `NULL` (default value) makes the `netinf` function infer parameters iteratively using approximate profile maximum likelihood. The parameters are initialized at the midpoint between the MLE of the minimum diffusion times and the MLE of the maximum diffusion times, across all cascades. Edges are then inferred until either the p-value cut-off or a manually specified number of edges (`n_edges`) is reached. The parameters are then updated using the diffusion times that result when using the inferred edges for the diffusion tree of each cascades. This procedure is repeated until either the network converges (i.e. all inferred edges are the same) or `max_iter` iterations are reached (if we want to just initialize the parameters automatically but not update them we can just set `max_iter = 1` and `params = NULL`). 
 
-```{r, cache=TRUE}
+```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
                   max_iter = 10, quiet = TRUE)
 ```
