@@ -131,7 +131,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
         double max_improvement = 0;
         id_array best_edge;
         for(m_iter x = possible_edges.begin(); x != possible_edges.end(); x++) {
-            if(x->second.second > max_improvement) {
+            if(x->second.second >= max_improvement) {
                 max_improvement = x->second.second;
                 best_edge = x->first;
             }
