@@ -120,9 +120,10 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     
     # Initialize parameters    
     if(is.null(params)) {
-        max_times <- sapply(cascades$cascade_times, mean)
-        min_times <- sapply(cascades$cascade_times, 
-                            function(x) mean(x[-1] - x[-length(x)]))
+        max_times <- do.call(c, lapply(cascades$cascade_times, 
+                                       function(x) x[-1] - x[1]))
+        min_times <- do.call(c, lapply(cascades$cascade_times, 
+                            function(x) x[-1] - x[-length(x)]))
         if(model == "exponential") {
             lambda_min <- 1 / mean(max_times, na.rm = T)
             lambda_max <- 1 / mean(min_times, na.rm = T)
@@ -134,12 +135,13 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
             adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
             params <- mean(c(sh_max * adjustment, sh_min * adjustment))
         } else if(model == "log-normal") {
-            mean_max <- mean(log(max_times))
-            mean_min <- mean(log(min_times))
-            sigma_max <- sqrt(stats::var(log(max_times)))
-            sigma_min <- sqrt(stats::var(log(min_times)))
+            mean_max <- mean(log(max_times[max_times != 0]))
+            mean_min <- mean(log(min_times[min_times != 0]))
+            sigma_max <- sqrt(stats::var(log(max_times[max_times != 0])))
+            sigma_min <- sqrt(stats::var(log(min_times[min_times != 0])))
             params <- c(mean(mean_max, mean_min), mean(sigma_max, sigma_min))
         }
+        qassert(params, "R")
         if(!quiet) cat('Initialized parameters with: ', params, '\n')
     }
     
@@ -184,18 +186,21 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         
         # Calculate new parameter values based on diffusion times in inferred 
         # trees 
-        if(model == "exponential") {
-            params = 1 / mean(trees$diffusion_time)
-        } else if(model == "rayleigh") {
-            N <- nrow(trees)
-            sh <- sqrt(sum(trees$diffusion_time^2) / 2 * N)
-            adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
-            params <- sh * adjustment
-        } else if(model == "log-normal") {
-            params <- c(mean(log(trees$diffusion_time)), 
-                        sqrt(stats::var(log(trees$diffusion_time))))
+        if(max_iter > 1) {
+            if(model == "exponential") {
+                params = 1 / mean(trees$diffusion_time)
+            } else if(model == "rayleigh") {
+                N <- nrow(trees)
+                sh <- sqrt(sum(trees$diffusion_time^2) / 2 * N)
+                adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
+                params <- sh * adjustment
+            } else if(model == "log-normal") {
+                params <- c(mean(log(trees$diffusion_time)), 
+                            sqrt(stats::var(log(trees$diffusion_time))))
+            }
+            if(!quiet) cat('New parameter values: ', params, '\n')           
         }
-        if(!quiet) cat('New parameter values: ', params, '\n')
+
         new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
                                      netinf_out[[2]]),
                                      stringsAsFactors = FALSE)

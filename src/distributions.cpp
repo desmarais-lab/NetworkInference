@@ -11,6 +11,10 @@ double drayleigh_(double x, double lambda) {
 }
 
 double dlognormal_(double x, double mu, double sigma) {
+    if(x <= 0) {
+        std::string msg = "x outside support of log-normal distribution.\n";
+        throw std::invalid_argument(msg);
+    }
     return 1 / (x*sigma*sqrt(2*M_PI)) * 
         std::exp(-(pow((log(x) - mu), 2)/(2*pow(sigma, 2))));
 }
