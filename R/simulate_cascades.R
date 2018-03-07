@@ -44,12 +44,6 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #' 
 #' @param diffnet object of class \code{diffnet}.
 #' @param nsim integer, number of cascades to simulate.
-#' @param seed integer, seed for random number generator. 
-#' @param lambda numeric, parameter for diffusion time distribution.
-#' @param beta numeric, weight for in-network diffusion
-#' @param epsilon numeric, weight for out of network diffusion
-#' @param model character, diffusion model to use. One of \code{c("exponential", 
-#'     "rayleigh")}.
 #' @param max_time numeric, the maximum time after which observations are 
 #'     censored
 #' @param start_probabilities a vector of probabilities for each node in diffnet,
@@ -57,8 +51,15 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #'     a uniform distribution over all nodes.
 #' @param partial_cascade object of type cascade, containing one partial 
 #'     cascades for which further development should be simulated.
-#' @param nodes vector of node names, optional, if nodes should be included in 
-#'     simulation that do not occur in \code{diffnet}
+#' @param params numeric, (optional) parameters for diffusion time distribution. 
+#'    See the details seciont of \code{\link{netinf}} for specification details.
+#'    Only use this argument if parmeters different from those contained in the 
+#'    \code{diffnet} object should be used or the network is not an object of 
+#'    class \code{diffnet}.
+#' @param model character, diffusion model to use. One of \code{c("exponential", 
+#'     "rayleigh", "log-normal")}. Only use this argument if parmeters different 
+#'     from those contained in the \code{diffnet} object should be used or the 
+#'     network is not an object of class \code{diffnet}.
 #'     
 #' @return A data frame with three columns. Containing 1) The names of 
 #'     the nodes (\code{"node_name"}) that experience an event in each cascade, 
@@ -69,29 +70,30 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #' 
 #' data(cascades) 
 #' out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, params = 1)
-#' simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1, 
-#'                                         beta = 0.5, epsilon = 10^-9, 
-#'                                         model = "exponential")
+#' simulated_cascades <- simulate_cascades(out, nsim = 10)
 #'  
 #' # Simulation from partial cascade
 #' 
 #' @export
-simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
-                              lambda, beta, epsilon, model, 
-                              partial_cascade = NULL, 
+simulate_cascades <- function(diffnet, nsim = 1, max_time = Inf, 
                               start_probabilities = NULL,
-                              nodes = NULL) {
-    
+                              partial_cascade = NULL, params = NULL, 
+                              model = NULL) {
     # Check inputs
     assert_that(is.diffnet(diffnet))
     assert_that(nsim >= 1)
-    model <- match.arg(model, c("exponential", "rayleigh"))
-    if(model == "rayleigh") {
-        stop("Rayleigh distribution is not implemented yet. Please choose the exponential diffusion model.")
+    
+    if(is.null(model)) {
+        model <- attr(diffnet, "diffusion_model")
     }
-    if(is.null(nodes)) {
-        nodes <- unique(c(diffnet$origin_node, diffnet$destination_node)) 
-    } 
+    if(is.null(params)) {
+        params <- attr(diffnet, "diffusion_model_parameters")
+    }
+    model <- match.arg(model, c("exponential", "rayleigh", "log-normal"))
+    if(model == "rayleigh") {
+        stop("Rayleigh distribution is not implemented yet. Please choose the exponential or log-normal diffusion model.")
+    }
+    nodes <- unique(c(diffnet$origin_node, diffnet$destination_node)) 
     n_nodes <- length(nodes)
     
     if(!is.null(start_probabilities) & !is.null(partial_cascade)) {
@@ -112,8 +114,6 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
         see_if(all(is.element(partial_cascade$cascade_nodes[[1]], nodes)))
     }
     
-    set.seed(seed)
-   
     ## Create adjacency matrix from edgelist (ordered as in nodes, row -> sender)
     X_ <- matrix(0, ncol = n_nodes, nrow = n_nodes)
     for(k in 1:nrow(diffnet)) {
@@ -123,8 +123,8 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
     }
     
     sim_out <- lapply(X = 1:nsim, FUN = simulate_cascade_, n_nodes = n_nodes, 
-                      lambda = lambda, epsilon = epsilon, max_time = max_time, 
-                      model = model, nodes = nodes, beta = beta, X_ = X_, 
+                      params = params, max_time = max_time, 
+                      model = model, nodes = nodes, X_ = X_, 
                       partial_cascade = partial_cascade, 
                       start_probabilities = start_probabilities)
     out <- do.call(rbind, sim_out)
@@ -134,12 +134,20 @@ simulate_cascades <- function(diffnet, nsim = 1, seed = NULL, max_time = Inf,
 
 
 # Simulate a single cascade from scratch (random first event node)
-simulate_cascade_ <- function(i, nodes, n_nodes, lambda, epsilon, max_time, 
-                              model, beta, X_, partial_cascade, 
-                              start_probabilities) {
+simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_, 
+                              partial_cascade, start_probabilities) {
+    beta = 0.5
+    epsilon = 10e-9
     
     # Generate relative diffusion times for all pairs
-    rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = lambda), nrow = n_nodes)
+    if(model == "exponential") {
+        rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = params), 
+                                 nrow = n_nodes)
+    } else if(model == "log-normal") {
+        rel_diff_times <- matrix(stats::rlnorm(n_nodes^2, meanlog = params[1],
+                                               sdlog = params[2]), 
+                                 nrow = n_nodes)       
+    }
     
     # No diffusion of node to itself
     diag(rel_diff_times) <- 0

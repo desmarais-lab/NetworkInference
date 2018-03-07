@@ -4,6 +4,7 @@ Development version
 
 ## New Features
 
+* `simulate_cascades()` now also supports the log-normal distribution.
 * The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
 * `netinf()` got another **speed-up**. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
 * Number of edges can now be chosen using a **Vuong style test**.

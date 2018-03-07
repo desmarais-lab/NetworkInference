@@ -4,38 +4,35 @@
 \alias{simulate_cascades}
 \title{Simulate cascades from a diffusion network}
 \usage{
-simulate_cascades(diffnet, nsim = 1, seed = NULL, max_time = Inf, lambda,
-  beta, epsilon, model, partial_cascade = NULL, start_probabilities = NULL,
-  nodes = NULL)
+simulate_cascades(diffnet, nsim = 1, max_time = Inf,
+  start_probabilities = NULL, partial_cascade = NULL, params = NULL,
+  model = NULL)
 }
 \arguments{
 \item{diffnet}{object of class \code{diffnet}.}
 
 \item{nsim}{integer, number of cascades to simulate.}
 
-\item{seed}{integer, seed for random number generator.}
-
 \item{max_time}{numeric, the maximum time after which observations are 
 censored}
-
-\item{lambda}{numeric, parameter for diffusion time distribution.}
-
-\item{beta}{numeric, weight for in-network diffusion}
-
-\item{epsilon}{numeric, weight for out of network diffusion}
-
-\item{model}{character, diffusion model to use. One of \code{c("exponential", 
-"rayleigh")}.}
-
-\item{partial_cascade}{object of type cascade, containing one partial 
-cascades for which further development should be simulated.}
 
 \item{start_probabilities}{a vector of probabilities for each node in diffnet,
 to be the node with the first event. If \code{NULL} a node is drawn from
 a uniform distribution over all nodes.}
 
-\item{nodes}{vector of node names, optional, if nodes should be included in 
-simulation that do not occur in \code{diffnet}}
+\item{partial_cascade}{object of type cascade, containing one partial 
+cascades for which further development should be simulated.}
+
+\item{params}{numeric, (optional) parameters for diffusion time distribution. 
+See the details seciont of \code{\link{netinf}} for specification details.
+Only use this argument if parmeters different from those contained in the 
+\code{diffnet} object should be used or the network is not an object of 
+class \code{diffnet}.}
+
+\item{model}{character, diffusion model to use. One of \code{c("exponential", 
+"rayleigh", "log-normal")}. Only use this argument if parmeters different 
+from those contained in the \code{diffnet} object should be used or the 
+network is not an object of class \code{diffnet}.}
 }
 \value{
 A data frame with three columns. Containing 1) The names of 
@@ -51,9 +48,7 @@ and a diffusion network.
 
 data(cascades) 
 out <- netinf(cascades, trans_mod = "exponential", n_edges = 5, params = 1)
-simulated_cascades <- simulate_cascades(out, nsim = 10, lambda = 1, 
-                                        beta = 0.5, epsilon = 10^-9, 
-                                        model = "exponential")
+simulated_cascades <- simulate_cascades(out, nsim = 10)
  
 # Simulation from partial cascade
 
