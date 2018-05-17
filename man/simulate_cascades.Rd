@@ -6,7 +6,7 @@
 \usage{
 simulate_cascades(diffnet, nsim = 1, max_time = Inf,
   start_probabilities = NULL, partial_cascade = NULL, params = NULL,
-  model = NULL)
+  model = NULL, nodes = NULL)
 }
 \arguments{
 \item{diffnet}{object of class \code{diffnet}.}
@@ -33,6 +33,9 @@ class \code{diffnet}.}
 "rayleigh", "log-normal")}. Only use this argument if parmeters different 
 from those contained in the \code{diffnet} object should be used or the 
 network is not an object of class \code{diffnet}.}
+
+\item{nodes}{vector of node ids if different from nodes included in 
+\code{diffnet}}
 }
 \value{
 A data frame with three columns. Containing 1) The names of 

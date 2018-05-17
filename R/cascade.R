@@ -311,6 +311,7 @@ subset_cascade <- function(cascade, selection) {
     return(out)
 }
 
+
 #' Subset a cascade object in time
 #' 
 #' Remove each all events occuring outside the desired subset for each cascade 

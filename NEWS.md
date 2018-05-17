@@ -4,6 +4,7 @@ Development version
 
 ## New Features
 
+* `simulate_cascades()` now supports passing of additional (not included in the network) nodes via the `nodes`
 * `simulate_cascades()` now also supports the log-normal distribution.
 * The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
 * `netinf()` got another **speed-up**. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
@@ -36,6 +37,7 @@ is chosen.
 ## Bug Fixes
 
 * Inference of very uninformative edges could lead for the software to break. Fixed now 
+* In `simulate_cascades()` with partial cascades provided, it was possibel that nodes experienced an event earlier than the last event in the partial cascade. Now, the earliest event time is the last observed event time in the partial cascade.
 
 ## Other changes
 

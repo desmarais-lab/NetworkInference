@@ -60,6 +60,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #'     "rayleigh", "log-normal")}. Only use this argument if parmeters different 
 #'     from those contained in the \code{diffnet} object should be used or the 
 #'     network is not an object of class \code{diffnet}.
+#' @param nodes vector of node ids if different from nodes included in 
+#'     \code{diffnet}
 #'     
 #' @return A data frame with three columns. Containing 1) The names of 
 #'     the nodes (\code{"node_name"}) that experience an event in each cascade, 
@@ -78,7 +80,7 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 simulate_cascades <- function(diffnet, nsim = 1, max_time = Inf, 
                               start_probabilities = NULL,
                               partial_cascade = NULL, params = NULL, 
-                              model = NULL) {
+                              model = NULL, nodes = NULL) {
     # Check inputs
     assert_that(is.diffnet(diffnet))
     assert_that(nsim >= 1)
@@ -93,7 +95,17 @@ simulate_cascades <- function(diffnet, nsim = 1, max_time = Inf,
     if(model == "rayleigh") {
         stop("Rayleigh distribution is not implemented yet. Please choose the exponential or log-normal diffusion model.")
     }
-    nodes <- unique(c(diffnet$origin_node, diffnet$destination_node)) 
+    if(is.null(nodes)) {
+        nodes <- unique(c(diffnet$origin_node, diffnet$destination_node)) 
+        if(any(!is.element(partial_cascade$cascade_nodes[[1]], nodes))) {
+            # TODO: This could be a warning and nodes that are not in the network
+            # could be dropped from the partial cascade
+            stop("There are nodes in the partial cascade that are not part of the diffusion network. Dropping these nodes. If these nodes should be included for potential out-of-network diffusion, please provide them via the `nodes` argument.")
+            #overlap = partial_cascade$cascade_nodes[[1]][
+            #    is.element(partial_cascade$cascade_nodes[[1]], nodes)]
+            #partial_cascade = subset_cascade(partial_cascade, overlap)
+        }
+    }
     n_nodes <- length(nodes)
     
     if(!is.null(start_probabilities) & !is.null(partial_cascade)) {
@@ -138,6 +150,7 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
                               partial_cascade, start_probabilities) {
     beta = 0.5
     epsilon = 10e-9
+    #epsilon = 0.01
     
     # Generate relative diffusion times for all pairs
     if(model == "exponential") {
@@ -147,6 +160,22 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
         rel_diff_times <- matrix(stats::rlnorm(n_nodes^2, meanlog = params[1],
                                                sdlog = params[2]), 
                                  nrow = n_nodes)       
+    }
+    rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
+    
+    # If there are partial cascades, the relative diffusion time from the nodes
+    # observed in the partial cascade prior to the last observed event time
+    # must be at least up to the last observed time
+    if(!is.null(partial_cascade)) {
+        part_casc_times <- partial_cascade$cascade_times[[1]]
+        diff_to_left_censor <- part_casc_times[length(part_casc_times)] - 
+            part_casc_times
+        part_casc_nodes <- partial_cascade$cascade_nodes[[1]]
+        names(diff_to_left_censor) <- part_casc_nodes
+        for(node in part_casc_nodes) {
+           rel_diff_times[node, ] <- rel_diff_times[node, ] + 
+               diff_to_left_censor[node]
+        }
     }
     
     # No diffusion of node to itself
@@ -168,7 +197,6 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
     # Set relative diffusion times between nodes with no corresponding diffusion
     # -edge to 0 
     rel_diff_times <- (X_ - Y)^2 * rel_diff_times
-    rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
     
     if(is.null(partial_cascade)) {
         start_nodes <- sample(x = nodes, size = 1, prob = start_probabilities)
@@ -180,6 +208,11 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
         g <- igraph::graph.adjacency(rel_diff_times, weighted = TRUE, 
                                  mode = "directed")
         dists <- igraph::distances(g, v = start_nodes, mode = "out")
+        # reorder
+        if(!is.null(partial_cascade)) {
+            dists <- dists[partial_cascade$cascade_nodes[[1]], ]
+        }
+        
     } else {
         stop("In order to use this functionality the `igraph` package needs to be installed. Run `install.packages('igraph')` and retry.")
     } 
@@ -193,7 +226,7 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
     ## Add the event time of each node in partial_cascade to shortest path 
     ## from this node (or add 0 if no partial cascade)
     abs_dists <- t(sapply(1:nrow(dists), 
-                          function(i) dists[i, ] + prev_event_times[i]))
+                          function(j) dists[j, ] + prev_event_times[j]))
     d <- apply(abs_dists, 2, min) 
     d <- d[!is.infinite(d)]
     
