@@ -311,6 +311,54 @@ subset_cascade <- function(cascade, selection) {
     return(out)
 }
 
+#' Drop nodes from a cascade object
+#' 
+#' @param cascades cascade, object to drop nodes from.
+#' @param nodes character or integer, vector of node_ids to drop.
+#' @param drop logical, Should empty cascades be dropped.
+#' 
+#' @return An object of class cascade containing the cascades without the 
+#'     dropped nodes.
+#' 
+#' @examples
+#' 
+#' data(policies)
+#' cascades <- as_cascade_wide(policies) 
+#' new_cascades <- drop_nodes(cascades, c("CT", "CA", "NY"))
+#' 
+#' @export
+drop_nodes <- function(cascades, nodes, drop = TRUE) {
+    # Check inputs
+    assert_that(inherits(cascades, 'cascade'))
+    assert_that(all(nodes %in% cascades$node_names))
+    c_length <- length(cascades$cascade_nodes)
+    cascade_ids <- names(cascades$cascade_nodes)
+    
+    # Drop nodes from cascade_nodes, cascade_times and node_names 
+    drop_idxs <- lapply(cascades$cascade_nodes, function(x) which(x %in% nodes))
+    cascade_nodes <- lapply(1:c_length, function(i) {
+       cascades$cascade_nodes[[i]][-drop_idxs[[i]]] 
+    })
+    names(cascade_nodes) <- cascade_ids
+    cascade_times <- lapply(1:c_length, function(i) {
+       cascades$cascade_times[[i]][-drop_idxs[[i]]] 
+    })
+    names(cascade_times) <- cascade_ids
+    node_names <- cascades$node_names[!cascades$node_names %in% nodes]
+    
+    # Check for empty cascades
+    if(drop) {
+       cascade_nodes <- remove_zero_length_(cascade_nodes)
+       cascade_times <- remove_zero_length_(cascade_times)
+    }
+    
+    out <- list(cascade_nodes = cascade_nodes, cascade_times = cascade_times,
+                node_names = node_names)
+    class(out) <- c('cascade', 'list')
+    return(out)
+}
+
+
 
 #' Subset a cascade object in time
 #' 

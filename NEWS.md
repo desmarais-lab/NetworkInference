@@ -4,6 +4,7 @@ Development version
 
 ## New Features
 
+* New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.
 * `simulate_cascades()` now supports passing of additional (not included in the network) nodes via the `nodes`
 * `simulate_cascades()` now also supports the log-normal distribution.
 * The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
