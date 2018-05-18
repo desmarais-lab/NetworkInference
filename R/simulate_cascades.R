@@ -145,39 +145,69 @@ simulate_cascades <- function(diffnet, nsim = 1, max_time = Inf,
 }
 
 
+rltruncexp <- function(n, rate, ltrunc) {
+    stats::qexp(stats::runif(n, min = stats::pexp(ltrunc, rate = rate), 
+                             max = 1), rate = rate)
+}
+
+rltrunclnorm <- function(n, meanlog, sdlog, ltrunc) {
+    stats::qlnorm(stats::runif(n, min = stats::plnorm(ltrunc, meanlog = meanlog,
+                                                      sdlog = sdlog)),
+                  meanlog = meanlog, sdlog = sdlog)
+}
+
+# This function generates a matrix of relative diffusion times (rows senders,
+# columns receivers) where all diffusion times sent by the nodes involved in the
+# partial cascade are left truncated to be at least long enough to not infect 
+# any nodes before the absolute left censoring time (the last infection time
+# in the partial cascade).
+truncated_rel_diff_times <- function(n_nodes, nodes, partial_cascade, model, 
+                                     params) {
+    out <- matrix(stats::rexp(n_nodes^2, rate = params), nrow = n_nodes)
+    rownames(out) <- colnames(out) <- nodes
+    
+    # Get the truncation point for each node in the partial cascade     
+    pc_times <- partial_cascade$cascade_times[[1]]
+    trunc_points <- pc_times[length(pc_times)] - pc_times
+   
+    # Truncated draws for nodes in partial cascade 
+    pc_nodes = partial_cascade$cascade_nodes[[1]]
+    
+    if(model == 'exponential') {
+        out[pc_nodes, ] = t(sapply(trunc_points, 
+                                   function(x) rltruncexp(n_nodes, params, x)))
+    } else if(model == "log-normal") {
+        out[pc_nodes, ] = t(sapply(trunc_points, 
+                                   function(x) rltrunclnorm(n_nodes, params[1], 
+                                                            params[2], x)))
+    }
+    return(out)    
+}
+
 # Simulate a single cascade from scratch (random first event node)
 simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_, 
                               partial_cascade, start_probabilities) {
     beta = 0.5
     epsilon = 10e-9
-    #epsilon = 0.01
-    
+   
     # Generate relative diffusion times for all pairs
-    if(model == "exponential") {
-        rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = params), 
-                                 nrow = n_nodes)
-    } else if(model == "log-normal") {
-        rel_diff_times <- matrix(stats::rlnorm(n_nodes^2, meanlog = params[1],
-                                               sdlog = params[2]), 
-                                 nrow = n_nodes)       
-    }
-    rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
-    
-    # If there are partial cascades, the relative diffusion time from the nodes
-    # observed in the partial cascade prior to the last observed event time
-    # must be at least up to the last observed time
-    if(!is.null(partial_cascade)) {
-        part_casc_times <- partial_cascade$cascade_times[[1]]
-        diff_to_left_censor <- part_casc_times[length(part_casc_times)] - 
-            part_casc_times
-        part_casc_nodes <- partial_cascade$cascade_nodes[[1]]
-        names(diff_to_left_censor) <- part_casc_nodes
-        for(node in part_casc_nodes) {
-           rel_diff_times[node, ] <- rel_diff_times[node, ] + 
-               diff_to_left_censor[node]
+    if(is.null(partial_cascade)) {
+        if(model == "exponential") {
+            rel_diff_times <- matrix(stats::rexp(n_nodes^2, rate = params), 
+                                     nrow = n_nodes)
+        } else if(model == "log-normal") {
+            rel_diff_times <- matrix(stats::rlnorm(n_nodes^2, meanlog = params[1],
+                                                   sdlog = params[2]), 
+                                     nrow = n_nodes)       
         }
+        rownames(rel_diff_times) <- colnames(rel_diff_times) <- nodes
+    } else {
+        rel_diff_times <- truncated_rel_diff_times(n_nodes, nodes, 
+                                                   partial_cascade, model, 
+                                                   params)
     }
-    
+   
+   
     # No diffusion of node to itself
     diag(rel_diff_times) <- 0
     if(!is.null(partial_cascade)) {
