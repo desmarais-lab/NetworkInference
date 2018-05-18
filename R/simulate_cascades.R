@@ -240,7 +240,7 @@ simulate_cascade_ <- function(i, nodes, n_nodes, params, max_time, model, X_,
         dists <- igraph::distances(g, v = start_nodes, mode = "out")
         # reorder
         if(!is.null(partial_cascade)) {
-            dists <- dists[partial_cascade$cascade_nodes[[1]], ]
+            dists <- dists[partial_cascade$cascade_nodes[[1]], , drop = FALSE]
         }
         
     } else {
