@@ -1,13 +1,13 @@
-# NetworkInference 1.1.2.9000
+---
 
-Development version
+# NetworkInference 1.1.2.9000 (current developmen version)
+
+---
 
 ## New Features
 
-* New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.
-* `simulate_cascades()` now supports passing of additional (not included in the network) nodes via the `nodes`
-* `simulate_cascades()` now also supports the log-normal distribution.
-* The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
+#### Changes to `netinf()`
+
 * `netinf()` got another **speed-up**. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
 * Number of edges can now be chosen using a **Vuong style test**.
 * This lead to the netinf output having a **fourth column** now, containing the 
@@ -23,6 +23,15 @@ is chosen.
 * `n_edges` can now specify either an absolute number of edges, or a p-value
     cutoff in the interval `(0, 1)` for the Vuong test
 * The log normal distribution is now available as a diffusion model. With this comes a **change in the arguments** for `netinf`. Instead of `lambda`, parameters are now specified with a vector (or scalar depending on distribution) `params`. For exponential and rayleigh distributions `params` is just the rate / alpha parameter. For the log-normal distribution `params` specifies mean and variance (in that order). See the `netinf()` documentation for details on specificaiton and parametrization (`?netinf`).
+* The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
+
+#### New functions
+* New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.
+
+#### Changes to `simulate_cascades()`
+* `simulate_cascades()` now supports passing of additional (isolated in the diffusion network) nodes via the `nodes` argument.
+* `simulate_cascades()` now also supports the log-normal distribution.
+
 
 ## Bug Fixes
 
@@ -33,7 +42,11 @@ is chosen.
 
 * C++ code is now modularized and headers are properly documented
 
+---
+
 # NetworkInference 1.1.2
+
+---
 
 ## New Features
 
@@ -47,14 +60,22 @@ is chosen.
 * `as_cascade_long()` and `as_cascade_wide()` handle date input correctly now.
 * `as_cascade_wide()` couldn't handle data input of class `data.table`. 
 
+---
+
 # NetworkInference 1.1.1
+
+---
 
 ## Bug Fixes
 
 * Use of igraph now conditional compliant with Writing R Extensions [1.1.3.1](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Suggested-packages)
 * Fixed version number displayed in startup message
 
+---
+
 # NetworkInference 1.1.0
+
+---
 
 ## New Features
 
@@ -65,7 +86,10 @@ is chosen.
 * x and y axis labels in `plot.cascade` with option `label_nodes=FALSE` were
     reversed
 
+---
 
 # NetworkInference 1.0.0
+
+---
 
 First release

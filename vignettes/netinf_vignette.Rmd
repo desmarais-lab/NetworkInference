@@ -181,14 +181,13 @@ plot(policy_cascades, label_nodes = FALSE, selection = selection)
 This produces a ['violin plot'](https://en.wikipedia.org/wiki/Violin_plot) for each cascade with the single diffusion events overplotted as dots. As we already saw in the previous visualization, the policy data has a lot of ties (i.e. many states adopted a policy in the same year) which is indicated by the areas of higher density in the violin plot.
 
 
-
 ## Inferring the Latent Diffusion Network
 
 The `netinf` algorithm is implemented in the `netinf()` function. The `netinf` inferrs edges based on a diffusion model. That is we assume a parametric model for the diffusion times between edges. Currently three different diffusion models are implemented: The exponential distribution, the rayleigh distribution and the log-normal distribution. The model can be chosen with the `trans_mod` argument (default is the exponential distribution). 
 
 ### Classic Netinf
 
-In the original implementation the parameters of that distribution are a tuning parameter, i.e. they have to be chosen manually. Furthermore, the number of edges to infer has to be fixed too. If you want to run `netinf` in this classic way you can do so by specifiying the respective parameters (see below for an explanation of the `max_iter` option):
+In the original implementation the number of edges to infer had to be fixed and chosen by the researcher. If you want to run `netinf` in this classic way you can do so by specifiying all parameters and the number of edges:
 
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
@@ -223,18 +222,11 @@ We see that with a fixed lambda of 0.5 and a p-value cut-off of 0.1 the algorith
 
 #### Selecting the parameters of the diffusion model
 
-The diffusion model parameters can be selected automatically. Setting the `params` argument to `NULL` (default value) makes the `netinf` function infer parameters iteratively using approximate profile maximum likelihood. The parameters are initialized at the midpoint between the MLE of the minimum diffusion times and the MLE of the maximum diffusion times, across all cascades. Edges are then inferred until either the p-value cut-off or a manually specified number of edges (`n_edges`) is reached. The parameters are then updated using the diffusion times that result when using the inferred edges for the diffusion tree of each cascades. This procedure is repeated until either the network converges (i.e. all inferred edges are the same) or `max_iter` iterations are reached (if we want to just initialize the parameters automatically but not update them we can just set `max_iter = 1` and `params = NULL`). 
+The diffusion model parameters can be selected automatically. Setting the `params` argument to `NULL` (default value) makes the `netinf` function initialize the parameters automatically. The parameters are initialized at the midpoint between the MLE of the minimum diffusion times and the MLE of the maximum diffusion times, across all cascades. Edges are then inferred until either the p-value cut-off or a manually specified number of edges (`n_edges`) is reached. 
 
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
                   , quiet = TRUE)
-```
-
-The final parameter values and number of iterations used can be acessed from the results object via the attributes `diffusion_model_parameters` and `n_iterations`:
-
-```{r}
-attr(results, 'diffusion_model_parameters')
-attr(results, 'n_iterations')
 ```
 
 ### Netinf output
