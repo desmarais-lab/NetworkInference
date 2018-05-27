@@ -5,7 +5,7 @@
 \title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges = 0.05, params = NULL,
-  quiet = FALSE, max_iter = 10)
+  quiet = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -21,15 +21,11 @@ edges are inferred in each iteration until the Vuong test for edge
 addition reaches the p-value of \code{n_edges} or when the maximum 
 possible number of edges is reached.}
 
-\item{params}{numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
-optimal parameters are inferred using profile maximum likelihood. If
-parameters should be fixed see details for how to specify parameters for
-the different distributions.}
+\item{params}{numeric, Parameters for diffusion model. If left unspecified 
+reasonable parameters are inferred from the data. See details for how to 
+specify parameters for the different distributions.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
-
-\item{max_iter, }{integer, maximum number of iteration for profile likelihood
-estimation. Only used if \code{optimize=TRUE}.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 
@@ -44,9 +40,6 @@ Returns the inferred diffusion network as an edgelist in an object of
         \item \code{"diffusion_model_parameters"}: The parameters for the 
             model that have been infered by the approximate profile MLE 
             procedure.
-        \item \code{"n_iterations"}: The number of iterations to convergence.
-        \item \code{"converged"}: Logical, did the parameter optimization 
-            converge.
     }
 }
 \description{

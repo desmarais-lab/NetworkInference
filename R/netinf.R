@@ -32,18 +32,15 @@
 #'     \code{\link{as_cascade_wide}} for details. 
 #' @param trans_mod character, indicating the choice of model: 
 #'      \code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.
-#' @param params numeric, Parameters for diffusion model. If left unspecified (\code{NULL}) 
-#'     optimal parameters are inferred using profile maximum likelihood. If
-#'     parameters should be fixed see details for how to specify parameters for
-#'     the different distributions.
+#' @param params numeric, Parameters for diffusion model. If left unspecified 
+#'     reasonable parameters are inferred from the data. See details for how to 
+#'     specify parameters for the different distributions.
 #' @param n_edges integer or numeric, If integer number of edges to infer per
 #'     iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
 #'     edges are inferred in each iteration until the Vuong test for edge 
 #'     addition reaches the p-value of \code{n_edges} or when the maximum 
 #'     possible number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
-#' @param max_iter, integer, maximum number of iteration for profile likelihood
-#'     estimation. Only used if \code{optimize=TRUE}.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -57,9 +54,6 @@
 #'         \item \code{"diffusion_model_parameters"}: The parameters for the 
 #'             model that have been infered by the approximate profile MLE 
 #'             procedure.
-#'         \item \code{"n_iterations"}: The number of iterations to convergence.
-#'         \item \code{"converged"}: Logical, did the parameter optimization 
-#'             converge.
 #'     }
 #'  
 #' @references 
@@ -80,7 +74,7 @@
 #' 
 #' @export
 netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05, 
-                   params=NULL, quiet = FALSE, max_iter = 10) {
+                   params = NULL, quiet = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
@@ -145,75 +139,21 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
         if(!quiet) cat('Initialized parameters with: ', params, '\n')
     }
     
-    # Run netinf and optimize paramters if required
+    # Run netinf 
     df_cascades <- data.table(as.data.frame(cascades))
     setkey(df_cascades, "node_name", "cascade_id")
     network <- data.frame(origin_node = "", destination_node = "")
-    convergence <- FALSE
-    i <- 1
-    while((i <= max_iter) & (!convergence)) {
-        if(!quiet) cat("Iteration", i, "\n")
-        netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
-                              cascade_times = cascades$cascade_times, 
-                              model = model, params = params, n_edges = n_edges, 
-                              quiet = quiet, auto_edges = auto_edges, 
-                              cutoff = cutoff)
-        # Extract the trees and cast them into data frame
-        tree_dfs <- lapply(1:length(netinf_out[[3]]), function(i) {
-            x <- netinf_out[[3]][[i]]
-            out <- as.data.frame(cbind(x[[1]], x[[2]], rep(i, length(x[[1]]))))}
-            )
-        trees_df <- do.call(rbind, tree_dfs)
-        
-        # Replace int node ids with node_names 
-        trees_df$child <- do.call(c, cascades$cascade_nodes)
-        trees_df <- trees_df[!is.na(trees_df[, 2]), ]
-        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
-        casc_names <- names(cascades$cascade_nodes)
-        trees_df[, 3] <- casc_names[trees_df[, 3]] 
-        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child")
-        trees_df <- data.table(trees_df) 
-        
-        # Join trees_df with the event times for each node in each cascade
-        # to get diffusion times 
-        setkey(trees_df, "parent", "cascade_id") 
-        trees <- trees_df[df_cascades, nomatch=0]
-        setnames(trees, "event_time", "parent_time")
-        setkey(trees, "child", "cascade_id") 
-        trees <- trees[df_cascades, nomatch=0] 
-        setnames(trees, "event_time", "child_time")
-        trees$diffusion_time = trees$child_time - trees$parent_time
-        
-        # Calculate new parameter values based on diffusion times in inferred 
-        # trees 
-        if(max_iter > 1) {
-            if(model == "exponential") {
-                params = 1 / mean(trees$diffusion_time)
-            } else if(model == "rayleigh") {
-                N <- nrow(trees)
-                sh <- sqrt(sum(trees$diffusion_time^2) / 2 * N)
-                adjustment <- exp(lgamma(N) + log(sqrt(N))) / exp(lgamma(N + 1 / 2))
-                params <- sh * adjustment
-            } else if(model == "log-normal") {
-                params <- c(mean(log(trees$diffusion_time)), 
-                            sqrt(stats::var(log(trees$diffusion_time))))
-            }
-            if(!quiet) cat('New parameter values: ', params, '\n')           
-        }
+    
+    netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
+                          cascade_times = cascades$cascade_times, 
+                          model = model, params = params, n_edges = n_edges, 
+                          quiet = quiet, auto_edges = auto_edges, 
+                          cutoff = cutoff)
+       
 
-        new_network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
-                                     netinf_out[[2]]),
-                                     stringsAsFactors = FALSE)
- 
-        if(identical(new_network, network)){
-            convergence = TRUE 
-        } 
-        network <- new_network
-        i = i + 1
-    }
-    if(!convergence & (max_iter > 1)) {
-        warning("Reach maximum number of iterations without convergence of the network. Consider increasing max_iter in the netinf call.")
-    }
+    network <- as.data.frame(cbind(do.call(rbind, netinf_out[[1]]), 
+                             netinf_out[[2]]), stringsAsFactors = FALSE)
+
   
     ## Replace integer node_ids with node_names
     ### In the edgelist
@@ -222,12 +162,8 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     colnames(network) <- c("origin_node", "destination_node", "improvement")
     network$p_value <- netinf_out[[4]]
     class(network) <- c("diffnet", "data.frame")
-    # Store final parameter values
     attr(network, "diffusion_model") = model
     attr(network, "diffusion_model_parameters") = params
-    attr(network, "n_iterations") = i
-    attr(network, "converged") = convergence
-    
     
     return(network) 
 }

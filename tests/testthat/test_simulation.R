@@ -6,7 +6,7 @@ if (requireNamespace("igraph", quietly = TRUE)) {
     data(cascades)
     test_that("Simulation function works.", {
         from_netinf <- netinf(cascades, params = 1, trans_mod = "exponential",
-                              n_edges = 5, quiet = TRUE, max_iter = 1)
+                              n_edges = 5, quiet = TRUE)
         set.seed(123)
         out <- simulate_cascades(from_netinf, nsim = 100, max_time = 10)
         casc <- as_cascade_long(out)

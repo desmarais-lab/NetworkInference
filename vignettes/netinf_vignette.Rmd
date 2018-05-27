@@ -192,7 +192,7 @@ In the original implementation the parameters of that distribution are a tuning 
 
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 100, 
-                  params = 0.5, max_iter = 1, quiet = TRUE)
+                  params = 0.5, quiet = TRUE)
 ```
 
 The exponential model has only one parameter (lambda or the rate). If there are more parameters the details section in the documentation of the `netinf` function (`?netinf`) has more detail on how to specify parameters and on the specific parametrization used by the implementation. 
@@ -215,7 +215,7 @@ After each iteration of the netinf algorithm, we check if the edge added signifi
 
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
-                  params = 0.5, max_iter = 1, quiet = TRUE)
+                  params = 0.5, quiet = TRUE)
 nrow(results)
 ```
 
@@ -227,7 +227,7 @@ The diffusion model parameters can be selected automatically. Setting the `param
 
 ```{r}
 results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
-                  max_iter = 10, quiet = TRUE)
+                  , quiet = TRUE)
 ```
 
 The final parameter values and number of iterations used can be acessed from the results object via the attributes `diffusion_model_parameters` and `n_iterations`:

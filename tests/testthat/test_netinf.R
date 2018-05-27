@@ -14,11 +14,3 @@ test_that("netinf produces the edges as original netinf executable.", {
     class(t2) <- c("diffnet", "data.frame")
     expect_equal(t1, t2)
 })
-
-test_that("netinf with automatic parameter search works ", {
-    data(sim_validation)
-    cascades <- sim_validation$input
-    validation <- sim_validation$output
-    from_netinf <- netinf(cascades, n_edges = 0.05, quiet = TRUE)
-    expect_equal(from_netinf, validation)    
-})
