@@ -149,7 +149,10 @@ as_cascade_long <- function(data, cascade_node_name = "node_name",
 #' @examples 
 #' 
 #' data("policies")
-#' cascades <- as_cascade_wide(policies)
+#' cascades <- as_cascade_long(policies, cascade_node_name = 'statenam', 
+#'                             event_time = 'adopt_year', cascade_id = 'policy')
+#' wide_policies = as.matrix(cascades)
+#' cascades <- as_cascade_wide(wide_policies)
 #' is.cascade(cascades)
 #' 
 #' @export
@@ -290,7 +293,8 @@ as.matrix.cascade <- function(x, ...) {
 #' @examples
 #' 
 #' data(policies)
-#' cascades <- as_cascade_wide(policies) 
+#' cascades <- as_cascade_long(policies, cascade_node_name = 'statenam', 
+#'                             event_time = 'adopt_year', cascade_id = 'policy')
 #' cascade_names <- names(cascades$cascade_times)
 #' subset_cascade(cascades, selection = cascade_names[1:10])
 #' 
@@ -323,8 +327,9 @@ subset_cascade <- function(cascade, selection) {
 #' @examples
 #' 
 #' data(policies)
-#' cascades <- as_cascade_wide(policies) 
-#' new_cascades <- drop_nodes(cascades, c("CT", "CA", "NY"))
+#' cascades <- as_cascade_long(policies, cascade_node_name = 'statenam', 
+#'                             event_time = 'adopt_year', cascade_id = 'policy')
+#' new_cascades <- drop_nodes(cascades, c("California", "New York"))
 #' 
 #' @export
 drop_nodes <- function(cascades, nodes, drop = TRUE) {

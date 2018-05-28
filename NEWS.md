@@ -8,7 +8,8 @@
 
 #### Changes to `netinf()`
 
-* `netinf()` got another **speed-up**. After the first edge, the computation time for each edge is reduced by the factor number of nodes in the network
+* `netinf()` got another **speed-up**. After the first edge, the computation 
+    time for each edge is reduced by the factor number of nodes in the network
 * Number of edges can now be chosen using a **Vuong style test**.
 * This lead to the netinf output having a **fourth column** now, containing the 
 p-value for each edge. The p-value is also available if a fixed number of edges
@@ -22,8 +23,18 @@ is chosen.
     times (assuming a diffusion 'fan', i.e. `a -> b, a -> c, a -> d,...`).
 * `n_edges` can now specify either an absolute number of edges, or a p-value
     cutoff in the interval `(0, 1)` for the Vuong test
-* The log normal distribution is now available as a diffusion model. With this comes a **change in the arguments** for `netinf`. Instead of `lambda`, parameters are now specified with a vector (or scalar depending on distribution) `params`. For exponential and rayleigh distributions `params` is just the rate / alpha parameter. For the log-normal distribution `params` specifies mean and variance (in that order). See the `netinf()` documentation for details on specificaiton and parametrization (`?netinf`).
-* The output from `netinf()` now contains information on the model, parameters and iterations as attributes. See the documentation for details.
+* The log normal distribution is now available as a diffusion model. With this 
+    comes a **change in the arguments** for `netinf`. Instead of `lambda`, 
+    parameters are now specified with a vector (or scalar depending on 
+    distribution) `params`. For exponential and rayleigh distributions `params` 
+    is just the rate / alpha parameter. For the log-normal distribution `params` 
+    specifies mean and variance (in that order). See the `netinf()` 
+    documentation for details on specificaiton and parametrization (`?netinf`).
+* The output from `netinf()` now contains information on the model, parameters 
+    and iterations as attributes. See the documentation for details.
+* The `policies` dataset has been updated with over 600 new policies from the 
+    [SPID](https://doi.org/10.7910/DVN/CVYSR7) database 
+    (access via `data(policies)`).
 
 #### New functions
 * New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.

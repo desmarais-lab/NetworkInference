@@ -1,22 +1,36 @@
-#' US States Policy Adaption
+#' US State Policy Adoption (SPID)
 #'
-#' Adoption dates (years) for 187 policies across 50 US states. Compiled by
-#' Desmarais et al. (2015).
+#' The SPID data includes information on the year of adoption for over 700 
+#' policies in the American states. 
+#' 
+#' This version 1.0 of the database. For each policy we document the year of first 
+#' adoption for each state. Adoption dates range from 1691 to 2017 and includes 
+#' all fifty states. Policies are adopted by anywhere from 1 to 50 states, with 
+#' an average of 24 adoptions. The data were assembled from a variety of sources, 
+#' including academic publications and policy advocacy/information groups. 
+#' Policies were coded according to the Policy Agendas Project major 
+#' topic code. Additional information on policies is available at the source 
+#' repository.
 #' 
 #' @name policies
 #' 
 #' @usage data(policies)  
 #' @docType data
 #' 
-#' @format The data is in a matrix format. Rows correspond to states (see rownames) columns
-#'     to policies. Cell entries indicate the year a state adopted a policy. \code{NA} 
-#'     entries indicate states not having adopted a policy at all. 
+#' @format The data comes in a data.frame with each row corresponding to an 
+#'     adoption event. For each event is described by the three columns: 
+#' \itemize{
+#'     \item \code{statenam}: Name of the adopting state.
+#'     \item \code{policy}: Name of the policy.
+#'     \item \code{adopt_year}: Year when the state adopted the policy.
+#' }
 #'     
-#' @source \url{https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/A1GIMB}
+#' @source \url{https://doi.org/10.7910/DVN/CVYSR7}
 #' 
-#' @references Desmarais, B. A., Harden, J. J., & Boehmke, F. J. (2015). 
-#'     Persistent Policy Pathways: Inferring Diffusion Networks in the American States. 
-#'     American Political Science Review, 109(02), 392-406.
+#' @references Boehmke, Frederick J.; Mark Brockway; Bruce A. Desmarais; 
+#'     Jeffrey J. Harden; Scott LaCombe; Fridolin Linder; and 
+#'     Hanna Wallach. 2018. "A New Database for Inferring Public Policy 
+#'     Innovativeness and Diffusion Networks." Working paper.
 "policies"
 
 #load('mkdata-network02.RData')
