@@ -3,14 +3,30 @@
 \docType{data}
 \name{policies}
 \alias{policies}
+\alias{policies_metadata}
 \title{US State Policy Adoption (SPID)}
-\format{The data comes in a data.frame with each row corresponding to an 
-    adoption event. For each event is described by the three columns: 
+\format{The data comes in two objects of class \code{data.frame}. The first
+    object, named \code{policies} contains the adoption events. Each row 
+    corresponds to an adoption event. Each adoption event is described by 
+    the three columns: 
 \itemize{
     \item \code{statenam}: Name of the adopting state.
     \item \code{policy}: Name of the policy.
     \item \code{adopt_year}: Year when the state adopted the policy.
-}}
+}
+The second object (\code{policies_metadata}) contains more details on each
+of the policies. It contains these columns:
+\itemize{
+    \item \code{policy}: Name of the policy.
+    \item \code{source}: Original source of the data.
+    \item \code{first_year}: First year any state adopted this policy.
+    \item \code{last_year}: Last year any state adopted this policy.
+    \item \code{adopt_count}: Number of states that adopted this policy.
+    \item \code{description}: Description of the policy.
+    \item \code{majortopic}: Topic group the policy belongs to.
+} 
+Both \code{data.frame} objects can be joined (merged) on the common column
+\code{policy} (see example code).}
 \source{
 \url{https://doi.org/10.7910/DVN/CVYSR7}
 }
@@ -30,6 +46,13 @@ including academic publications and policy advocacy/information groups.
 Policies were coded according to the Policy Agendas Project major 
 topic code. Additional information on policies is available at the source 
 repository.
+}
+\examples{
+
+data('policies')
+
+# Join the adoption events with the metadata 
+merged_policies <- merge(policies, policies_metadata, by = 'policy')
 }
 \references{
 Boehmke, Frederick J.; Mark Brockway; Bruce A. Desmarais; 
