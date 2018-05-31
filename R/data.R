@@ -17,29 +17,45 @@
 #' @usage data(policies)  
 #' @docType data
 #' 
-#' @format The data comes in a data.frame with each row corresponding to an 
-#'     adoption event. For each event is described by the three columns: 
+#' @format The data comes in two objects of class \code{data.frame}. The first
+#'     object, named \code{policies} contains the adoption events. Each row 
+#'     corresponds to an adoption event. Each adoption event is described by 
+#'     the three columns: 
 #' \itemize{
 #'     \item \code{statenam}: Name of the adopting state.
 #'     \item \code{policy}: Name of the policy.
 #'     \item \code{adopt_year}: Year when the state adopted the policy.
 #' }
+#' The second object (\code{policies_metadata}) contains more details on each
+#' of the policies. It contains these columns:
+#' \itemize{
+#'     \item \code{policy}: Name of the policy.
+#'     \item \code{source}: Original source of the data.
+#'     \item \code{first_year}: First year any state adopted this policy.
+#'     \item \code{last_year}: Last year any state adopted this policy.
+#'     \item \code{adopt_count}: Number of states that adopted this policy.
+#'     \item \code{description}: Number of states that adopted this policy.
+#'     \item \code{majortopic}: Number of states that adopted this policy.
+#' } 
+#' Both \code{data.frame} objects can be joined (merged) on the common column
+#' \code{policy} (see example code).
 #'     
 #' @source \url{https://doi.org/10.7910/DVN/CVYSR7}
+#' 
+#' @aliases policies policies_metadata
 #' 
 #' @references Boehmke, Frederick J.; Mark Brockway; Bruce A. Desmarais; 
 #'     Jeffrey J. Harden; Scott LaCombe; Fridolin Linder; and 
 #'     Hanna Wallach. 2018. "A New Database for Inferring Public Policy 
 #'     Innovativeness and Diffusion Networks." Working paper.
+#'     
+#' @examples
+#' 
+#' data('policies')
+#' 
+#' # Join the adoption events with the metadata 
+#' merged_policies <- merge(policies, policies_metadata, by = 'policy')
 "policies"
-
-#load('mkdata-network02.RData')
-#
-#rownames(x) <- x[, 4]
-#policies <- x[, -c(1:4)]
-#policies <- as.matrix(policies)
-#save(policies, file = 'data/policies.RData')
-
 
 #' Example cascades
 #'
