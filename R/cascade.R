@@ -367,7 +367,7 @@ drop_nodes <- function(cascades, nodes, drop = TRUE) {
 
 #' Subset a cascade object in time
 #' 
-#' Remove each all events occuring outside the desired subset for each cascade 
+#' Remove each all events occurring outside the desired subset for each cascade 
 #' in a cascade object.
 #' 
 #' @param cascade cascade, object to subset.
