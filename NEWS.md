@@ -10,7 +10,10 @@
 
 * `netinf()` got another **speed-up**. After the first edge, the computation 
     time for each edge is reduced by the factor number of nodes in the network
-* Number of edges can now be chosen using a **Vuong style test**.
+* Number of edges can now be chosen using a **Vuong style test**. If this 
+    procedure should be used, a p-value is chosen at which the inference of new
+    edges stops. This value is specified via the new `p_value_cutoff` argument
+    to `netinf()`.
 * This lead to the netinf output having a **fourth column** now, containing the 
 p-value for each edge. The p-value is also available if a fixed number of edges
 is chosen.

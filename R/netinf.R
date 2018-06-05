@@ -34,11 +34,13 @@
 #' @param params numeric, Parameters for diffusion model. If left unspecified 
 #'     reasonable parameters are inferred from the data. See details for how to 
 #'     specify parameters for the different distributions.
-#' @param n_edges integer or numeric, If integer number of edges to infer per
-#'     iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
-#'     edges are inferred in each iteration until the Vuong test for edge 
-#'     addition reaches the p-value of \code{n_edges} or when the maximum 
-#'     possible number of edges is reached.
+#' @param n_edges integer, number of edges to infer. Leave unspecified if using 
+#'     \code{p_value_cutoff}.
+#' @param p_value_cutoff numeric, in the interval (0, 1). If 
+#'     specifie, edges are inferred in each iteration until the Vuong test for 
+#'     edge addition reaches the p-value cutoff or when the maximum 
+#'     possible number of edges is reached. Leave unspecified if using 
+#'     \code{n_edges} to explicitly specify number of edges to infer.
 #' @param quiet logical, Should output on progress by suppressed.
 #' @param trees logical, Should the inferred cascade trees be returned. Note, 
 #'     that this will lead to a different the structure of the function output. 
@@ -79,25 +81,29 @@
 #' out <- netinf(cascades2, trans_mod = "exponential", n_edges = 5, params = 1)
 #' 
 #' @export
-netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05, 
-                   params = NULL, quiet = FALSE, trees = FALSE) {
+netinf <- function(cascades, trans_mod = "exponential", n_edges = NULL, 
+                   p_value_cutoff = NULL, params = NULL, quiet = FALSE, 
+                   trees = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
     qassert(trans_mod, "S1")
-    # If no number of edges is specified edge selection is automated via Vuong
-    # Test
-    if(qtest(n_edges, "X1")) {
+    if(is.null(n_edges) & is.null(p_value_cutoff)) {
+        stop('Please specify either `n_edges` or `p_value_cutoff`.')
+    }
+    if(!is.null(n_edges) & !is.null(p_value_cutoff)) {
+        stop('Please only specify either `n_edges` or `p_value_cutoff`.')
+    }
+    if(!is.null(n_edges)) {
         qassert(n_edges, "X1[1,)")
         auto_edges <- FALSE 
         cutoff <- 0 # Not used
-    } else if(qtest(n_edges, "R1")) {
-        qassert(n_edges, "R1(0,1]")
+    } else {
+        qassert(p_value_cutoff, "R1(0,1]")
         auto_edges <- TRUE
-        cutoff <- n_edges
+        cutoff <- p_value_cutoff
         n_edges <- 0 # Not used since n_edges inferred form cutoff
-    } else stop(paste("n_edges has to be either an integer > 1 or a p-value",
-                      "cutoff (0, 1]"))
+    } 
     
     model <- match.arg(trans_mod, c("exponential", "rayleigh", 'log-normal'))
     

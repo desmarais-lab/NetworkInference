@@ -4,8 +4,8 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges = 0.05, params = NULL,
-  quiet = FALSE, trees = FALSE)
+netinf(cascades, trans_mod = "exponential", n_edges = NULL,
+  p_value_cutoff = NULL, params = NULL, quiet = FALSE, trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -15,11 +15,14 @@ information. See \code{\link{as_cascade_long}} and
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.}
 
-\item{n_edges}{integer or numeric, If integer number of edges to infer per
-iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
-edges are inferred in each iteration until the Vuong test for edge 
-addition reaches the p-value of \code{n_edges} or when the maximum 
-possible number of edges is reached.}
+\item{n_edges}{integer, number of edges to infer. Leave unspecified if using 
+\code{p_value_cutoff}.}
+
+\item{p_value_cutoff}{numeric, in the interval (0, 1). If 
+specifie, edges are inferred in each iteration until the Vuong test for 
+edge addition reaches the p-value cutoff or when the maximum 
+possible number of edges is reached. Leave unspecified if using 
+\code{n_edges} to explicitly specify number of edges to infer.}
 
 \item{params}{numeric, Parameters for diffusion model. If left unspecified 
 reasonable parameters are inferred from the data. See details for how to 
