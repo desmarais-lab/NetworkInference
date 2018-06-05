@@ -1,13 +1,21 @@
 ---
-title: "NetworkInference: Inferring Latent Diffusion Networks"
-author: "Fridolin Linder"
+title: "NetworkInference Tutorial: Persistent Policy Diffusion Ties"
+author: "Fridolin Linder and Bruce Desmarais"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{NetworkInference: Inferring Latent Diffusion Networks}
+  %\VignetteIndexEntry{NetworkInference Tutorial: Persistent Policy Diffusion Ties}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 
 ---
 
@@ -15,95 +23,35 @@ vignette: >
 
 ---
 
-This package provides an R implementation of the netinf algorithm 
-created by @gomez2010inferring (see [here](http://snap.stanford.edu/netinf/) 
-for more information and the original C++ implementation). Given a set of events 
-that spread between a set of nodes the algorithm infers the most likely stable 
-diffusion network that is underlying the diffusion process.
+In this tutorial we go through some of the functionality of the `NetworkInference` package using the example application from Desmarais et al. (2015) and extending it with the recently released [State Policy Innovation and Diffusion](https://doi.org/10.7910/DVN/CVYSR7) (SPID) database. In this paper Desmarais et al. infer a latent network for policy diffusion based on adoption of policies in the US states.
 
----
+`netinf` infers the optimal diffusion network from a set of *nodes* (in this case US-states) and a number of so called *cascades* (here a cascade corresponds to a policy that is adopted by at least two states). A cascade is a series of events occurring at 
+a specified time. 
 
-# Installation
+## Installing the package
 
----
-
-The package can be installed from [CRAN](https://CRAN.R-project.org/):
+Installing `NetworkInference`:
 ```{r, eval=FALSE}
-install.packages("NetworkInference")
+install.packages('NetworkInference')
 ```
 
-The latest development version can be installed from 
-[github](https://github.com/desmarais-lab/NetworkInference):
+
+Some other packages required for this tutorial:
 ```{r, eval=FALSE}
-#install.packages(devtools)
-devtools::install_github('desmarais-lab/NetworkInference')
+install.packages(c('dplyr', 'igraph'))
 ```
 
----
-
-# Quick start guide
-
----
-
-To get started, get your data into the `cascades` format required by the `netinf` 
-function:
-
-```{r, results='hide', message=FALSE}
-library(NetworkInference)
-
-# Simulate random cascade data
-df <- simulate_rnd_cascades(50, n_node = 20)
-
-# Cast data into `cascades` object
-## From long format
-cascades <- as_cascade_long(df)
-
-## From wide format
-df_matrix <- as.matrix(cascades) ### Create example matrix
-cascades <- as_cascade_wide(df_matrix)
-```
-
-Then fit the model:
-```{r}
-result <- netinf(cascades, quiet = TRUE)
-```
-
-```{r, eval=FALSE}
-head(result)
-```
-```{r, results="asis", echo=FALSE}
-pander::pandoc.table(head(result))
-```
-
----
-
-# Tutorial
-
----
-
-This is a quick tutorial to get started with the package. For more detailed 
-information on the algorithm and functionality of the package see the 
-package documentation.
-
-`netinf` infers the optimal diffusion network from a set of *nodes* 
-and a number of so called *cascades*. A cascade is a series of events occurring at 
-a specified time. For this demo we will replicate the analysis presented in 
-@desmarais2015persistent including additional data collected in the [SPID Database](https://doi.org/10.7910/DVN/CVYSR7). In this paper Desmarais et al. infer a latent network
-for policy diffusion based on adoption of policies in the US states. In this
-case a node in the network is a state, a cascade refers to a specific policy and
-an event is the adoption of said policy in a state.  
-
-## Preparing the Data
+## Exploring SPID Data
 
 The policy adoption data is available in the package:
 
 ```{r, message=FALSE}
 library(NetworkInference)
 # Load the `policies` dataset (?policies for details).
-data(policies)
+data('policies')
 ```
 
-The data is stored as a `data.frame` where each row corresponds to an adoption event.
+This loads two `data.frame`-objects. `policies` contains the adoption events and `policies_metadata` contains additional information on each policy.
 
 ```{r, eval=FALSE}
 head(policies)
@@ -113,7 +61,35 @@ head(policies)
 pander::pandoc.table(head(policies))
 ```
 
-The first column (`statenam`) gives the state that adopted the `policy` in year `adopt_year`. More information on the policies can be found in the [SPID repository](https://doi.org/10.7910/DVN/CVYSR7).
+The first column (`statenam`) gives the state that adopted the `policy` in year `adopt_year`. Let's take a closer look at the data.
+
+Number of policies:
+```{r}
+length(unique(policies$policy))
+```
+Number of adoption events:
+```{r}
+nrow(policies)
+```
+Some example policies:
+```{r}
+unique(policies$policy)[1:5]
+```
+
+Not all the policy abbreviations are understandable. So let's check the metadata for more information:
+```{r, eval=FALSE}
+library(dplyr)
+filter(policies_metadata, policy %in% unique(policy)[100:104]) %>%
+    select(-source)
+```
+```{r, results="asis", echo=FALSE, message=FALSE}
+library(dplyr)
+pander::pandoc.table(filter(policies_metadata, policy %in% unique(policy)[100:104]) %>%
+                         select(-source))
+```
+
+
+## Preparing the Data for NetworkInference
 
 Most functionality of the `NetworkInference` package is based on the `cascades` 
 data format. So before starting with the analysis we have to transform our data
@@ -126,6 +102,49 @@ policy_cascades <- as_cascade_long(policies, cascade_node_name = 'statenam',
 ```
 
 In this case we used the function `as_cascade_long`. If your data is in wide format you can convert it using the function `as_cascade_wide`.
+
+The `cascade` class contains the same data as the `policies` `data.frame`, just in a different format. You don't need to understand how the object is constructed but let's take a look for clarity:
+
+```{r}
+class(policy_cascades)
+length(policy_cascades)
+names(policy_cascades)
+```
+
+The `cascade` class is basically a list containing three elements: 
+
+```{r}
+policy_cascades$cascade_nodes[2:3]
+```
+
+```{r}
+policy_cascades$cascade_times[2:3]
+```
+
+There are a few convenience functions to manipulate the cascades (but you can also manipulate the data before converting it to the `cascade` format).
+
+### Subsetting by Cascade
+```{r}
+selected_policies <- subset_cascade(cascade = policy_cascades, 
+                                    selection = c('clinic_access', 'cogrowman'))
+selected_policies[1:2]
+```
+
+## Subsetting in Time
+
+```{r}
+time_constrained <- subset_cascade_time(cascade = selected_policies, 
+                                        start_time = 1990, end_time = 2000)
+time_constrained[1:2]
+```
+
+## Removing Nodes (States)
+
+```{r}
+less_nodes <- drop_nodes(cascades = time_constrained, 
+                         nodes = c('Maryland', 'Washington'))
+less_nodes[1:2]
+```
 
 ### Visually Inspecting Cascades
 
@@ -210,11 +229,11 @@ With version 1.2.0 `netinf` can be run without manually specifying the number of
 
 #### Selecting the number of edges automatically
 
-After each iteration of the netinf algorithm, we check if the edge added significant improvement to the network. This is done via a vuong style test. Given the likelihood score for each cascade conditional on the network inferred so far, we penalize the network with one addional edge and test if the increase in likelihood accross all cascades is significant. The user still has to specify a p-value cut-off. If the p-value of an edge is larger than the specified cut-off the algorithm stops inferring more edges. The cut-off is again set via the `n_edges` argument. Setting it to a value in the interval (0,1) let's the funciton use the p-value procedure and uses that cut-off:
+After each iteration of the netinf algorithm, we check if the edge added significant improvement to the network. This is done via a vuong style test. Given the likelihood score for each cascade conditional on the network inferred so far, we penalize the network with one addional edge and test if the increase in likelihood accross all cascades is significant. The user still has to specify a p-value cut-off. If the p-value of an edge is larger than the specified cut-off the algorithm stops inferring more edges. The cut-off is set via the `p_value_cutoff` argument.
 
 ```{r}
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
-                  params = 0.5, quiet = TRUE)
+results <- netinf(policy_cascades, trans_mod = "exponential", 
+                  p_value_cutoff = 0.1, params = 0.5, quiet = TRUE)
 nrow(results)
 ```
 
@@ -225,8 +244,8 @@ We see that with a fixed lambda of 0.5 and a p-value cut-off of 0.1 the algorith
 The diffusion model parameters can be selected automatically. Setting the `params` argument to `NULL` (default value) makes the `netinf` function initialize the parameters automatically. The parameters are initialized at the midpoint between the MLE of the minimum diffusion times and the MLE of the maximum diffusion times, across all cascades. Edges are then inferred until either the p-value cut-off or a manually specified number of edges (`n_edges`) is reached. 
 
 ```{r}
-results <- netinf(policy_cascades, trans_mod = "exponential", n_edges = 0.1, 
-                  , quiet = TRUE)
+results <- netinf(policy_cascades, trans_mod = "exponential", 
+                  p_value_cutoff = 0.1, quiet = TRUE)
 nrow(results)
 ```
 
