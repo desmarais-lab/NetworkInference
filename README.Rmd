@@ -43,56 +43,32 @@ devtools::install_github('desmarais-lab/NetworkInference')
 
 ## Quick start guide
 
-This gets you started. For more in-depth explanations see the package vignette 
-and documentation.
-
-First, get your data into the `cascades` format required by the `netinf` 
+To get started, get your data into the `cascades` format required by the `netinf` 
 function:
 
 ```{r, results='hide', message=FALSE}
 library(NetworkInference)
 
 # Simulate random cascade data
-set.seed(423399)
-df <- simulate_rnd_cascades(50, n_node = 50) # Simulates random cascade data
-node_names <- unique(df$node_name)
+df <- simulate_rnd_cascades(50, n_node = 20)
 
 # Cast data into `cascades` object
-## From dataframe
+## From long format
 cascades <- as_cascade_long(df)
 
-## From matrix
+## From wide format
 df_matrix <- as.matrix(cascades) ### Create example matrix
 cascades <- as_cascade_wide(df_matrix)
 ```
 
-Cascades can be explored using `summary` and `plot`. See the vignette and 
-package documentation for full functionality.
-```{r, fig.align='center', fig.width=7, fig.height=4}
-cascade_ids <- names(cascades[[1]])
-selection <- cascade_ids[c(2, 5)]
-plot(cascades, label_nodes = TRUE, selection = selection)
-selection <- cascade_ids[c(1:20)]
-plot(cascades, label_nodes = FALSE, selection = selection)
-```
-
-The actual netinf algorithm is used with:
+Then fit the model:
 ```{r}
-result <- netinf(cascades, quiet = TRUE)
+result <- netinf(cascades, quiet = TRUE, p_value_cutoff = 0.05)
 ```
 
-The resulting network comes in form of an edgelist:
 ```{r, eval=FALSE}
 head(result)
 ```
 ```{r, results="asis", echo=FALSE}
 pander::pandoc.table(head(result))
-```
-
-The network as well as the improvement in fit and the p-value from the vuong test
-per edge can be visualized:
-```{r}
-plot(result, type = "network")
-plot(result, type = "improvement")
-plot(result, type = "p-value")
 ```
