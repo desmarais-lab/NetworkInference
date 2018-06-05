@@ -5,7 +5,7 @@
 \title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges = 0.05, params = NULL,
-  quiet = FALSE)
+  quiet = FALSE, trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -26,6 +26,10 @@ reasonable parameters are inferred from the data. See details for how to
 specify parameters for the different distributions.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
+
+\item{trees}{logical, Should the inferred cascade trees be returned. Note, 
+that this will lead to a different the structure of the function output. 
+See section Value for details.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 
@@ -41,6 +45,10 @@ Returns the inferred diffusion network as an edgelist in an object of
             model that have been infered by the approximate profile MLE 
             procedure.
     }
+    If the argument \code{trees} is set to \code{TRUE}, the output is a list
+    with the first element being the \code{data.frame} described above, and 
+    the second element being the trees in edge-list form in a single 
+    \code{data.frame}
 }
 \description{
 Infer a network of diffusion ties from a set of cascades. Each cascade 

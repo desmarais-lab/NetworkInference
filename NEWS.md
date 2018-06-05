@@ -35,6 +35,7 @@ is chosen.
 * The `policies` dataset has been updated with over 600 new policies from the 
     [SPID](https://doi.org/10.7910/DVN/CVYSR7) database 
     (access via `data(policies)`).
+* Inferred cascade trees can now be returned by setting `trees = TRUE`.
 
 #### New functions
 * New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.

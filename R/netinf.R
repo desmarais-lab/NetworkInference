@@ -41,6 +41,9 @@
 #'     addition reaches the p-value of \code{n_edges} or when the maximum 
 #'     possible number of edges is reached.
 #' @param quiet logical, Should output on progress by suppressed.
+#' @param trees logical, Should the inferred cascade trees be returned. Note, 
+#'     that this will lead to a different the structure of the function output. 
+#'     See section Value for details.
 #' 
 #' @return Returns the inferred diffusion network as an edgelist in an object of 
 #'     class \code{diffnet} and \code{\link[base]{data.frame}}. The first 
@@ -55,6 +58,10 @@
 #'             model that have been infered by the approximate profile MLE 
 #'             procedure.
 #'     }
+#'     If the argument \code{trees} is set to \code{TRUE}, the output is a list
+#'     with the first element being the \code{data.frame} described above, and 
+#'     the second element being the trees in edge-list form in a single 
+#'     \code{data.frame}.
 #'  
 #' @references 
 #' M. Gomez-Rodriguez, J. Leskovec, A. Krause. Inferring Networks of Diffusion 
@@ -74,7 +81,7 @@
 #' 
 #' @export
 netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05, 
-                   params = NULL, quiet = FALSE) {
+                   params = NULL, quiet = FALSE, trees = FALSE) {
     
     # Check inputs 
     assert_that(class(cascades)[1] == "cascade")
@@ -140,10 +147,6 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     }
     
     # Run netinf 
-    df_cascades <- data.table(as.data.frame(cascades))
-    setkey(df_cascades, "node_name", "cascade_id")
-    network <- data.frame(origin_node = "", destination_node = "")
-    
     netinf_out <- netinf_(cascade_nodes = cascade_nodes, 
                           cascade_times = cascades$cascade_times, 
                           model = model, params = params, n_edges = n_edges, 
@@ -165,7 +168,24 @@ netinf <- function(cascades, trans_mod = "exponential", n_edges=0.05,
     attr(network, "diffusion_model") = model
     attr(network, "diffusion_model_parameters") = params
     
-    return(network) 
+    if(trees) {
+        tree_dfs <- lapply(1:length(netinf_out[[3]]), function(i) {
+            x <- netinf_out[[3]][[i]]
+            out <- as.data.frame(cbind(x[[1]], x[[2]], rep(i, length(x[[1]]))))}
+            )
+        trees_df <- do.call(rbind, tree_dfs)
+        
+        # Replace int node ids with node_names 
+        trees_df$child <- do.call(c, cascades$cascade_nodes)
+        trees_df <- trees_df[!is.na(trees_df[, 2]), ]
+        trees_df[, 1] <- cascades$node_names[(trees_df[, 1] + 1)]
+        casc_names <- names(cascades$cascade_nodes)
+        trees_df[, 3] <- casc_names[trees_df[, 3]] 
+        colnames(trees_df) <- c("parent", "log_score", "cascade_id", "child") 
+        trees_df <- trees_df[, c(1, 4, 2, 3)]
+        return(list('network' = network, 'trees' = trees_df))
+    }
+    else return(network) 
 }
 
 
