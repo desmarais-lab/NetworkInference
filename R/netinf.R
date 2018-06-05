@@ -25,7 +25,6 @@
 #' 
 #' @import checkmate
 #' @import assertthat
-#' @import data.table
 #' 
 #' @param  cascades an object of class cascade containing node and cascade 
 #'     information. See \code{\link{as_cascade_long}} and 

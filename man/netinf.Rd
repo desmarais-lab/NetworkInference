@@ -48,7 +48,7 @@ Returns the inferred diffusion network as an edgelist in an object of
     If the argument \code{trees} is set to \code{TRUE}, the output is a list
     with the first element being the \code{data.frame} described above, and 
     the second element being the trees in edge-list form in a single 
-    \code{data.frame}
+    \code{data.frame}.
 }
 \description{
 Infer a network of diffusion ties from a set of cascades. Each cascade 
