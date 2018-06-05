@@ -1,6 +1,6 @@
 ---
 
-# NetworkInference 1.1.2.9000 (current developmen version)
+# NetworkInference 1.2.0 
 
 ---
 
@@ -10,7 +10,10 @@
 
 * `netinf()` got another **speed-up**. After the first edge, the computation 
     time for each edge is reduced by the factor number of nodes in the network
-* Number of edges can now be chosen using a **Vuong style test**.
+* Number of edges can now be chosen using a **Vuong style test**. If this 
+    procedure should be used, a p-value is chosen at which the inference of new
+    edges stops. This value is specified via the new `p_value_cutoff` argument
+    to `netinf()`.
 * This lead to the netinf output having a **fourth column** now, containing the 
 p-value for each edge. The p-value is also available if a fixed number of edges
 is chosen.
@@ -35,6 +38,7 @@ is chosen.
 * The `policies` dataset has been updated with over 600 new policies from the 
     [SPID](https://doi.org/10.7910/DVN/CVYSR7) database 
     (access via `data(policies)`).
+* Inferred cascade trees can now be returned by setting `trees = TRUE`.
 
 #### New functions
 * New function `drop_nodes()` now allows to drop nodes from all cascades in a cascade object.

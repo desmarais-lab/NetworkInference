@@ -1,0 +1,77 @@
+---
+title: "NetworkInference: Quick Start Guide"
+author: "Fridolin Linder"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{NetworkInference: Quick Start Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+---
+
+# Introduction
+
+---
+
+This package provides an R implementation of the netinf algorithm 
+created by @gomez2010inferring (see [here](http://snap.stanford.edu/netinf/) 
+for more information and the original C++ implementation). Given a set of events 
+that spread between a set of nodes the algorithm infers the most likely stable 
+diffusion network that is underlying the diffusion process.
+
+---
+
+# Installation
+
+---
+
+The package can be installed from [CRAN](https://CRAN.R-project.org/):
+```{r, eval=FALSE}
+install.packages("NetworkInference")
+```
+
+The latest development version can be installed from 
+[github](https://github.com/desmarais-lab/NetworkInference):
+```{r, eval=FALSE}
+#install.packages(devtools)
+devtools::install_github('desmarais-lab/NetworkInference')
+```
+
+---
+
+# Quick start guide
+
+---
+
+To get started, get your data into the `cascades` format required by the `netinf` 
+function:
+
+```{r, results='hide', message=FALSE}
+library(NetworkInference)
+
+# Simulate random cascade data
+df <- simulate_rnd_cascades(50, n_node = 20)
+
+# Cast data into `cascades` object
+## From long format
+cascades <- as_cascade_long(df)
+
+## From wide format
+df_matrix <- as.matrix(cascades) ### Create example matrix
+cascades <- as_cascade_wide(df_matrix)
+```
+
+Then fit the model:
+```{r}
+result <- netinf(cascades, quiet = TRUE, p_value_cutoff = 0.05)
+```
+
+```{r, eval=FALSE}
+head(result)
+```
+```{r, results="asis", echo=FALSE}
+pander::pandoc.table(head(result))
+```
+

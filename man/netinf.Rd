@@ -4,8 +4,8 @@
 \alias{netinf}
 \title{Infer latent diffusion network}
 \usage{
-netinf(cascades, trans_mod = "exponential", n_edges = 0.05, params = NULL,
-  quiet = FALSE)
+netinf(cascades, trans_mod = "exponential", n_edges = NULL,
+  p_value_cutoff = NULL, params = NULL, quiet = FALSE, trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 
@@ -15,17 +15,24 @@ information. See \code{\link{as_cascade_long}} and
 \item{trans_mod}{character, indicating the choice of model: 
 \code{"exponential"}, \code{"rayleigh"} or \code{"log-normal"}.}
 
-\item{n_edges}{integer or numeric, If integer number of edges to infer per
-iteration, if a numeric value in the interval (0, 1) (excluding 0 and 1) 
-edges are inferred in each iteration until the Vuong test for edge 
-addition reaches the p-value of \code{n_edges} or when the maximum 
-possible number of edges is reached.}
+\item{n_edges}{integer, number of edges to infer. Leave unspecified if using 
+\code{p_value_cutoff}.}
+
+\item{p_value_cutoff}{numeric, in the interval (0, 1). If 
+specifie, edges are inferred in each iteration until the Vuong test for 
+edge addition reaches the p-value cutoff or when the maximum 
+possible number of edges is reached. Leave unspecified if using 
+\code{n_edges} to explicitly specify number of edges to infer.}
 
 \item{params}{numeric, Parameters for diffusion model. If left unspecified 
 reasonable parameters are inferred from the data. See details for how to 
 specify parameters for the different distributions.}
 
 \item{quiet}{logical, Should output on progress by suppressed.}
+
+\item{trees}{logical, Should the inferred cascade trees be returned. Note, 
+that this will lead to a different the structure of the function output. 
+See section Value for details.}
 }
 \value{
 Returns the inferred diffusion network as an edgelist in an object of 
@@ -41,6 +48,10 @@ Returns the inferred diffusion network as an edgelist in an object of
             model that have been infered by the approximate profile MLE 
             procedure.
     }
+    If the argument \code{trees} is set to \code{TRUE}, the output is a list
+    with the first element being the \code{data.frame} described above, and 
+    the second element being the trees in edge-list form in a single 
+    \code{data.frame}.
 }
 \description{
 Infer a network of diffusion ties from a set of cascades. Each cascade 
