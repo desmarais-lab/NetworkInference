@@ -49,13 +49,13 @@ void print_time_estimate(std::chrono::duration<double, std::milli> fp_ms,
         message = "Estimated completion time: ";
     }
     std::string unit = "milliseconds";
-    if (estimate > 1000 & estimate < 60000) {
+    if ((estimate > 1000) & (estimate < 60000)) {
         estimate /= 1000;  
         unit = "seconds";
-    } else if (estimate > 60000 & estimate < 3600000) {
+    } else if ((estimate > 60000) & (estimate < 3600000)) {
         estimate /= 60000;
         unit = "minutes";
-    } else if (estimate > 3600000 & estimate < 86400000) {
+    } else if ((estimate > 3600000) & (estimate < 86400000)) {
         estimate /= 3600000;
         unit = "hours";
     } else if (estimate > 86400000) {
