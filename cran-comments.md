@@ -1,4 +1,6 @@
 Version 1.2.0
+
+Fixed error from calling ceiling on integer reported by CRAN checks.
  
 ## Test environments
 * Mac OS 10.12.5 (Sierra), R 3.5.0
@@ -8,9 +10,7 @@ Version 1.2.0
 * win-builder (devel and release)
 
 ## R CMD check results
-
-A submission yesterday failed due to a test failing on Debian. The same test
-passes on Mac OS, Windows, Ubuntu and a Debian 9.3.0 virtual machine. I can't reproduce the error. The tested function has a random component but is seeded. Since it is not central to the package, I removed the failing test. 
+No errors, warnings or notes
 
 ## Downstream dependencies
 There are currently no downstream dependencies
