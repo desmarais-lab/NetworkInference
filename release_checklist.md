@@ -2,9 +2,9 @@
 * Update version date in DESCRIPTION
 * Increment version number in R/zzz.R
 * Update NEWS.md
-* Check locally (`devtools:check()`)
 * Check on winbuilder (`devtools::build_win()`)
 * Push to github and wait for Travis check
+* Check locally (`devtools:check()`)
 * Check reverse dependencies (`devtools::revdep_check()`)
 * Update cran-comments.md
 * Release on cran

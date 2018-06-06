@@ -56,7 +56,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
     Progress p(n_edges, show_progress);
     
     int e;
-    int check_interval = ceil(n_p_edges / 10);
+    int check_interval = (n_p_edges / 10) + 1;
     id_array previous_best_edge;
     NumericVector improvements(n_p_edges);
     
@@ -115,7 +115,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
             x->second.second = edge_replacements[0];
             
             // Check for user interrupt and update progress bar
-            if(i % (check_interval+1) == 0) {
+            if((i % check_interval) == 0) {
                 checkUserInterrupt();
             }
             i += 1;
