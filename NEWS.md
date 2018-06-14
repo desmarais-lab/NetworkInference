@@ -1,8 +1,11 @@
----
+# NetworkInference 1.2.1
+
+## Bug Fixes
+
+* `netinf_` used ceiling on integer which caused error on Solaris
 
 # NetworkInference 1.2.0 
 
----
 
 ## New Features
 
@@ -57,11 +60,9 @@ is chosen.
 
 * C++ code is now modularized and headers are properly documented
 
----
 
 # NetworkInference 1.1.2
 
----
 
 ## New Features
 
@@ -75,22 +76,17 @@ is chosen.
 * `as_cascade_long()` and `as_cascade_wide()` handle date input correctly now.
 * `as_cascade_wide()` couldn't handle data input of class `data.table`. 
 
----
 
 # NetworkInference 1.1.1
 
----
 
 ## Bug Fixes
 
 * Use of igraph now conditional compliant with Writing R Extensions [1.1.3.1](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Suggested-packages)
 * Fixed version number displayed in startup message
 
----
 
 # NetworkInference 1.1.0
-
----
 
 ## New Features
 
@@ -101,10 +97,7 @@ is chosen.
 * x and y axis labels in `plot.cascade` with option `label_nodes=FALSE` were
     reversed
 
----
 
 # NetworkInference 1.0.0
-
----
 
 First release

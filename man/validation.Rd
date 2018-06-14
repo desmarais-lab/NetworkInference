@@ -22,7 +22,7 @@ Output from netinf example program (\url{https://github.com/snap-stanford/snap/t
 data(validation)
 }
 \description{
-Contians output from original netinf C++ implementation, executed on 
+Contains output from original netinf C++ implementation, executed on 
 \code{\link{cascades}}. For testing purposes.
 }
 \keyword{datasets}

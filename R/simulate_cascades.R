@@ -52,8 +52,8 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #' @param partial_cascade object of type cascade, containing one partial 
 #'     cascades for which further development should be simulated.
 #' @param params numeric, (optional) parameters for diffusion time distribution. 
-#'    See the details seciont of \code{\link{netinf}} for specification details.
-#'    Only use this argument if parmeters different from those contained in the 
+#'    See the details section of \code{\link{netinf}} for specification details.
+#'    Only use this argument if parameters different from those contained in the 
 #'    \code{diffnet} object should be used or the network is not an object of 
 #'    class \code{diffnet}.
 #' @param model character, diffusion model to use. One of \code{c("exponential", 

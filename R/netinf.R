@@ -37,7 +37,7 @@
 #' @param n_edges integer, number of edges to infer. Leave unspecified if using 
 #'     \code{p_value_cutoff}.
 #' @param p_value_cutoff numeric, in the interval (0, 1). If 
-#'     specifie, edges are inferred in each iteration until the Vuong test for 
+#'     specified, edges are inferred in each iteration until the Vuong test for 
 #'     edge addition reaches the p-value cutoff or when the maximum 
 #'     possible number of edges is reached. Leave unspecified if using 
 #'     \code{n_edges} to explicitly specify number of edges to infer.
@@ -53,10 +53,10 @@
 #'     represented by the row. The output additionally has the following 
 #'     attributes:
 #'     \itemize{
-#'         \item \code{"diffusion_model"}: The diffusion model used to infere the 
+#'         \item \code{"diffusion_model"}: The diffusion model used to infer the 
 #'             diffusion network.
 #'         \item \code{"diffusion_model_parameters"}: The parameters for the 
-#'             model that have been infered by the approximate profile MLE 
+#'             model that have been inferred by the approximate profile MLE 
 #'             procedure.
 #'     }
 #'     If the argument \code{trees} is set to \code{TRUE}, the output is a list

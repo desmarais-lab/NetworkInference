@@ -20,7 +20,7 @@ An object of class cascade, where only events are included that have
     times \code{start_time} <= t < \code{end_time}.
 }
 \description{
-Remove each all events occuring outside the desired subset for each cascade 
+Remove each all events occurring outside the desired subset for each cascade 
 in a cascade object.
 }
 \examples{
