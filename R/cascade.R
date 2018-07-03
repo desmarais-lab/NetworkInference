@@ -408,7 +408,7 @@ subset_cascade_time <- function(cascade, start_time, end_time, drop=TRUE) {
    }
    #subset_node_names <- unique(do.call(c, subset_nodes))
    subset_node_names <- cascade$node_names
-   out <- list(cascade_times = subset_times, cascade_nodes = subset_nodes,
+   out <- list(cascade_nodes = subset_nodes, cascade_times = subset_times, 
                node_names = subset_node_names)
    class(out) <- c("cascade", "list")
    return(out)
