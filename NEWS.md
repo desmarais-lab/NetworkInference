@@ -1,3 +1,9 @@
+# NetworkInference 1.2.1.9000 (development version)
+
+## Bug Fixes
+
+`netinf()` with `log-normal` model didn't run because of an index error in the argument check for `params`
+
 # NetworkInference 1.2.1
 
 ## Bug Fixes
