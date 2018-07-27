@@ -1,10 +1,11 @@
-Version 1.2.1
+Version 1.2.2
 
-Fixed error from calling ceiling on integer reported by CRAN checks.
+Fixed a memory access error casued by comparision with an unitialized array.
  
 ## Test environments
-* Mac OS 10.12.5 (Sierra), R 3.5.0
-* ubuntu 14.04.5 (on travis-ci), R 3.5.0
+* Mac OS 10.12.6 (Sierra), R 3.5.1
+* ubuntu 14.04.5, R 3.5.0 
+* ubuntu 14.04.5 (on travis-ci), R 3.4.4 (+ valgrind)
 * win-builder (devel and release)
 
 ## R CMD check results
