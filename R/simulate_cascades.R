@@ -57,7 +57,7 @@ simulate_rnd_cascades <- function(n_cascades, n_nodes) {
 #'    \code{diffnet} object should be used or the network is not an object of 
 #'    class \code{diffnet}.
 #' @param model character, diffusion model to use. One of \code{c("exponential", 
-#'     "rayleigh", "log-normal")}. Only use this argument if parmeters different 
+#'     "rayleigh", "log-normal")}. Only use this argument if parameters different 
 #'     from those contained in the \code{diffnet} object should be used or the 
 #'     network is not an object of class \code{diffnet}.
 #' @param nodes vector of node ids if different from nodes included in 
