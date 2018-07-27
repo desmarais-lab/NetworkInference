@@ -57,7 +57,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
     
     int e;
     int check_interval = (n_p_edges / 10) + 1;
-    id_array previous_best_edge;
+    id_array previous_best_edge = {{-1, -1}};
     NumericVector improvements(n_p_edges);
     
     for(e = 0; e < n_edges; e++) {
