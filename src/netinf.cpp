@@ -75,6 +75,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
             n = 0;
             for(m_iter rit = it_best; rit->first[0] == current_child; rit--) {
                 last_key = rit->first;
+                if(rit == possible_edges.begin()) break;
                 n++;
             }
             
@@ -86,6 +87,7 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
             m = 0;
             for(m_iter rit = it_best; rit->first[0] == current_child; rit++) {
                 last_key = rit->first;
+                if(rit == possible_edges.end()) break;
                 m++;
             }
             // And store the iterator as start point for edge inference 

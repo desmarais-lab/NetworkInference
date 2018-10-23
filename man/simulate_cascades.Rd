@@ -30,7 +30,7 @@ Only use this argument if parameters different from those contained in the
 class \code{diffnet}.}
 
 \item{model}{character, diffusion model to use. One of \code{c("exponential", 
-"rayleigh", "log-normal")}. Only use this argument if parmeters different 
+"rayleigh", "log-normal")}. Only use this argument if parameters different 
 from those contained in the \code{diffnet} object should be used or the 
 network is not an object of class \code{diffnet}.}
 
