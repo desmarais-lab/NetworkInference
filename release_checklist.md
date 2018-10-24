@@ -3,7 +3,7 @@
 * Increment version number in R/zzz.R
 * Update NEWS.md
 * Check on winbuilder (`devtools::build_win()`)
-* Check locally (`devtools:check()`)
+* Check locally (with valgrind) (`devtools:check(args = "--use-valgrind")`)
 * Push to github and wait for Travis check
 * Check reverse dependencies (`devtools::revdep_check()`)
 * Update cran-comments.md

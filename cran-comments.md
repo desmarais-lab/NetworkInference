@@ -1,15 +1,18 @@
-Version 1.2.2
+Version 1.2.3
 
-Fixed a memory access error casued by comparision with an unitialized array.
- 
+Fixed potential memory error from iterating over the beginning/end of a `std::map`
+
 ## Test environments
-* Mac OS 10.12.6 (Sierra), R 3.5.1
-* ubuntu 14.04.5, R 3.5.0 
-* ubuntu 14.04.5 (on travis-ci), R 3.4.4 (+ valgrind)
+* Mac OS 10.12.6 (High Sierra), R 3.5.1
+* Ubuntu 16.04.5 LTS, R 3.5.1
+* Ubuntu 14.04.5 LTS (travis-ci), R 3.5.1 (+ valgrind)
 * win-builder (devel and release)
 
 ## R CMD check results
-No errors, warnings or notes
+
+* No errors, warnings
+
+* I got one note from R-hub about a possibly invalid URL: 'http://snap.stanford.edu/netinf/'. It seems like the site is temporarilly down but the URL is valid.
 
 ## Downstream dependencies
-There are currently no downstream dependencies
+There are no downstream dependencies

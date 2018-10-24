@@ -1,7 +1,7 @@
 .onAttach <- function(...) {
       packageStartupMessage(
 'NetworkInference: Inferring latent diffusion networks.
-Version 1.2.2
+Version 1.2.3
 copyright (c) 2016, Fridolin Linder, Pennsylvania State University
                     Bruce Desmarais, Pennsylvania State University
 For citation information, type citation("NetworkInference").
