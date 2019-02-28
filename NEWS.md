@@ -1,3 +1,11 @@
+# NetworkInference 1.2.4.9000
+
+Development Version
+
+## New Features
+
+## Bug Fixes
+
 # NetworkInference 1.2.4
 
 ## New Features
