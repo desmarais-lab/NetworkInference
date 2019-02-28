@@ -1,8 +1,8 @@
 Package: NetworkInference
 Type: Package
 Title: Inferring Latent Diffusion Networks
-Version: 1.2.3.9000
-Date: 2018-10-24
+Version: 1.2.4
+Date: 2019-02-27
 Authors@R: c(person("Fridolin", "Linder", email = "fridolin.linder@gmail.com",
                   role = c("aut", "cre")),
              person("Bruce", "Desmarais", role = "ctb"))
@@ -27,7 +27,7 @@ Suggests:
     igraph,
     utils,
     dplyr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 SystemRequirements: C++11
 LazyData: true
 VignetteBuilder: knitr

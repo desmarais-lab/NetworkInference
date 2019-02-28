@@ -5,7 +5,8 @@
 \title{Transform long data to cascade}
 \usage{
 as_cascade_long(data, cascade_node_name = "node_name",
-  event_time = "event_time", cascade_id = "cascade_id", node_names = NULL)
+  event_time = "event_time", cascade_id = "cascade_id",
+  node_names = NULL)
 }
 \arguments{
 \item{data}{\link{data.frame}, containing the cascade data 

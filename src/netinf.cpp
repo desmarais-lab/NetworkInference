@@ -64,19 +64,15 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
         
         m_iter start_iter = possible_edges.begin();
         id_array end_id = possible_edges.rbegin()->first;
-        int n = -1;
-        int m = -1;
         if(e > 0) {
             // Find the first edge in possible_edges that has the same child as 
             // previous_best_edge by iterating back from previous_best_edge
             m_iter it_best = possible_edges.find(previous_best_edge);
             int current_child = previous_best_edge[0];
             id_array last_key = it_best->first;
-            n = 0;
             for(m_iter rit = it_best; rit->first[0] == current_child; rit--) {
                 last_key = rit->first;
                 if(rit == possible_edges.begin()) break;
-                n++;
             }
             
             // And store the iterator as start point for edge inference 
@@ -84,11 +80,9 @@ List netinf_(List &cascade_nodes, List &cascade_times, int &n_edges,
             
             // Find the last edge in possible_edges with the same child as 
             // previous_best_edges
-            m = 0;
-            for(m_iter rit = it_best; rit->first[0] == current_child; rit++) {
+            for(m_iter rit = it_best; rit != possible_edges.end(); rit++) {
+                if(rit->first[0] != current_child) break;
                 last_key = rit->first;
-                if(rit == possible_edges.end()) break;
-                m++;
             }
             // And store the iterator as start point for edge inference 
             end_id = possible_edges.find(last_key)->first;

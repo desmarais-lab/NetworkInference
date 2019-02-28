@@ -5,7 +5,8 @@
 \title{Infer latent diffusion network}
 \usage{
 netinf(cascades, trans_mod = "exponential", n_edges = NULL,
-  p_value_cutoff = NULL, params = NULL, quiet = FALSE, trees = FALSE)
+  p_value_cutoff = NULL, params = NULL, quiet = FALSE,
+  trees = FALSE)
 }
 \arguments{
 \item{cascades}{an object of class cascade containing node and cascade 

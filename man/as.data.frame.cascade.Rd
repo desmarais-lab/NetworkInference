@@ -4,7 +4,8 @@
 \alias{as.data.frame.cascade}
 \title{Convert a cascade object to a data frame}
 \usage{
-\method{as.data.frame}{cascade}(x, row.names = NULL, optional = FALSE, ...)
+\method{as.data.frame}{cascade}(x, row.names = NULL, optional = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{Cascade object to convert.}

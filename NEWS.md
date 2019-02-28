@@ -1,8 +1,9 @@
-# NetworkInference 1.2.3.9000 (Development Version)
+# NetworkInference 1.2.4
 
 ## New Features
 
 ## Bug Fixes
+* Fixed potential memory error from iterating over the beginning/end of a `std::map`. The last fix didn't work under all circumstances.
 
 # NetworkInference 1.2.3
 
