@@ -28,7 +28,7 @@ of the policies. It contains these columns:
 Both \code{data.frame} objects can be joined (merged) on the common column
 \code{policy} (see example code).}
 \source{
-\url{https://doi.org/10.7910/DVN/CVYSR7}
+\doi{10.7910/DVN/CVYSR7}
 }
 \usage{
 data(policies)
