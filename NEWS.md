@@ -1,10 +1,15 @@
-# NetworkInference 1.2.4.9000
+# NetworkInference 1.2.5.9000
 
 Development Version
 
 ## New Features
 
 ## Bug Fixes
+
+# NetworkInference 1.2.5
+
+* Update C++11 -> C++17
+* Minor fixes to package metadata
 
 # NetworkInference 1.2.4
 
