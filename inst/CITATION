@@ -1,51 +1,45 @@
 citHeader("To cite NetworkInference in publications use:")
 
-citEntry(entry = "misc",
-  title        = "{NetworkInference}: Inferring latent diffusion networks",
-  author       = personList(as.person("Fridolin Linder"),
-                   as.person("Bruce A. Desmarais")),
-  year         = "2017",
-  url          = "https://github.com/desmarais-lab/NetworkInference",
-
-  textVersion  =
-  paste("Linder, Fridolin and Bruce A. Desmarais (2016). NetworkInference:",
-        "Inferring latent diffusion networks. R package version 1.0.",
-        "URL: https://github.com/desmarais-lab/NetworkInference.")
+bibentry(
+  bibtype = "Misc",
+  key     = "NetworkInference",
+  title   = "{NetworkInference}: Inferring latent diffusion networks",
+  author  = c(
+    person("Fridolin", "Linder"),
+    person("Bruce A.", "Desmarais")
+  ),
+  year    = "2017",
+  url     = "https://github.com/desmarais-lab/NetworkInference"
 )
 
-citEntry(entry = "misc",
-  title        = "Collaborative Research: An Expanded Framework for Inferring Public
-                  Policy Diffusion Networks.",
-  author       = personList(as.person("Frederick J. Boehmke"),
-                            as.person("Bruce A. Desmarais"),
-                            as.person("Jeffrey J. Harden"),
-                            as.person("Hanna M. Wallach")),
-  journal      = "National Science Foundation",
-  volume       = "SES Awards: 1558661, 1558781, 1558561, and 1558509",
-
-  textVersion  =
-  paste('Frederick J. Boehmke, Bruce A Desmarais, Jeffrey J Harden, Hanna M Wallach.',
-        'Collaborative Research: An Expanded Framework for Inferring Public Policy',
-        'Diffusion Networks. National Science Foundation. SES Awards: 1558661,',
-        '1558781, 1558561, and 1558509.')
+bibentry(
+  bibtype = "Misc",
+  key     = "BoehmkeNSF",
+  title   = "Collaborative Research: An Expanded Framework for Inferring Public Policy Diffusion Networks.",
+  author  = c(
+    person("Frederick J.", "Boehmke"),
+    person("Bruce A.", "Desmarais"),
+    person("Jeffrey J.", "Harden"),
+    person("Hanna M.", "Wallach")
+  ),
+  journal = "National Science Foundation",
+  volume  = "SES Awards: 1558661, 1558781, 1558561, and 1558509"
 )
 
-
-citEntry(entry = "article",
-  title        = "A New Database for Inferring Public Policy Innovativeness and Diffusion Networks.",
-  author       = personList(as.person("Frederick J. Boehmke"),
-                            as.person("Mark D. Brockway"),
-                            as.person("Bruce A. Desmarais"),
-                            as.person("Jeffrey J. Harden"),
-                            as.person("Scott J. LaCombe"),
-                            as.person("Fridolin Linder"),
-                            as.person("Hanna M. Wallach")),
-  journal      = "Presented at the 2017 Midwest Political Science Association Annual Conference",
-  year         = "2017",
-
-  textVersion  =
-  paste('Frederick J. Boehmke, Mark D. Brockway, Bruce A. Desmarais, Jeff Harden,',
-        'Scott J. LaCombe, Fridolin Linder, Hanna Wallach. 2016. A New Database for',
-        'Inferring Public Policy Innovativeness and Diffusion Networks. Presented at',
-        'the 2017 Midwest Political Science Association Annual Conference.')
+bibentry(
+  bibtype = "Article",
+  key     = "BoehmkeSPID",
+  title   = "A New Database for Inferring Public Policy Innovativeness and Diffusion Networks.",
+  author  = c(
+    person("Frederick J.", "Boehmke"),
+    person("Mark D.", "Brockway"),
+    person("Bruce A.", "Desmarais"),
+    person("Jeffrey J.", "Harden"),
+    person("Scott J.", "LaCombe"),
+    person("Fridolin", "Linder"),
+    person("Hanna M.", "Wallach")
+  ),
+  journal = "Presented at the 2017 Midwest Political Science Association Annual Conference",
+  year    = "2017"
 )
+
